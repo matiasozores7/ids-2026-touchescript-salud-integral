@@ -1,0 +1,5 @@
+-- Escribir aquí las sentencias DDL (CREATE TABLE) para:
+-- - medicos, especialidades, consultorios, coberturas
+-- - pacientes, usuarios (login/roles)
+-- - agendas y turnos (REQUISITO: utilizar un único campo DATETIME para fecha/hora del turno)
+-- Luego, verificar que se cumplan los requisitos propuestos en el enunciado
