@@ -27,7 +27,7 @@ CREATE TABLE usuarios (
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    rol ENUM('paciente', 'admin', 'recepcionista', 'medico') NOT NULL
+    rol ENUM('paciente', 'admin', 'medico') NOT NULL
 );
 
 CREATE TABLE pacientes (
