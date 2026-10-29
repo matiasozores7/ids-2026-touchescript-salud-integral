@@ -1,0 +1,92 @@
+@media (max-width: 900px) {
+  .hero-panel {
+    padding: 32px 26px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appointment-search {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-submit {
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 680px) {
+  .home-page {
+    gap: 38px;
+  }
+
+  .hero-panel {
+    border-radius: 14px;
+    padding: 27px 18px;
+  }
+
+  .hero-grid {
+    gap: 25px;
+  }
+
+  .hero-copy h1 {
+    font-size: 35px;
+    letter-spacing: -1.2px;
+  }
+
+  .hero-description {
+    font-size: 14px;
+  }
+
+  .appointment-search {
+    grid-template-columns: 1fr;
+    margin-top: 22px;
+  }
+
+  .form-field select {
+    height: 44px;
+  }
+
+  .next-appointment {
+    padding: 18px;
+  }
+
+  .specialty-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .specialty-card {
+    min-height: 156px;
+    padding: 12px;
+  }
+
+  .section-heading h2,
+  .checkin-panel h2 {
+    font-size: 19px;
+  }
+
+  .section-heading a {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .doctor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-card {
+    padding: 17px;
+  }
+
+  .checkin-panel {
+    padding: 25px 19px;
+  }
+
+  .checkin-steps {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 22px;
+  }
+}

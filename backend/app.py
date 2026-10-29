@@ -1,15 +1,15 @@
 from flask import Flask
+from config import Config
+from src.routes import health_bp
+from src.utils.error_handlers import register_error_handlers
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
-
-@app.route('/api/healthcheck', methods=['GET'])
-def healthcheck():
-    return {
-        "status": "ok",
-        "message": "API Backend activa"
-    }, 200
-
+register_error_handlers(app)
+app.register_blueprint(health_bp)
+# Cuando agreguen blueprints agreguen el url_prefix="/api" 
+# para cumplir con la convención del listado
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=int(app.config['PORT']), debug=True)
