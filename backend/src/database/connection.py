@@ -8,8 +8,7 @@ def get_db_connection():
         user=Config.DB_USER,
         password=Config.DB_PASSWORD,
         database=Config.DB_NAME,
-        cursorclass=pymysql.cursors.DictCursor,
-        autocommit=True # Analizar la implementación de esta linea para este TP. Podriamos tener que sacarla.
+        cursorclass=pymysql.cursors.DictCursor
     )
 
 def execute_query(
@@ -35,9 +34,15 @@ def execute_query(
             if fetch_all:
                 return cursor.fetchall()
 
+            connection.commit()
+
             # Para INSERT devuelve el ID generado;
             # para UPDATE/DELETE, las filas afectadas.
             return cursor.lastrowid if cursor.lastrowid else cursor.rowcount
+
+    except Exception as error:
+        connection.rollback()
+        raise error
 
     finally:
         connection.close()
