@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS turnos;
 DROP TABLE IF EXISTS agendas;
 DROP TABLE IF EXISTS consultorios;
 DROP TABLE IF EXISTS medicos;
+DROP TABLE IF EXISTS pacientes;
 DROP TABLE IF EXISTS especialidades;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS coberturas;
@@ -26,8 +27,14 @@ CREATE TABLE usuarios (
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    rol ENUM('paciente', 'admin', 'recepcionista') NOT NULL,
-    cobertura_id INT,
+    rol ENUM('paciente', 'admin', 'medico') NOT NULL
+);
+
+CREATE TABLE pacientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    cobertura_id INT NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (cobertura_id) REFERENCES coberturas(id)
 );
 
@@ -39,9 +46,9 @@ CREATE TABLE especialidades (
 
 CREATE TABLE medicos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
+    usuario_id INT NOT NULL UNIQUE,
     especialidad_id INT NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (especialidad_id) REFERENCES especialidades(id)
 );
 
@@ -59,7 +66,7 @@ CREATE TABLE agendas (
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
     duracion_turno INT NOT NULL,
-    FOREIGN KEY (medico_id) REFERENCES medicos(id),
+    FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
     FOREIGN KEY (consultorio_id) REFERENCES consultorios(id)
 );
 
@@ -69,9 +76,10 @@ CREATE TABLE turnos (
     paciente_id INT,
     consultorio_id INT NOT NULL,
     fecha_hora DATETIME NOT NULL,
+    fecha_hora_llegada DATETIME NULL,
     estado ENUM('disponible', 'reservado', 'confirmado', 'atendido', 'cancelado', 'ausente') DEFAULT 'disponible',
     qr_token VARCHAR(255) UNIQUE, 
     FOREIGN KEY (medico_id) REFERENCES medicos(id),
-    FOREIGN KEY (paciente_id) REFERENCES usuarios(id),
+    FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
     FOREIGN KEY (consultorio_id) REFERENCES consultorios(id)
 );
