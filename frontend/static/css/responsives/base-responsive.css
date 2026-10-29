@@ -1,0 +1,104 @@
+@media (max-width: 900px) {
+  .header-inner {
+    gap: 14px;
+  }
+
+  .main-nav a {
+    padding-inline: 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 680px) {
+  .header-inner {
+    width: min(100% - 24px, 1152px);
+    height: 60px;
+  }
+
+  .brand {
+    gap: 7px;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .brand-subtitle {
+    font-size: 9px;
+  }
+
+  .search-doctors {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: inline-flex;
+  }
+
+  .main-nav {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    left: 0;
+    display: none;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    border-top: 1px solid var(--border);
+    padding: 10px 12px;
+    background: #fff;
+    box-shadow: 0 8px 18px rgb(41 77 93 / 9%);
+  }
+
+  .main-nav.mobile-open {
+    display: flex;
+  }
+
+  .main-nav a {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  .page-content {
+    width: min(100% - 24px, 1152px);
+    padding: 20px 0 28px;
+  }
+
+  .footer-inner {
+    width: min(100% - 24px, 1152px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 18px 0;
+    text-align: center;
+  }
+
+  .footer-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .footer-meta {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}

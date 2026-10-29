@@ -1,17 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro Médico Salud Integral</title>
-</head>
-<body>
-    <header>
-        <h1>Centro Médico Salud Integral</h1>
-    </header>
-    <main>
-        <!-- Placeholders para vistas de Pacientes y Backoffice -->
-        <p>Sistema de gestión de turnos médicos y check-in por QR.</p>
-    </main>
-</body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Encontrá especialistas, reservá tus turnos y organizá tu atención médica desde un solo lugar.">
+    <title>{% block title %}ToucheHealth | Centro Médico{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsives/base-responsive.css') }}">
+    {% block page_styles %}{% endblock %}
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="header-inner">
+          <a class="brand" href="{{ url_for('index') }}" aria-label="ToucheHealth | Centro Médico, inicio">
+            <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+              <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+              <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+            </svg>
+            <span class="brand-copy">
+              <span class="brand-name">ToucheHealth</span>
+              <span class="brand-subtitle">CENTRO MÉDICO</span>
+            </span>
+          </a>
+
+          <nav class="main-nav" aria-label="Principal">
+            <a class="active" href="{{ url_for('index') }}">Inicio</a>
+            <a href="#especialidades">Especialidades</a>
+            <a href="#profesionales">Profesionales</a>
+            <a href="#proximo-turno">Mis turnos</a>
+          </nav>
+
+          <div class="header-actions">
+            <a class="button button-primary button-small search-doctors" href="#profesionales">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+              Buscar médicos
+            </a>
+            <button class="avatar avatar-small profile-avatar" type="button" aria-label="Perfil">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+            </button>
+            <button class="mobile-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <span class="footer-brand-name">ToucheHealth</span>
+            <span>Atención médica organizada en un solo lugar.</span>
+          </div>
+          <nav class="footer-nav" aria-label="Enlaces del pie de página">
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="#especialidades">Especialidades</a>
+            <a href="#profesionales">Profesionales</a>
+          </nav>
+          <div class="footer-meta">
+            <span>© ToucheHealth | Centro Médico</span>
+            <a href="#inicio">Ver backoffice →</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  <script src="{{ url_for('static', filename='js/navigation.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/home.js') }}" defer></script>
+  </body>
 </html>

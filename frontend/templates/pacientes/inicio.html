@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Turnos médicos online · ToucheHealth | Centro Médico{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsives/home-responsive.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="home-page" id="inicio">
+  <section class="hero-panel">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">ToucheHealth | Centro Médico</p>
+        <h1>Tu salud, más cerca que nunca</h1>
+        <p class="hero-description">Encontrá especialistas, reservá tus turnos y organizá tu atención médica desde un solo lugar.</p>
+
+        <form class="appointment-search" action="{{ url_for('index') }}" method="get">
+          <label class="form-field">
+            <span>Especialidad</span>
+            <select name="especialidad">
+              <option value="">Todas</option>
+              <option value="sp-clinica">Clínica médica</option>
+              <option value="sp-cardio">Cardiología</option>
+              <option value="sp-pedia">Pediatría</option>
+              <option value="sp-derma">Dermatología</option>
+              <option value="sp-trauma">Traumatología</option>
+              <option value="sp-gine">Ginecología</option>
+              <option value="sp-oftalmo">Oftalmología</option>
+              <option value="sp-neuro">Neurología</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Profesional</span>
+            <select name="q" id="doctor-filter">
+              <option value="">Cualquiera</option>
+              <option value="Fernández" data-specialty="sp-cardio">Dra. Fernández</option>
+              <option value="González" data-specialty="sp-clinica">Dr. González</option>
+              <option value="Rodríguez" data-specialty="sp-pedia">Dra. Rodríguez</option>
+              <option value="López" data-specialty="sp-trauma">Dr. López</option>
+              <option value="Pérez" data-specialty="sp-derma">Dra. Pérez</option>
+              <option value="Romero" data-specialty="sp-neuro">Dr. Romero</option>
+              <option value="Martínez" data-specialty="sp-gine">Dra. Martínez</option>
+              <option value="Herrera" data-specialty="sp-oftalmo">Dr. Herrera</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Día preferido</span>
+            <select name="dia">
+              <option value="">Cualquier día</option>
+              <option value="1">Lunes</option>
+              <option value="2">Martes</option>
+              <option value="3">Miércoles</option>
+              <option value="4">Jueves</option>
+              <option value="5">Viernes</option>
+              <option value="6">Sábado</option>
+            </select>
+          </label>
+          <button class="button button-primary button-large search-submit" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+            Buscar turnos
+          </button>
+        </form>
+      </div>
+
+      <article class="next-appointment card" id="proximo-turno">
+        <div class="card-heading">
+          <h2>Próximo turno</h2>
+          <span class="status-badge">Reservado</span>
+        </div>
+        <div class="appointment-doctor">
+          <span class="avatar avatar-large">LF</span>
+          <div>
+            <p class="doctor-name">Dra. Lucía Fernández</p>
+            <p class="doctor-specialty">Cardiología</p>
+          </div>
+        </div>
+        <dl class="appointment-facts">
+          <div><dt>Fecha</dt><dd>Viernes 30 de octubre</dd></div>
+          <div><dt>Hora</dt><dd>09:30</dd></div>
+          <div><dt>Lugar</dt><dd>Cons. 102</dd></div>
+        </dl>
+        <div class="card-actions">
+          <a class="button button-outline button-small" href="#proximo-turno">Ver detalle</a>
+          <a class="button button-primary button-small" href="#proximo-turno">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v2M14 20h2M20 19v2"/></svg>
+            Ver QR
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="content-section" id="especialidades">
+    <div class="section-heading">
+      <h2>Especialidades destacadas</h2>
+      <a href="#especialidades">Ver todas</a>
+    </div>
+    <div class="specialty-grid">
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v2a4 4 0 0 0 8 0v-1"/><circle cx="18" cy="11" r="2"/></svg></span>
+        <span class="specialty-name">Clínica médica</span><span class="specialty-description">Controles generales y seguimiento integral.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 8.6c0 5.2-8.8 11-8.8 11S3.2 13.8 3.2 8.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.2Z"/><path d="M4 12h4l2-3 3 6 2-3h5"/></svg></span>
+        <span class="specialty-name">Cardiología</span><span class="specialty-description">Prevención y control cardiovascular.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.3 2 4 2 4-2 4-2M9 9h.01M15 9h.01M9 5l1 2M15 5l-1 2"/></svg></span>
+        <span class="specialty-name">Pediatría</span><span class="specialty-description">Atención de niñas, niños y adolescentes.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><circle cx="12" cy="11" r="3"/><path d="M7.5 18a5 5 0 0 1 9 0"/></svg></span>
+        <span class="specialty-name">Dermatología</span><span class="specialty-description">Cuidado de la piel, cabello y uñas.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8a2.5 2.5 0 1 1-3.5-3.5A2.5 2.5 0 1 1 7 1l10 10a2.5 2.5 0 1 1 3.5 3.5A2.5 2.5 0 1 1 17 18Z" transform="translate(2 2) scale(.83)"/></svg></span>
+        <span class="specialty-name">Traumatología</span><span class="specialty-description">Lesiones, articulaciones y movilidad.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12c-4-1-3-6 0-6s4 5 0 6Zm0 0c1-4 6-3 6 0s-5 4-6 0Zm0 0c4 1 3 6 0 6s-4-5 0-6Zm0 0c-1 4-6 3-6 0s5-4 6 0Z"/><circle cx="12" cy="12" r="2"/><path d="M12 18v4"/></svg></span>
+        <span class="specialty-name">Ginecología</span><span class="specialty-description">Salud ginecológica y controles anuales.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <span class="specialty-name">Oftalmología</span><span class="specialty-description">Control visual y salud ocular.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="specialty-card" href="#profesionales">
+        <span class="specialty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m12-6h4a2 2 0 0 1 2 2v4M3 15v4a2 2 0 0 0 2 2h4m12-6v4a2 2 0 0 1-2 2h-4"/><path d="M8 12h2l2-4 2 8 2-4h2"/></svg></span>
+        <span class="specialty-name">Neurología</span><span class="specialty-description">Consultas sobre sistema nervioso.</span>
+        <span class="specialty-count">1 profesional <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="content-section" id="profesionales">
+    <div class="section-heading">
+      <h2>Profesionales destacados</h2>
+      <a href="#profesionales">Ver profesionales</a>
+    </div>
+    <div class="doctor-grid">
+        <article class="doctor-card card">
+          <div class="doctor-card-heading">
+            <span class="avatar avatar-large">LF</span>
+            <div class="doctor-summary">
+              <h3>Dra. Lucía Fernández</h3>
+              <p class="doctor-specialty">Cardiología</p>
+              <p class="doctor-credentials">MN 112.458 · 14 años de experiencia</p>
+            </div>
+          </div>
+          <dl class="doctor-details">
+            <div>
+              <svg class="detail-icon teal-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <dt class="visually-hidden">Próxima disponibilidad</dt><dd>Viernes 30 de octubre · 09:00</dd>
+            </div>
+            <div>
+              <svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <dt class="visually-hidden">Consultorio</dt><dd>Consultorio 102</dd>
+            </div>
+            <div class="insurance-row">
+              <svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>
+              <dt class="visually-hidden">Coberturas</dt>
+              <dd class="insurance-tags"><span>OSDE</span><span>Swiss Medical</span><span>Galeno</span><span>Particular</span></dd>
+            </div>
+          </dl>
+          <div class="card-actions doctor-card-actions">
+            <a class="button button-outline button-small" href="#profesionales">Ver perfil</a>
+            <a class="button button-primary button-small" href="#proximo-turno">Reservar turno</a>
+          </div>
+        </article>
+        <article class="doctor-card card">
+          <div class="doctor-card-heading">
+            <span class="avatar avatar-large">MG</span>
+            <div class="doctor-summary">
+              <h3>Dr. Martín González</h3>
+              <p class="doctor-specialty">Clínica médica</p>
+              <p class="doctor-credentials">MN 98.774 · 18 años de experiencia</p>
+            </div>
+          </div>
+          <dl class="doctor-details">
+            <div><svg class="detail-icon teal-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><dt class="visually-hidden">Próxima disponibilidad</dt><dd>Lunes 2 de noviembre · 08:00</dd></div>
+            <div><svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><dt class="visually-hidden">Consultorio</dt><dd>Consultorio 101</dd></div>
+            <div class="insurance-row"><svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg><dt class="visually-hidden">Coberturas</dt><dd class="insurance-tags"><span>OSDE</span><span>Swiss Medical</span><span>Galeno</span><span>PAMI</span></dd></div>
+          </dl>
+          <div class="card-actions doctor-card-actions"><a class="button button-outline button-small" href="#profesionales">Ver perfil</a><a class="button button-primary button-small" href="#proximo-turno">Reservar turno</a></div>
+        </article>
+        <article class="doctor-card card">
+          <div class="doctor-card-heading">
+            <span class="avatar avatar-large">CR</span>
+            <div class="doctor-summary">
+              <h3>Dra. Camila Rodríguez</h3>
+              <p class="doctor-specialty">Pediatría</p>
+              <p class="doctor-credentials">MN 130.215 · 9 años de experiencia</p>
+            </div>
+          </div>
+          <dl class="doctor-details">
+            <div><svg class="detail-icon teal-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><dt class="visually-hidden">Próxima disponibilidad</dt><dd>Martes 3 de noviembre · 09:00</dd></div>
+            <div><svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><dt class="visually-hidden">Consultorio</dt><dd>Consultorio 101</dd></div>
+            <div class="insurance-row"><svg class="detail-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg><dt class="visually-hidden">Coberturas</dt><dd class="insurance-tags"><span>OSDE</span><span>Swiss Medical</span><span>IOMA</span><span>Particular</span></dd></div>
+          </dl>
+          <div class="card-actions doctor-card-actions"><a class="button button-outline button-small" href="#profesionales">Ver perfil</a><a class="button button-primary button-small" href="#proximo-turno">Reservar turno</a></div>
+        </article>
+    </div>
+  </section>
+
+  <section class="checkin-panel">
+    <h2>Check-in digital, sin filas</h2>
+    <p class="checkin-description">Presentá el código QR de tu turno en recepción y quedás registrado en la sala de espera.</p>
+    <ol class="checkin-steps">
+      <li><span class="step-number">1</span><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Reservá tu turno</h3><p>Elegí especialidad, profesional y horario.</p></div></li>
+      <li><span class="step-number">2</span><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>Abrí tu QR</h3><p>Lo encontrás en Mis turnos, listo para mostrar.</p></div></li>
+      <li><span class="step-number">3</span><div><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7 10 17l-5-5"/><path d="M22 12a10 10 0 1 1-5-8.7"/></svg>Registrá tu llegada</h3><p>Recepción escanea el código y te asigna lugar en la cola.</p></div></li>
+    </ol>
+  </section>
+</div>
+{% endblock %}
