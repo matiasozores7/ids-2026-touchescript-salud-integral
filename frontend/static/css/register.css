@@ -1,0 +1,205 @@
+.register-shell {
+  background: #f5f8fa;
+}
+
+.register-shell .site-header,
+.register-shell .site-footer {
+  display: none;
+}
+
+.register-shell .page-content {
+  width: 100%;
+  flex: 1;
+  padding: 0;
+}
+
+.register-page {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: minmax(420px, 48%) 1fr;
+}
+
+.register-intro {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 58px 6.1vw;
+  background: #133f4d;
+  color: #f5fafb;
+}
+
+.register-brand {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 12px;
+}
+
+.register-brand-mark {
+  width: 40px;
+  height: 40px;
+}
+
+.register-brand-copy {
+  display: grid;
+  gap: 3px;
+  line-height: 1;
+}
+
+.register-brand-copy strong {
+  font-size: 16px;
+}
+
+.register-brand-copy span {
+  color: #91aab2;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.register-intro-copy {
+  max-width: 550px;
+  margin-bottom: 27vh;
+}
+
+.register-intro-copy h1 {
+  margin: 0;
+  font-size: clamp(32px, 3.2vw, 44px);
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+}
+
+.register-intro-copy p {
+  max-width: 510px;
+  margin: 20px 0 0;
+  color: #b7c8cd;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.register-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.register-panel {
+  width: min(100%, 550px);
+  margin-top: -1vh;
+}
+
+.register-panel h1 {
+  margin: 0;
+  color: #263547;
+  font-size: 39px;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+}
+
+.register-subtitle {
+  margin: 14px 0 35px;
+  color: #717b87;
+  font-size: 18px;
+}
+
+.register-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+}
+
+.register-field {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.register-field span,
+.register-terms {
+  color: #273443;
+  font-size: 13px;
+}
+
+.register-field input,
+.register-field select {
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+  border: 1px solid #d8e0e5;
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #fff;
+  color: #263547;
+  font: inherit;
+  font-size: 14px;
+}
+
+.register-field input:focus,
+.register-field select:focus {
+  border-color: #2781a3;
+  outline: 3px solid rgb(39 129 163 / 15%);
+}
+
+.register-field-full {
+  grid-column: 1 / -1;
+}
+
+.register-optional {
+  margin: -10px 0 0;
+  color: #8a96a3;
+  font-size: 12px;
+}
+
+.register-terms {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.register-terms input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.register-submit {
+  grid-column: 1 / -1;
+  height: 46px;
+  border: 0;
+  border-radius: 11px;
+  background: #2781a3;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.register-submit:hover {
+  background: #1d6e8d;
+}
+
+.register-login {
+  margin: 24px 0 0;
+  color: #7a838d;
+  font-size: 14px;
+  text-align: center;
+}
+
+.register-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #247e9d;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

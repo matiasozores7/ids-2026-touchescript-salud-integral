@@ -1,0 +1,88 @@
+@media (max-width: 900px) {
+  .register-page {
+    grid-template-columns: minmax(320px, 42%) 1fr;
+  }
+
+  .register-intro {
+    padding: 42px 38px;
+  }
+
+  .register-intro-copy h1 {
+    font-size: 32px;
+  }
+
+  .register-content {
+    padding: 36px;
+  }
+}
+
+@media (max-width: 680px) {
+  .register-page {
+    display: block;
+  }
+
+  .register-intro {
+    min-height: auto;
+    padding: 28px 24px 34px;
+  }
+
+  .register-intro-copy {
+    margin: 65px 0 0;
+  }
+
+  .register-intro-copy h1 {
+    font-size: 29px;
+    letter-spacing: -.8px;
+  }
+
+  .register-intro-copy p {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  .register-content {
+    align-items: flex-start;
+    padding: 38px 24px 48px;
+  }
+
+  .register-panel h1 {
+    font-size: 32px;
+  }
+
+  .register-subtitle {
+    margin-bottom: 26px;
+    font-size: 16px;
+  }
+
+  .register-form {
+    gap: 21px;
+  }
+
+  .register-field span,
+  .register-terms,
+  .register-login {
+    font-size: 15px;
+  }
+
+  .register-field input,
+  .register-field select,
+  .register-submit {
+    height: 56px;
+  }
+
+  .register-login {
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 460px) {
+  .register-form {
+    grid-template-columns: 1fr;
+  }
+
+  .register-field-full,
+  .register-terms,
+  .register-submit {
+    grid-column: auto;
+  }
+}
