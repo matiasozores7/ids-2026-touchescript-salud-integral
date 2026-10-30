@@ -28,6 +28,31 @@ class BadRequestError(APIError):
             status_code=400
         )
 
+class UnauthorizedError(APIError):
+    def __init__(
+        self,
+        description: str,
+        message: str = "No autorizado."
+    ):
+        super().__init__(
+            message=message,
+            description=description,
+            code="UNAUTHORIZED",
+            status_code=401
+        )
+
+class ForbiddenError(APIError):
+    def __init__(
+        self,
+        description: str,
+        message: str = "No tenés permisos para realizar esta operación."
+    ):
+        super().__init__(
+            message=message,
+            description=description,
+            code="FORBIDDEN",
+            status_code=403
+        )
 
 class NotFoundError(APIError):
     def __init__(
