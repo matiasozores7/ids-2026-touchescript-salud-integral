@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar sesión · Salud Integral{% endblock %}
+
+{% block body_class %}login-shell{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsives/login-responsive.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <aside class="login-intro">
+    <a class="login-brand" href="{{ url_for('index') }}" aria-label="Salud Integral, inicio">
+      <svg class="login-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+        <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+        <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+      </svg>
+      <span class="login-brand-copy">
+        <strong>Salud Integral</strong>
+        <span>Centro Médico</span>
+      </span>
+    </a>
+
+    <div class="login-intro-copy">
+      <h1>Tus turnos médicos, organizados en un solo lugar.</h1>
+      <p>Reservá, consultá y presentá tu QR de check-in desde el portal del paciente.</p>
+    </div>
+  </aside>
+
+  <main class="login-content">
+    <section class="login-card" aria-labelledby="login-title">
+      <h2 id="login-title">Iniciar sesión</h2>
+      <p class="login-subtitle">Elegí con qué perfil querés ingresar a la demo.</p>
+
+      <div class="login-tabs" role="tablist" aria-label="Perfil de ingreso">
+        <button class="login-tab is-active" type="button" role="tab" aria-selected="true" data-role="paciente">Paciente</button>
+        <button class="login-tab" type="button" role="tab" aria-selected="false" data-role="recepcion">Recepción</button>
+        <button class="login-tab" type="button" role="tab" aria-selected="false" data-role="administracion">Administración</button>
+      </div>
+
+      <form class="login-form" action="{{ url_for('patient_home') }}" method="post">
+        <input id="login-role" name="role" type="hidden" value="paciente">
+        <label class="login-field" for="email">
+          <span>Correo electrónico</span>
+          <input id="email" name="email" type="email" value="maria.gomez@demo.com" autocomplete="email" required>
+        </label>
+        <label class="login-field" for="password">
+          <span>Contraseña</span>
+          <input id="password" name="password" type="password" value="demo1234" autocomplete="current-password" required>
+        </label>
+        <button class="login-link" type="button">¿Olvidaste tu contraseña?</button>
+        <button class="login-submit" type="submit">Ingresar</button>
+      </form>
+
+      <p class="login-register">¿No tenés cuenta? <button class="login-link" type="button">Registrate</button></p>
+    </section>
+  </main>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+  document.querySelectorAll(".login-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const isPatient = tab.dataset.role === "paciente";
+      document.querySelectorAll(".login-tab").forEach((item) => {
+        const active = item === tab;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-selected", active);
+      });
+      document.querySelector("#login-role").value = tab.dataset.role;
+      document.querySelector(".login-submit").disabled = !isPatient;
+    });
+  });
+</script>
+{%endblock%}

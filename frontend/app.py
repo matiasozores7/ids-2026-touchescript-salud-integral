@@ -5,6 +5,11 @@ app = Flask(__name__)
 
 @app.get("/")
 def index():
+    return render_template("login.html")
+
+
+@app.post("/pacientes")
+def patient_home():
     return render_template("pacientes/inicio.html")
 
 

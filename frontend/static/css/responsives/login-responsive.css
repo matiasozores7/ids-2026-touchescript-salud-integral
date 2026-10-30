@@ -1,0 +1,81 @@
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: minmax(320px, 42%) 1fr;
+  }
+
+  .login-intro {
+    padding: 42px 38px;
+  }
+
+  .login-intro-copy h1 {
+    font-size: 32px;
+  }
+
+  .login-content {
+    padding: 36px;
+  }
+}
+
+@media (max-width: 680px) {
+  .login-page {
+    display: block;
+  }
+
+  .login-intro {
+    min-height: auto;
+    padding: 28px 24px 34px;
+  }
+
+  .login-intro-copy {
+    margin: 65px 0 0;
+  }
+
+  .login-intro-copy h1 {
+    font-size: 29px;
+    letter-spacing: -.8px;
+  }
+
+  .login-intro-copy p {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  .login-content {
+    align-items: flex-start;
+    padding: 38px 24px 48px;
+  }
+
+  .login-card h2 {
+    font-size: 32px;
+  }
+
+  .login-subtitle {
+    margin-bottom: 26px;
+    font-size: 16px;
+  }
+
+  .login-tab {
+    padding: 11px 5px;
+    font-size: 14px;
+  }
+
+  .login-form {
+    gap: 21px;
+    margin-top: 28px;
+  }
+
+  .login-field span,
+  .login-link,
+  .login-register {
+    font-size: 15px;
+  }
+
+  .login-field input,
+  .login-submit {
+    height: 56px;
+  }
+
+  .login-register {
+    margin-top: 28px;
+  }
+}
