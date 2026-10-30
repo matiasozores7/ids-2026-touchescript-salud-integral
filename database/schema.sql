@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS pacientes;
 DROP TABLE IF EXISTS especialidades;
 DROP TABLE IF EXISTS usuarios;
 DROP TABLE IF EXISTS coberturas;
+DROP TABLE IF EXISTS tokens_revocados;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -25,6 +26,7 @@ CREATE TABLE coberturas (
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     rol ENUM('paciente', 'admin', 'medico') NOT NULL
@@ -33,7 +35,7 @@ CREATE TABLE usuarios (
 CREATE TABLE pacientes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL UNIQUE,
-    cobertura_id INT NOT NULL,
+    cobertura_id INT,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (cobertura_id) REFERENCES coberturas(id)
 );
@@ -82,4 +84,9 @@ CREATE TABLE turnos (
     FOREIGN KEY (medico_id) REFERENCES medicos(id),
     FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
     FOREIGN KEY (consultorio_id) REFERENCES consultorios(id)
+);
+
+CREATE TABLE tokens_revocados (
+    jti VARCHAR(36) PRIMARY KEY,
+    fecha_expiracion DATETIME NOT NULL
 );
