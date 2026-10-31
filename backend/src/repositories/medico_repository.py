@@ -50,3 +50,25 @@ def listar_medicos(connection, limit, offset):
     with connection.cursor() as cursor:
         cursor.execute(query, (limit, offset))
         return cursor.fetchall()
+
+def existe_especialidad(connection, especialidad_id: int) -> bool:
+    query = "SELECT id FROM especialidades WHERE id = %s"
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (especialidad_id,))
+        return cursor.fetchone() is not None
+
+
+def obtener_medico_por_id(connection, medico_id: int):
+    query = """
+        SELECT m.id, u.nombre, u.apellido, u.email, u.activo,
+               m.especialidad_id, e.nombre AS especialidad
+        FROM medicos m
+        JOIN usuarios u ON u.id = m.usuario_id
+        JOIN especialidades e ON e.id = m.especialidad_id
+        WHERE m.id = %s
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (medico_id,))
+        return cursor.fetchone()
