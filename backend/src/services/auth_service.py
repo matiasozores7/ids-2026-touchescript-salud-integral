@@ -87,6 +87,12 @@ def login_usuario(email: str, password: str) -> dict:
                 message="Credenciales inválidas."
             )
 
+        if not usuario["activo"]:
+            raise UnauthorizedError(
+                description="Tu cuenta se encuentra desactivada. Contactá con administración.",
+                message="Cuenta desactivada."
+            )
+
         perfil_id = _obtener_perfil(connection, usuario)
 
     access_token = _generar_access_token(usuario_id=usuario["id"], rol=usuario["rol"], perfil_id=perfil_id)
