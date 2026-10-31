@@ -1,4 +1,5 @@
 import pymysql
+from contextlib import contextmanager
 from config import Config
 
 def get_db_connection():
@@ -11,38 +12,17 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-def execute_query(
-    query: str,
-    params: tuple | dict = None,
-    fetch_one: bool = False,
-    fetch_all: bool = False
-):
-    """
-    Ejecuta una consulta SQL parametrizada garantizando la seguridad
-    (evita SQL Injection) y gestiona la apertura y cierre automático
-    de conexiones y cursores.
-    """
+@contextmanager
+def transaction():
     connection = get_db_connection()
 
     try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, params or ())
+        yield connection
+        connection.commit()
 
-            if fetch_one:
-                return cursor.fetchone()
-
-            if fetch_all:
-                return cursor.fetchall()
-
-            connection.commit()
-
-            # Para INSERT devuelve el ID generado;
-            # para UPDATE/DELETE, las filas afectadas.
-            return cursor.lastrowid if cursor.lastrowid else cursor.rowcount
-
-    except Exception as error:
+    except Exception:
         connection.rollback()
-        raise error
+        raise
 
     finally:
         connection.close()

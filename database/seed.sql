@@ -6,12 +6,13 @@ INSERT INTO coberturas (nombre) VALUES
 ('IOMA'), 
 ('Particular');
 
-INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES 
-('Admin Sistema', 'admin@clinica.com', 'hash_admin_123', 'admin'),         
-('Recepción Uno', 'recepcion@clinica.com', 'hash_recepcion_123', 'admin'), 
-('Dr. Roberto Fernández', 'roberto@clinica.com', 'hash_medico_123', 'medico'),   
-('Juan Perez', 'juan@mail.com', 'hash_paciente_1', 'paciente'),                  
-('Ana Gomez', 'ana@mail.com', 'hash_paciente_2', 'paciente');                   
+INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo) VALUES 
+('Admin', 'Sistema', 'admin@clinica.com', 'hash_admin_123', 'admin', TRUE),
+('Recepción', 'Uno', 'recepcion@clinica.com', 'hash_recepcion_123', 'admin', TRUE),
+('Roberto', 'Fernández', 'roberto@clinica.com', 'hash_medico_123', 'medico', TRUE),
+('Juan', 'Perez', 'juan@mail.com', 'hash_paciente_1', 'paciente', TRUE),
+('Ana', 'Gomez', 'ana@mail.com', 'hash_paciente_2', 'paciente', TRUE);
+      
 
 INSERT INTO pacientes (usuario_id, cobertura_id) VALUES 
 (4, 1),
