@@ -8,9 +8,11 @@
 }
 
 .register-shell .page-content {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
   flex: 1;
-  padding: 0;
 }
 
 .register-page {
