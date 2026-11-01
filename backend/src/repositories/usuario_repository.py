@@ -48,3 +48,12 @@ def actualizar_usuario_por_id(connection, usuario_id: int, usuario_data: dict) -
     )
     cursor.execute(query, values)
     cursor.close()
+
+def desactivar_usuario_por_id(connection, usuario_id: int) -> None:
+    query = """
+        UPDATE usuarios 
+        SET activo = FALSE 
+        WHERE id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (usuario_id,))

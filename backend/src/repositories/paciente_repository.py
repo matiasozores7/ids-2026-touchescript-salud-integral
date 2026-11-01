@@ -63,6 +63,17 @@ def obtener_usuario_id_por_paciente_id(connection, paciente_id: int) -> int | No
         return resultado.get("usuario_id")
     return None
 
+def buscar_paciente_por_id(connection, paciente_id: int) -> dict | None:
+    query = """
+        SELECT pacientes.id AS paciente_id, pacientes.usuario_id, usuarios.activo
+        FROM pacientes
+        INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
+        WHERE pacientes.id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id,))
+        return cursor.fetchone()
+
 def actualizar_paciente_por_id(connection, paciente_id: int, cobertura_id: int) -> None:
     cursor = connection.cursor()
     query = """
