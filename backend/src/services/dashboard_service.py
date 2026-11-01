@@ -1,4 +1,7 @@
-from src.repositories.dashboard_repository import obtener_pacientes_en_sala_espera
+from src.repositories.dashboard_repository import (
+    obtener_pacientes_en_sala_espera,
+    obtener_turnos_por_medico_y_especialidad
+)
 
 def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[dict]:
     turnos = obtener_pacientes_en_sala_espera(connection, fecha)
@@ -16,3 +19,7 @@ def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[di
                 turno["puntualidad"] = "Llegó puntual"
 
     return turnos
+
+
+def obtener_turnos_por_medico_especialidad_service(connection, fecha: str | None = None) -> list[dict]:
+    return obtener_turnos_por_medico_y_especialidad(connection, fecha)

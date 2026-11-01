@@ -46,3 +46,40 @@ def obtener_pacientes_en_sala_espera(connection, fecha: str | None = None):
     with connection.cursor() as cursor:
         cursor.execute(query, tuple(params))
         return cursor.fetchall()
+
+
+def obtener_turnos_por_medico_y_especialidad(connection, fecha: str | None = None):
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    params = (fecha,) if fecha else ()
+
+    query = f"""
+        SELECT 
+            medicos.id AS medico_id,
+            usuarios.nombre AS medico_nombre,
+            usuarios.apellido AS medico_apellido,
+            especialidades.id AS especialidad_id,
+            especialidades.nombre AS especialidad,
+            COUNT(turnos.id) AS total_turnos,
+            SUM(CASE WHEN turnos.estado = 'disponible' THEN 1 ELSE 0 END) AS turnos_disponibles,
+            SUM(CASE WHEN turnos.estado = 'reservado' THEN 1 ELSE 0 END) AS turnos_reservados,
+            SUM(CASE WHEN turnos.estado = 'confirmado' THEN 1 ELSE 0 END) AS turnos_confirmados,
+            SUM(CASE WHEN turnos.estado = 'atendido' THEN 1 ELSE 0 END) AS turnos_atendidos,
+            SUM(CASE WHEN turnos.estado = 'cancelado' THEN 1 ELSE 0 END) AS turnos_cancelados
+        FROM medicos
+        INNER JOIN usuarios ON medicos.usuario_id = usuarios.id
+        INNER JOIN especialidades ON medicos.especialidad_id = especialidades.id
+        LEFT JOIN turnos ON turnos.medico_id = medicos.id {filtro_fecha}
+        WHERE usuarios.rol = 'medico'
+          AND usuarios.activo = 1
+        GROUP BY 
+            medicos.id, 
+            usuarios.nombre, 
+            usuarios.apellido, 
+            especialidades.id, 
+            especialidades.nombre
+        ORDER BY total_turnos DESC;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
