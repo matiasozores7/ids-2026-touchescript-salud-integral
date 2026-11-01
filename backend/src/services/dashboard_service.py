@@ -1,7 +1,8 @@
 from src.repositories.dashboard_repository import (
     obtener_pacientes_en_sala_espera,
     obtener_turnos_por_medico_y_especialidad,
-    obtener_ocupacion_consultorios
+    obtener_ocupacion_consultorios,
+    obtener_estadisticas_ausentismo
 )
 
 def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[dict]:
@@ -29,7 +30,6 @@ def obtener_turnos_por_medico_especialidad_service(connection, fecha: str | None
 def obtener_ocupacion_consultorios_service(connection, fecha: str | None = None) -> list[dict]:
     consultorios = obtener_ocupacion_consultorios(connection, fecha)
 
-    
     for c in consultorios:
         total = c.get("total_turnos", 0)
         ocupados = c.get("turnos_ocupados", 0) or 0
@@ -40,3 +40,41 @@ def obtener_ocupacion_consultorios_service(connection, fecha: str | None = None)
             c["porcentaje_ocupacion"] = 0.0
 
     return consultorios
+
+
+def obtener_ausentismo_service(connection, fecha: str | None = None) -> dict:
+    medicos_data = obtener_estadisticas_ausentismo(connection, fecha)
+
+    total_general = 0
+    ausentes_general = 0
+    asistieron_general = 0
+    cancelados_general = 0
+
+    for m in medicos_data:
+        agendados = m.get("turnos_agendados", 0)
+        ausentes = m.get("ausentes", 0) or 0
+        asistieron = m.get("asistieron", 0) or 0
+        cancelados = m.get("cancelados", 0) or 0
+
+        if agendados > 0:
+            m["porcentaje_ausentismo"] = round((ausentes / agendados) * 100, 2)
+        else:
+            m["porcentaje_ausentismo"] = 0.0
+
+        total_general += agendados
+        ausentes_general += ausentes
+        asistieron_general += asistieron
+        cancelados_general += cancelados
+
+    porcentaje_general = round((ausentes_general / total_general) * 100, 2) if total_general > 0 else 0.0
+
+    return {
+        "resumen_general": {
+            "total_turnos_agendados": total_general,
+            "asistieron": asistieron_general,
+            "ausentes": ausentes_general,
+            "cancelados": cancelados_general,
+            "porcentaje_ausentismo": porcentaje_general
+        },
+        "por_medico": medicos_data
+    }

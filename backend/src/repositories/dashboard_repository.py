@@ -6,18 +6,15 @@ def obtener_pacientes_en_sala_espera(connection, fecha: str | None = None):
             turnos.fecha_hora_llegada,
             turnos.estado,
             
-            -- Datos del Paciente
             paciente_usuario.id AS paciente_usuario_id,
             paciente_usuario.nombre AS paciente_nombre,
             paciente_usuario.apellido AS paciente_apellido,
             
-            -- Datos del Médico y su Especialidad
             medico_usuario.id AS medico_usuario_id,
             medico_usuario.nombre AS medico_nombre,
             medico_usuario.apellido AS medico_apellido,
             especialidades.nombre AS especialidad,
             
-            -- Consultorio y Ubicación
             consultorios.numero_sala AS consultorio_sala,
             consultorios.piso AS consultorio_piso
 
@@ -101,6 +98,35 @@ def obtener_ocupacion_consultorios(connection, fecha: str | None = None):
         LEFT JOIN turnos ON turnos.consultorio_id = consultorios.id {filtro_fecha}
         GROUP BY consultorios.id, consultorios.numero_sala, consultorios.piso
         ORDER BY consultorios.id ASC;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
+
+
+def obtener_estadisticas_ausentismo(connection, fecha: str | None = None):
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    params = (fecha,) if fecha else ()
+
+    query = f"""
+        SELECT 
+            medicos.id AS medico_id,
+            usuarios.nombre AS medico_nombre,
+            usuarios.apellido AS medico_apellido,
+            especialidades.nombre AS especialidad,
+            COUNT(turnos.id) AS turnos_agendados,
+            SUM(CASE WHEN turnos.estado = 'ausente' THEN 1 ELSE 0 END) AS ausentes,
+            SUM(CASE WHEN turnos.estado IN ('confirmado', 'atendido') THEN 1 ELSE 0 END) AS asistieron,
+            SUM(CASE WHEN turnos.estado = 'cancelado' THEN 1 ELSE 0 END) AS cancelados
+        FROM medicos
+        INNER JOIN usuarios ON medicos.usuario_id = usuarios.id
+        INNER JOIN especialidades ON medicos.especialidad_id = especialidades.id
+        INNER JOIN turnos ON turnos.medico_id = medicos.id {filtro_fecha}
+        WHERE usuarios.rol = 'medico'
+          AND turnos.estado != 'disponible'
+        GROUP BY medicos.id, usuarios.nombre, usuarios.apellido, especialidades.nombre
+        ORDER BY ausentes DESC;
     """
 
     with connection.cursor() as cursor:
