@@ -4,7 +4,8 @@ from src.services.dashboard_service import (
     obtener_sala_espera_service,
     obtener_turnos_por_medico_especialidad_service,
     obtener_ocupacion_consultorios_service,
-    obtener_ausentismo_service
+    obtener_ausentismo_service,
+    obtener_tiempo_espera_service
 )
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
@@ -66,4 +67,19 @@ def get_ausentismo():
 
     except Exception as e:
         print(f"¡ERROR INTERNO INESPERADO EN AUSENTISMO!: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@dashboard_bp.route('/dashboard/tiempo-espera', methods=['GET'])
+def get_tiempo_espera():
+    try:
+        fecha = request.args.get('fecha')
+
+        with transaction() as connection:
+            reporte = obtener_tiempo_espera_service(connection, fecha)
+
+        return jsonify(reporte), 200
+
+    except Exception as e:
+        print(f"¡ERROR INTERNO INESPERADO EN TIEMPO DE ESPERA!: {str(e)}")
         return jsonify({"error": str(e)}), 500

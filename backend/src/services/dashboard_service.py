@@ -2,7 +2,8 @@ from src.repositories.dashboard_repository import (
     obtener_pacientes_en_sala_espera,
     obtener_turnos_por_medico_y_especialidad,
     obtener_ocupacion_consultorios,
-    obtener_estadisticas_ausentismo
+    obtener_estadisticas_ausentismo,
+    obtener_estadisticas_tiempo_espera
 )
 
 def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[dict]:
@@ -76,5 +77,28 @@ def obtener_ausentismo_service(connection, fecha: str | None = None) -> dict:
             "cancelados": cancelados_general,
             "porcentaje_ausentismo": porcentaje_general
         },
+        "por_medico": medicos_data
+    }
+
+
+def obtener_tiempo_espera_service(connection, fecha: str | None = None) -> dict:
+    medicos_data = obtener_estadisticas_tiempo_espera(connection, fecha)
+
+    suma_tiempos = 0.0
+    total_pacientes = 0
+
+    for m in medicos_data:
+        pacientes = m.get("pacientes_evaluados", 0)
+        promedio = float(m.get("tiempo_promedio_minutos") or 0.0)
+
+        m["tiempo_espera_promedio_minutos"] = round(promedio, 1)
+
+        suma_tiempos += (promedio * pacientes)
+        total_pacientes += pacientes
+
+    promedio_general = round(suma_tiempos / total_pacientes, 1) if total_pacientes > 0 else 0.0
+
+    return {
+        "promedio_general_minutos": promedio_general,
         "por_medico": medicos_data
     }

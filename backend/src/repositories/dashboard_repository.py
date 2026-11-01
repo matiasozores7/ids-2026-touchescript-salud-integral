@@ -132,3 +132,30 @@ def obtener_estadisticas_ausentismo(connection, fecha: str | None = None):
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         return cursor.fetchall()
+
+
+def obtener_estadisticas_tiempo_espera(connection, fecha: str | None = None):
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    params = (fecha,) if fecha else ()
+
+    query = f"""
+        SELECT 
+            medicos.id AS medico_id,
+            usuarios.nombre AS medico_nombre,
+            usuarios.apellido AS medico_apellido,
+            especialidades.nombre AS especialidad,
+            COUNT(turnos.id) AS pacientes_evaluados,
+            AVG(TIMESTAMPDIFF(MINUTE, turnos.fecha_hora_llegada, turnos.fecha_hora)) AS tiempo_promedio_minutos
+        FROM medicos
+        INNER JOIN usuarios ON medicos.usuario_id = usuarios.id
+        INNER JOIN especialidades ON medicos.especialidad_id = especialidades.id
+        INNER JOIN turnos ON turnos.medico_id = medicos.id {filtro_fecha}
+        WHERE usuarios.rol = 'medico'
+          AND turnos.fecha_hora_llegada IS NOT NULL
+        GROUP BY medicos.id, usuarios.nombre, usuarios.apellido, especialidades.nombre
+        ORDER BY tiempo_promedio_minutos DESC;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
