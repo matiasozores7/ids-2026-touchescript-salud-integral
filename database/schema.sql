@@ -58,7 +58,8 @@ CREATE TABLE medicos (
 CREATE TABLE consultorios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero_sala VARCHAR(20) NOT NULL,
-    piso VARCHAR(20)
+    piso VARCHAR(20),
+    activo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE agendas (

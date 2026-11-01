@@ -33,3 +33,19 @@ def crear_consultorio():
         message="Consultorio creado correctamente.",
         status_code=201
     )
+
+
+@consultorios_bp.route("/consultorios/<int:consultorio_id>", methods=["PUT"])
+def actualizar_consultorio(consultorio_id):
+    data = request.get_json(silent=True)
+    consultorio_validator.validar_actualizacion(data)
+
+    consultorio_service.actualizar_consultorio(
+        consultorio_id=consultorio_id,
+        numero_sala=data["numero_sala"].strip(),
+        piso=data["piso"].strip() if data.get("piso") is not None else None
+    )
+
+    return success_response(
+        message="Consultorio actualizado correctamente."
+    )
