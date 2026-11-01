@@ -32,3 +32,19 @@ def crear_usuario(connection, usuario_data: dict) -> int:
     cursor.close()
     
     return usuario_id
+
+def actualizar_usuario_por_id(connection, usuario_id: int, usuario_data: dict) -> None:
+    cursor = connection.cursor()
+    query = """
+        UPDATE usuarios 
+        SET nombre = %s, apellido = %s, email = %s 
+        WHERE id = %s
+    """
+    values = (
+        usuario_data.get("nombre"),
+        usuario_data.get("apellido"),
+        usuario_data.get("email"),
+        usuario_id
+    )
+    cursor.execute(query, values)
+    cursor.close()

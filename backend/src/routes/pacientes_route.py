@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from src.database.connection import transaction
 from src.repositories.paciente_repository import obtener_todos_los_pacientes
-from src.services.paciente_service import crear_paciente_service
+from src.services.paciente_service import crear_paciente_service,actualizar_paciente_service
 
 pacientes_bp = Blueprint('pacientes_bp', __name__)
 
@@ -33,6 +33,31 @@ def post_paciente():
             "id": nuevo_id
         })
         codigo_estado = 201
+
+    except ValueError as ve:
+        respuesta_json = jsonify({"error": str(ve)})
+        codigo_estado = 400
+
+    except Exception as e:
+        print(f"¡ERROR INTERNO INESPERADO!: {str(e)}")
+        respuesta_json = jsonify({"error": str(e)})
+        codigo_estado = 500
+
+    return respuesta_json, codigo_estado
+
+@pacientes_bp.route('/pacientes/<int:paciente_id>', methods=['PUT'])
+def put_paciente(paciente_id):
+    try:
+        data = request.get_json()
+        
+        with transaction() as conexion:
+            actualizar_paciente_service(conexion, paciente_id, data)
+        
+        respuesta_json = jsonify({
+            "mensaje": f"Paciente con ID {paciente_id} actualizado con éxito",
+            "status": "success"
+        })
+        codigo_estado = 200
 
     except ValueError as ve:
         respuesta_json = jsonify({"error": str(ve)})
