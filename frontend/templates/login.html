@@ -40,7 +40,7 @@
         <button class="login-tab nav-link" type="button" role="tab" aria-selected="false" data-role="administracion">Administración</button>
       </div>
 
-      <form class="login-form" action="{{ url_for('patient_home') }}" method="post">
+      <form class="login-form" action="{{ url_for('login') }}" method="post">
         <input id="login-role" name="role" type="hidden" value="paciente">
         <div class="login-field">
           <label for="email" class="form-label">Correo electrónico</label>
