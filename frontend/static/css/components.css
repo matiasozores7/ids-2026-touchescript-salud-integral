@@ -1,0 +1,80 @@
+/* Componentes reutilizables entre pantallas */
+
+:root {
+  --danger: #cf3a57;
+  --danger-dark: #a82a43;
+  --danger-soft: #fdecef;
+  --danger-border: #f1c4cd;
+}
+
+.estado-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.estado-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.estado-reservado {
+  background: #e1f0f7;
+  color: #2b6a8a;
+}
+
+.estado-confirmado {
+  background: #e2f1f0;
+  color: #276b67;
+}
+
+.estado-atendido {
+  background: #0f5c4a;
+  color: #fff;
+}
+
+.estado-cancelado {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.estado-ausente {
+  background: #fdf2e0;
+  color: #8f5a0e;
+}
+
+.button-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.button-danger:hover {
+  background: var(--danger-dark);
+  color: #fff;
+}
+
+.button-outline-danger {
+  border-color: var(--danger-border);
+  background: #fff;
+  color: var(--danger);
+}
+
+.button-outline-danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger-dark);
+}
+
+.button-danger:focus-visible,
+.button-outline-danger:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}

@@ -1,0 +1,83 @@
+.mis-turnos-page {
+  --bs-body-color: #1f2d3d;
+  --bs-secondary-color: #5f6c7b;   /* .text-body-secondary */
+  --bs-secondary-rgb: 120, 132, 147; /* .text-secondary (= --muted) */
+  --bs-primary-rgb: 71, 127, 154;  /* .text-primary (= --primary) */
+  --bs-tertiary-bg-rgb: 238, 242, 244; /* .bg-body-tertiary */
+  --bs-border-color: var(--border);
+  --celeste: #e3f2f8;
+  color: var(--bs-body-color);
+}
+
+.mis-turnos-page .button { border-radius: 10px; font-size: 14px; font-weight: 500; }
+.mis-turnos-page .button-large { min-height: 44px; font-size: 15px; }
+.mis-turnos-page .avatar { background: var(--celeste); color: var(--primary); }
+.mis-turnos-page h1 { font-size: 30px; }
+.mis-turnos-page a:hover { color: var(--petrol); }
+
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 13px; }
+.text-lg { font-size: 17px; font-weight: 600; }
+
+/* Pestañas: nav-pills de Bootstrap */
+.mis-turnos-tabs {
+  --bs-nav-pills-border-radius: 8px;
+  --bs-nav-pills-link-active-bg: var(--celeste);
+  --bs-nav-pills-link-active-color: var(--bs-body-color);
+  --bs-nav-link-padding-x: 12px;
+  --bs-nav-link-padding-y: 6.5px;
+  --bs-nav-link-font-size: 14px;
+  --bs-nav-link-font-weight: 500;
+  --bs-nav-link-color: var(--bs-secondary-color);
+  --bs-nav-link-hover-color: var(--bs-body-color);
+  gap: 2px;
+  padding: 3px;
+}
+
+/* Tarjeta de turno (listado, detalle y QR) */
+.turno-card {
+  --bs-card-border-radius: 14px;
+  --bs-card-border-color: var(--bs-border-color);
+  box-shadow: var(--shadow-card);
+}
+
+.turno-fecha {
+  min-width: 80px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--celeste);
+  line-height: 1.2;
+}
+
+.turno-fecha strong { font-size: 22px; }
+
+.turnos-vacio { padding: 40px 16px; border-style: dashed; border-radius: 12px; }
+
+/* Detalle y QR */
+.detalle-card { max-width: 672px; }
+.detalle-card h1 { font-size: 26px; }
+.detalle-card dd { font-size: 15px; }
+.qr-contenedor { max-width: 384px; }
+.qr-encabezado h1 { font-size: 18px; }
+.qr-encabezado { background: #173f4f; }
+.qr-codigo { font-size: 17px; letter-spacing: .12em; }
+
+/* Modal de cancelar: variables del .modal de Bootstrap */
+.modal-cancelar {
+  --bs-modal-width: 448px;
+  --bs-modal-padding: 1.5rem;
+  --bs-modal-header-padding: 1.5rem;
+  --bs-modal-border-radius: 16px;
+  --bs-modal-border-width: 0;
+}
+
+.modal-cancelar .modal-content { box-shadow: 0 20px 50px rgb(41 77 93 / 22%); }
+.modal-cancelar .modal-title { font-size: 18px; font-weight: 600; }
+.modal-cancelar .form-control { border-color: #d7dfe5; border-radius: 10px; font-size: 14px; }
+.modal-cancelar .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(71 127 154 / 20%); }
+.modal-backdrop { --bs-backdrop-bg: #294d5d; --bs-backdrop-opacity: .4; }
+
+@media (max-width: 575.98px) {
+  .mis-turnos-page h1 { font-size: 26px; }
+  .detalle-card h1 { font-size: 22px; }
+}
