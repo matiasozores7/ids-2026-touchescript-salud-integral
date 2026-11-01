@@ -1,0 +1,505 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+body:has(.backoffice-layout) {
+  background: #f5f7f8;
+}
+
+body:has(.backoffice-layout) .site-header,
+body:has(.backoffice-layout) .site-footer {
+  display: none;
+}
+
+body:has(.backoffice-layout) .page-content {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.backoffice-layout {
+  display: flex;
+  min-height: 100vh;
+  color: #354052;
+}
+
+.backoffice-sidebar {
+  display: flex;
+  width: 244px;
+  flex: 0 0 244px;
+  flex-direction: column;
+  padding: 26px 15px 18px;
+  background: #fff;
+  border-right: 1px solid var(--border);
+}
+
+.backoffice-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px 30px;
+}
+
+.backoffice-brand-mark {
+  width: 35px;
+  height: 35px;
+}
+
+.backoffice-brand span {
+  display: grid;
+  gap: 3px;
+  line-height: 1;
+}
+
+.backoffice-brand strong {
+  color: var(--petrol);
+  font-size: 15px;
+}
+
+.backoffice-brand small,
+.backoffice-user small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sidebar-label {
+  margin: 0 12px 8px;
+  color: #9aa4ae;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.backoffice-nav {
+  display: grid;
+  gap: 3px;
+}
+
+.backoffice-nav a,
+.sidebar-footer a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: transparent;
+  color: #687584;
+  font-size: 12px;
+  text-align: left;
+}
+
+.backoffice-nav a:hover,
+.backoffice-nav a.active {
+  background: #eaf3f7;
+  color: var(--petrol);
+  font-weight: 600;
+}
+
+.backoffice-nav i,
+.sidebar-footer i {
+  width: 17px;
+  color: #8d99a5;
+  font-size: 15px;
+}
+
+.backoffice-nav a.active i {
+  color: var(--primary);
+}
+
+.sidebar-footer {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+  border-top: 1px solid #eef1f3;
+  padding-top: 17px;
+}
+
+.sidebar-footer a:hover {
+  color: var(--primary);
+}
+
+.backoffice-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.backoffice-header {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 42px;
+  background: #fff;
+}
+
+.backoffice-header > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.backoffice-header a {
+  color: var(--petrol);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.backoffice-header > div:first-child span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.backoffice-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.backoffice-user > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.backoffice-user strong {
+  color: #354052;
+  font-size: 11px;
+}
+
+.backoffice-notifications {
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: #6f7c88;
+  font-size: 17px;
+}
+
+.backoffice-notifications b {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  display: grid;
+  width: 14px;
+  height: 14px;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #d65b63;
+  color: #fff;
+  font-size: 8px;
+}
+
+.backoffice-user-avatar {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e2f1f0;
+  color: #327f7b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.backoffice-content {
+  width: min(100% - 84px, 1180px);
+  margin: 0 auto;
+  padding: 34px 0 46px;
+}
+
+.backoffice-heading h1 {
+  margin: 0;
+  color: #2f3e4e;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.8px;
+}
+
+.backoffice-heading p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.metric-card,
+.dashboard-card,
+.quick-stat {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.metric-card {
+  padding: 17px 18px;
+}
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric-label i {
+  color: var(--teal);
+  font-size: 17px;
+}
+
+.metric-card > strong {
+  display: block;
+  margin-top: 14px;
+  color: #354052;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.metric-card > small {
+  display: block;
+  margin-top: 3px;
+  color: #9aa4ae;
+  font-size: 10px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.dashboard-card {
+  min-height: 300px;
+  padding: 20px;
+}
+
+.dashboard-card-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-card h2 {
+  margin: 0;
+  color: #354052;
+  font-size: 15px;
+}
+
+.dashboard-card-heading p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dashboard-card-heading a {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.fake-chart {
+  display: flex;
+  height: 210px;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 21px;
+  color: #9aa4ae;
+  font-size: 9px;
+}
+
+.chart-area {
+  position: relative;
+  flex: 1;
+}
+
+.chart-grid-lines {
+  position: absolute;
+  inset: 0 0 21px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chart-grid-lines span {
+  border-top: 1px dashed #e6eaed;
+}
+
+.chart-bars {
+  position: absolute;
+  inset: 0 0 0;
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  gap: 5px;
+}
+
+.chart-bars > div {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+}
+
+.chart-bars .bar {
+  width: min(25px, 70%);
+  min-height: 4px;
+  border-radius: 4px 4px 2px 2px;
+  background: #9ed5d0;
+}
+
+.chart-bars small {
+  color: #9aa4ae;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.empty-state {
+  display: flex;
+  height: 210px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #a4afb8;
+}
+
+.empty-state i {
+  color: #b7d8d5;
+  font-size: 30px;
+}
+
+.empty-state p {
+  margin: 12px 0 0;
+  font-size: 11px;
+}
+
+.quick-stats {
+  margin-top: 18px;
+}
+
+.quick-stat {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 19px;
+}
+
+.quick-stat span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.quick-stat i {
+  margin-right: 7px;
+  color: var(--teal);
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.quick-stat strong {
+  color: #354052;
+  font-size: 20px;
+}
+
+@media (max-width: 991.98px) {
+  .backoffice-sidebar {
+    width: 205px;
+    flex-basis: 205px;
+  }
+
+  .backoffice-header {
+    padding: 0 24px;
+  }
+
+  .backoffice-content {
+    width: min(100% - 48px, 1180px);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .backoffice-layout {
+    display: block;
+  }
+
+  .backoffice-sidebar {
+    width: 100%;
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .backoffice-brand {
+    padding-bottom: 16px;
+  }
+
+  .backoffice-nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+  }
+
+  .backoffice-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 18px 24px;
+  }
+
+  .backoffice-header > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .backoffice-content {
+    width: min(100% - 32px, 1180px);
+    padding-top: 26px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .backoffice-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .backoffice-heading .button {
+    flex: 1;
+  }
+
+  .quick-stat {
+    min-height: 68px;
+  }
+}
