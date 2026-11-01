@@ -97,3 +97,16 @@ def modificar_medico(medico_id: int, datos: dict) -> dict:
         actualizado = medico_repo.obtener_medico_por_id(connection, medico_id)
 
     return _a_respuesta(actualizado)
+
+
+def eliminar_medico(medico_id: int) -> None:
+    with transaction() as connection:
+        medico = _obtener_medico_activo(connection, medico_id)
+
+        if medico_repo.contar_turnos_pendientes(connection, medico_id) > 0:
+            raise ConflictError(
+                message="No se puede dar de baja al médico.",
+                description="El médico tiene turnos reservados o confirmados pendientes."
+            )
+
+        medico_repo.desactivar_usuario(connection, medico["usuario_id"])

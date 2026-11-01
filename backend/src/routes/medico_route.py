@@ -66,3 +66,12 @@ def modificar_medico(medico_id):
     resultado = medico_service.modificar_medico(medico_id, data)
 
     return success_response(data=resultado, message="Médico modificado exitosamente")
+
+
+@medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["DELETE"])
+@jwt_required()
+@roles_requeridos("admin")
+def eliminar_medico(medico_id):
+    medico_service.eliminar_medico(medico_id)
+
+    return success_response(message="Médico dado de baja exitosamente")

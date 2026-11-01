@@ -1,4 +1,3 @@
-
 def buscar_medico_por_usuario_id(connection, usuario_id: int):
     query = """
         SELECT id, usuario_id, especialidad_id
@@ -20,7 +19,7 @@ def crear_medico(connection, usuario_id: int, especialidad_id: int) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (usuario_id, especialidad_id))
         return cursor.lastrowid
-    
+
 
 def contar_medicos(connection) -> int:
     query = """
@@ -51,6 +50,7 @@ def listar_medicos(connection, limit, offset):
         cursor.execute(query, (limit, offset))
         return cursor.fetchall()
 
+
 def existe_especialidad(connection, especialidad_id: int) -> bool:
     query = "SELECT id FROM especialidades WHERE id = %s"
 
@@ -73,6 +73,7 @@ def obtener_medico_por_id(connection, medico_id: int):
         cursor.execute(query, (medico_id,))
         return cursor.fetchone()
 
+
 def actualizar_medico(connection, medico_id: int, usuario_id: int,
                       nombre: str, apellido: str, email: str, especialidad_id: int):
     query_usuario = """
@@ -89,3 +90,24 @@ def actualizar_medico(connection, medico_id: int, usuario_id: int,
     with connection.cursor() as cursor:
         cursor.execute(query_usuario, (nombre, apellido, email, usuario_id))
         cursor.execute(query_medico, (especialidad_id, medico_id))
+
+
+def contar_turnos_pendientes(connection, medico_id: int) -> int:
+    query = """
+        SELECT COUNT(*) AS total
+        FROM turnos
+        WHERE medico_id = %s
+          AND estado IN ('reservado', 'confirmado')
+          AND fecha_hora >= NOW()
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (medico_id,))
+        return cursor.fetchone()["total"]
+
+
+def desactivar_usuario(connection, usuario_id: int):
+    query = "UPDATE usuarios SET activo = FALSE WHERE id = %s"
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (usuario_id,))
