@@ -23,6 +23,14 @@ def listar_medicos():
         message="Listado de médicos"
     )
 
+@medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["GET"])
+@jwt_required()
+@roles_requeridos("admin")
+def obtener_medico(medico_id):
+    resultado = medico_service.obtener_medico(medico_id)
+
+    return success_response(data=resultado, message="Detalle del médico")
+
 @medico_bp.route("/medicos", methods=["POST"])
 @jwt_required()
 @roles_requeridos("admin")

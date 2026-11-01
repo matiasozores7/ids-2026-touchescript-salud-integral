@@ -1,10 +1,16 @@
 from werkzeug.security import generate_password_hash
 
 from src.database.connection import transaction
-from src.errors.exceptions import BadRequestError, ConflictError
+from src.errors.exceptions import BadRequestError, ConflictError, NotFoundError
 from src.repositories import medico_repository as medico_repo
 from src.repositories import usuario_repository as usuario_repo
 
+
+def _a_respuesta(medico: dict) -> dict:
+    # Campos internos que no se exponen al cliente
+    medico.pop("activo", None)
+    medico.pop("usuario_id", None)
+    return medico
 
 def listar_medicos(limit: int, offset: int):
     with transaction() as connection:
@@ -13,6 +19,16 @@ def listar_medicos(limit: int, offset: int):
 
     return items, total
 
+def obtener_medico(medico_id: int) -> dict:
+    with transaction() as connection:
+        medico = medico_repo.obtener_medico_por_id(connection, medico_id)
+
+    if medico is None or not medico["activo"]:
+        raise NotFoundError(
+            description="No existe un médico activo con ese identificador."
+        )
+
+    return _a_respuesta(medico)
 
 def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
     email_clean = email.strip().lower()
