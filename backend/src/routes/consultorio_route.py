@@ -1,8 +1,7 @@
 from flask import Blueprint, request
 
-from src.database.connection import get_db_connection
-from src.errors.exceptions import BadRequestError
-from src.repositories import consultorio_repository as consultorio_repo
+from src.services import consultorio_service
+from src.validators import consultorio_validator
 from src.utils.responses import success_response
 
 
@@ -11,12 +10,7 @@ consultorios_bp = Blueprint("consultorios", __name__)
 
 @consultorios_bp.route("/consultorios", methods=["GET"])
 def listar_consultorios():
-    connection = get_db_connection()
-
-    try:
-        consultorios = consultorio_repo.listar_consultorios_activos(connection)
-    finally:
-        connection.close()
+    consultorios = consultorio_service.listar_consultorios()
 
     return success_response(
         data=consultorios,
@@ -26,34 +20,13 @@ def listar_consultorios():
 
 @consultorios_bp.route("/consultorios", methods=["POST"])
 def crear_consultorio():
-    data = request.get_json() or {}
-    numero_sala = data.get("numero_sala")
+    data = request.get_json(silent=True)
+    consultorio_validator.validar_creacion(data)
 
-    if not isinstance(numero_sala, str) or not numero_sala.strip():
-        raise BadRequestError(
-            description="El campo numero_sala es obligatorio y debe ser un texto."
-        )
-
-    piso = data.get("piso")
-    if piso is not None and not isinstance(piso, str):
-        raise BadRequestError(
-            description="El campo piso debe ser un texto."
-        )
-
-    connection = get_db_connection()
-
-    try:
-        consultorio_id = consultorio_repo.crear_consultorio(
-            connection,
-            numero_sala=numero_sala.strip(),
-            piso=piso.strip() if piso is not None else None
-        )
-        connection.commit()
-    except Exception:
-        connection.rollback()
-        raise
-    finally:
-        connection.close()
+    consultorio_id = consultorio_service.crear_consultorio(
+        numero_sala=data["numero_sala"].strip(),
+        piso=data["piso"].strip() if data.get("piso") is not None else None
+    )
 
     return success_response(
         data={"id": consultorio_id},
