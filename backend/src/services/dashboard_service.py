@@ -1,6 +1,7 @@
 from src.repositories.dashboard_repository import (
     obtener_pacientes_en_sala_espera,
-    obtener_turnos_por_medico_y_especialidad
+    obtener_turnos_por_medico_y_especialidad,
+    obtener_ocupacion_consultorios
 )
 
 def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[dict]:
@@ -23,3 +24,19 @@ def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[di
 
 def obtener_turnos_por_medico_especialidad_service(connection, fecha: str | None = None) -> list[dict]:
     return obtener_turnos_por_medico_y_especialidad(connection, fecha)
+
+
+def obtener_ocupacion_consultorios_service(connection, fecha: str | None = None) -> list[dict]:
+    consultorios = obtener_ocupacion_consultorios(connection, fecha)
+
+    
+    for c in consultorios:
+        total = c.get("total_turnos", 0)
+        ocupados = c.get("turnos_ocupados", 0) or 0
+
+        if total > 0:
+            c["porcentaje_ocupacion"] = round((ocupados / total) * 100, 2)
+        else:
+            c["porcentaje_ocupacion"] = 0.0
+
+    return consultorios

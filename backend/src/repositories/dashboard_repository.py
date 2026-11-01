@@ -83,3 +83,26 @@ def obtener_turnos_por_medico_y_especialidad(connection, fecha: str | None = Non
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         return cursor.fetchall()
+
+
+def obtener_ocupacion_consultorios(connection, fecha: str | None = None):
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    params = (fecha,) if fecha else ()
+
+    query = f"""
+        SELECT 
+            consultorios.id AS consultorio_id,
+            consultorios.numero_sala,
+            consultorios.piso,
+            COUNT(turnos.id) AS total_turnos,
+            SUM(CASE WHEN turnos.estado IN ('reservado', 'confirmado', 'atendido') THEN 1 ELSE 0 END) AS turnos_ocupados,
+            SUM(CASE WHEN turnos.estado = 'disponible' THEN 1 ELSE 0 END) AS turnos_libres
+        FROM consultorios
+        LEFT JOIN turnos ON turnos.consultorio_id = consultorios.id {filtro_fecha}
+        GROUP BY consultorios.id, consultorios.numero_sala, consultorios.piso
+        ORDER BY consultorios.id ASC;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
