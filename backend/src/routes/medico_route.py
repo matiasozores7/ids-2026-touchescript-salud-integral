@@ -9,6 +9,7 @@ from src.validators import medico_validator
 
 medico_bp = Blueprint("medicos", __name__)
 
+
 @medico_bp.route("/medicos", methods=["GET"])
 @jwt_required()
 @roles_requeridos("admin")
@@ -23,6 +24,7 @@ def listar_medicos():
         message="Listado de médicos"
     )
 
+
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["GET"])
 @jwt_required()
 @roles_requeridos("admin")
@@ -30,6 +32,7 @@ def obtener_medico(medico_id):
     resultado = medico_service.obtener_medico(medico_id)
 
     return success_response(data=resultado, message="Detalle del médico")
+
 
 @medico_bp.route("/medicos", methods=["POST"])
 @jwt_required()
@@ -51,3 +54,15 @@ def crear_medico():
         message="Médico creado exitosamente",
         status_code=201
     )
+
+
+@medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["PATCH"])
+@jwt_required()
+@roles_requeridos("admin")
+def modificar_medico(medico_id):
+    data = request.get_json() or {}
+    medico_validator.validar_modificacion_parcial(data)
+
+    resultado = medico_service.modificar_medico(medico_id, data)
+
+    return success_response(data=resultado, message="Médico modificado exitosamente")

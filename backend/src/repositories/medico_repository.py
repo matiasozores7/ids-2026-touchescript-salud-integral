@@ -61,7 +61,7 @@ def existe_especialidad(connection, especialidad_id: int) -> bool:
 
 def obtener_medico_por_id(connection, medico_id: int):
     query = """
-        SELECT m.id, u.nombre, u.apellido, u.email, u.activo,
+        SELECT m.id, m.usuario_id, u.nombre, u.apellido, u.email, u.activo,
                m.especialidad_id, e.nombre AS especialidad
         FROM medicos m
         JOIN usuarios u ON u.id = m.usuario_id
@@ -72,3 +72,20 @@ def obtener_medico_por_id(connection, medico_id: int):
     with connection.cursor() as cursor:
         cursor.execute(query, (medico_id,))
         return cursor.fetchone()
+
+def actualizar_medico(connection, medico_id: int, usuario_id: int,
+                      nombre: str, apellido: str, email: str, especialidad_id: int):
+    query_usuario = """
+        UPDATE usuarios
+        SET nombre = %s, apellido = %s, email = %s
+        WHERE id = %s
+    """
+    query_medico = """
+        UPDATE medicos
+        SET especialidad_id = %s
+        WHERE id = %s
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query_usuario, (nombre, apellido, email, usuario_id))
+        cursor.execute(query_medico, (especialidad_id, medico_id))
