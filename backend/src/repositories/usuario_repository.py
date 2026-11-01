@@ -11,12 +11,24 @@ def buscar_usuario_por_email(connection, email: str):
         return cursor.fetchone()
 
 
-def crear_usuario(connection, nombre, apellido, email, password_hash, rol="paciente"):
+def crear_usuario(connection, usuario_data: dict) -> int:
+    cursor = connection.cursor()
     query = """
-        INSERT INTO usuarios (nombre, apellido, email, password_hash, rol)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo) 
+        VALUES (%s, %s, %s, %s, %s, %s)
     """
-
-    with connection.cursor() as cursor:
-        cursor.execute(query, (nombre, apellido, email, password_hash, rol))
-        return cursor.lastrowid
+    
+    values = (
+        usuario_data.get("nombre"),
+        usuario_data.get("apellido"),
+        usuario_data.get("email"),
+        usuario_data.get("password"),
+        "paciente",
+        True
+    )
+    
+    cursor.execute(query, values)
+    usuario_id = cursor.lastrowid
+    cursor.close()
+    
+    return usuario_id

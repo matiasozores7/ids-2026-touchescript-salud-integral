@@ -38,3 +38,17 @@ def obtener_todos_los_pacientes(connection):
     with connection.cursor() as cursor:
         cursor.execute(query)
         return cursor.fetchall()
+
+def insertar_paciente(connection, usuario_id: int, cobertura_id: int) -> int:
+    cursor = connection.cursor()
+    query = """
+        INSERT INTO pacientes (usuario_id, cobertura_id) 
+        VALUES (%s, %s)
+    """
+    values = (usuario_id, cobertura_id)
+    
+    cursor.execute(query, values)
+    paciente_id = cursor.lastrowid
+    cursor.close()
+    
+    return paciente_id
