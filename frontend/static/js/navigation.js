@@ -1,11 +1,11 @@
-const menuButton = document.querySelector(".mobile-menu");
-const mainNav = document.querySelector(".main-nav");
+const mainNav = document.querySelector("#main-navigation");
 
-if (menuButton && mainNav) {
-  menuButton.addEventListener("click", () => {
-    const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-    menuButton.setAttribute("aria-expanded", String(!isOpen));
-    menuButton.setAttribute("aria-label", isOpen ? "Abrir menú" : "Cerrar menú");
-    mainNav.classList.toggle("mobile-open", !isOpen);
+if (mainNav) {
+  mainNav.addEventListener("click", (event) => {
+    const navigationLink = event.target.closest("a");
+
+    if (navigationLink && window.innerWidth < 992) {
+      bootstrap.Collapse.getOrCreateInstance(mainNav).hide();
+    }
   });
 }
