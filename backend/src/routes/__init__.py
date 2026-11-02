@@ -3,3 +3,4 @@ from .auth_route import auth_bp
 from .consultorio_route import consultorios_bp
 from .medico_route import medico_bp
 from .pacientes_route import pacientes_bp
+from .dashboard_route import dashboard_bp

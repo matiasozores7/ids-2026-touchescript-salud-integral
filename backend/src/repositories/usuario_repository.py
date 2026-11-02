@@ -1,4 +1,3 @@
-
 def buscar_usuario_por_email(connection, email: str):
     query = """
         SELECT id, nombre, apellido, email, password_hash, rol, activo
