@@ -37,3 +37,7 @@ DIAS_SEMANA_MAPA = {
     6: "Domingo",
 }
 
+
+
+# Ventana en minutos para el check-in (15 min antes hasta 15 min después)
+VENTANA_CHECKIN_MINUTOS = 15

@@ -86,3 +86,13 @@ def validar_reserva_turno(data: dict) -> None:
         raise BadRequestError(
             description="El campo 'paciente_id' debe ser un número entero positivo."
         )
+
+
+def validar_checkin(data: dict) -> None:
+    _validar_tipo_diccionario(data)
+
+    qr_token = data.get("qr_token")
+    if not isinstance(qr_token, str) or not qr_token.strip():
+        raise BadRequestError(
+            description="El campo 'qr_token' es obligatorio y debe ser una cadena no vacía."
+        )

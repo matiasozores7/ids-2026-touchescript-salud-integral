@@ -6,8 +6,11 @@ from src.constants_turnos import (
     ESTADO_ATENDIDO,
     ESTADO_AUSENTE,
     ESTADO_CANCELADO,
+    ESTADO_CONFIRMADO,
     ESTADO_DISPONIBLE,
+    ESTADO_RESERVADO,
     TRANSICIONES_VALIDAS,
+    VENTANA_CHECKIN_MINUTOS,
 )
 from src.database.connection import transaction
 from src.errors.exceptions import ConflictError, ForbiddenError, NotFoundError
@@ -231,3 +234,56 @@ def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool
         cancelado = turno_repo.obtener_turno_por_id(connection, turno_id)
 
     return _serializar_turno(cancelado)
+
+
+def realizar_checkin(qr_token: str) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_qr(connection, qr_token)
+        if turno is None:
+            raise NotFoundError(
+                description="Código QR inválido o no correspondiente a ningún turno."
+            )
+
+        estado_actual = turno["estado"]
+
+        if estado_actual == ESTADO_CANCELADO:
+            raise ConflictError(description="El turno se encuentra cancelado.")
+
+        if estado_actual in (ESTADO_CONFIRMADO, ESTADO_ATENDIDO):
+            raise ConflictError(
+                description="El código QR ya fue utilizado anteriormente (check-in previo o turno atendido)."
+            )
+
+        if estado_actual == ESTADO_AUSENTE:
+            raise ConflictError(
+                description="El turno ha sido marcado como ausente y no admite check-in."
+            )
+
+        if estado_actual != ESTADO_RESERVADO:
+            raise ConflictError(
+                description=f"El turno no puede recibir check-in desde su estado actual '{estado_actual}'."
+            )
+
+        ahora = datetime.now()
+        fecha_turno = turno["fecha_hora"]
+        if isinstance(fecha_turno, str):
+            fecha_turno = datetime.fromisoformat(fecha_turno)
+
+        ventana_inicio = fecha_turno - timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
+        ventana_fin = fecha_turno + timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
+
+        if ahora < ventana_inicio:
+            raise ConflictError(
+                description="Aún no comenzó la ventana de check-in (habilitada desde 15 minutos antes del turno)."
+            )
+
+        if ahora > ventana_fin:
+            turno_repo.actualizar_estado_turno(connection, turno["id"], ESTADO_AUSENTE)
+            raise ConflictError(
+                description="La ventana horaria de check-in ha expirado (+15 minutos). El turno ha sido marcado como ausente."
+            )
+
+        turno_repo.confirmar_checkin(connection, turno["id"], ahora)
+        confirmado = turno_repo.obtener_turno_con_detalles(connection, turno["id"])
+
+    return _serializar_turno(confirmado)

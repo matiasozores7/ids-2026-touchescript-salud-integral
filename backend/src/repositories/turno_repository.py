@@ -193,3 +193,35 @@ def cancelar_turno(connection, turno_id: int) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (turno_id,))
         return cursor.rowcount
+
+
+def obtener_turno_por_qr(connection, qr_token: str):
+    query = """
+        SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+               t.fecha_hora_llegada, t.estado, t.qr_token,
+               u_pac.nombre AS paciente_nombre, u_pac.apellido AS paciente_apellido,
+               u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+               c.numero_sala AS consultorio_sala
+        FROM turnos t
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+        JOIN medicos m ON t.medico_id = m.id
+        JOIN usuarios u_med ON m.usuario_id = u_med.id
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.qr_token = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (qr_token,))
+        return cursor.fetchone()
+
+
+def confirmar_checkin(connection, turno_id: int, fecha_hora_llegada) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'confirmado',
+            fecha_hora_llegada = %s
+        WHERE id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (fecha_hora_llegada, turno_id))
+        return cursor.rowcount

@@ -161,3 +161,20 @@ def cancelar_turno(turno_id: int):
         data=resultado,
         message="Turno cancelado exitosamente."
     )
+
+
+# -----------------------------------------------------------------------------
+# Tarea 8: POST /turnos/checkin
+# -----------------------------------------------------------------------------
+@turnos_bp.route("/turnos/checkin", methods=["POST"])
+def checkin_turno():
+    data = request.get_json(silent=True) or {}
+    turno_validator.validar_checkin(data)
+
+    qr_token = data["qr_token"].strip()
+    resultado = turno_service.realizar_checkin(qr_token)
+
+    return success_response(
+        data=resultado,
+        message="Check-in registrado exitosamente. Paciente ingresado a sala de espera."
+    )
