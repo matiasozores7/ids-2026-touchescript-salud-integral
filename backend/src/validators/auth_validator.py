@@ -1,9 +1,6 @@
-import re 
+import re
+from src.constants import MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, REGEX_EMAIL
 from src.errors.exceptions import BadRequestError
-
-MIN_PASSWORD_LENGTH = 8
-MAX_PASSWORD_LENGTH = 128
-REGEX_EMAIL = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
 def validar_registro(data: dict):
     _validar_tipo_data(data)
