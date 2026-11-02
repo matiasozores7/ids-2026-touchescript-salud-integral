@@ -18,6 +18,7 @@ def detalle_turno(turno_id):
 @app.get("/qr/<int:turno_id>")
 def qr_turno(turno_id):
     return render_template("pacientes/qr_turno.html", turno_id=turno_id)
+
 @app.get("/backoffice/consultorios")
 def backoffice_consultorios():
     return render_template("backoffice/consultorios.html")
