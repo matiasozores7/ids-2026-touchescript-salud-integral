@@ -191,3 +191,16 @@ def marcar_turno_atendido(turno_id: int):
         data=resultado,
         message="Turno marcado como atendido exitosamente."
     )
+
+
+# -----------------------------------------------------------------------------
+# Tarea 10: POST /turnos/marcar-ausentes
+# -----------------------------------------------------------------------------
+@turnos_bp.route("/turnos/marcar-ausentes", methods=["POST"])
+def marcar_turnos_ausentes():
+    afectados = turno_service.marcar_ausentes()
+
+    return success_response(
+        data={"turnos_marcados": afectados},
+        message=f"Se actualizaron {afectados} turnos al estado ausente."
+    )

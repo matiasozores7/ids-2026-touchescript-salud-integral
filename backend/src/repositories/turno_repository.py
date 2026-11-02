@@ -236,3 +236,15 @@ def marcar_atendido(connection, turno_id: int) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (turno_id,))
         return cursor.rowcount
+
+
+def marcar_turnos_ausentes_expirados(connection, fecha_limite) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'ausente'
+        WHERE estado = 'reservado'
+          AND fecha_hora < %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (fecha_limite,))
+        return cursor.rowcount

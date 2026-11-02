@@ -312,3 +312,11 @@ def marcar_atendido(turno_id: int) -> dict:
         atendido = turno_repo.obtener_turno_con_detalles(connection, turno_id)
 
     return _serializar_turno(atendido)
+
+
+def marcar_ausentes() -> int:
+    fecha_limite = datetime.now() - timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
+    with transaction() as connection:
+        afectados = turno_repo.marcar_turnos_ausentes_expirados(connection, fecha_limite)
+
+    return afectados
