@@ -1,6 +1,5 @@
 from src.errors.exceptions import BadRequestError
-
-MAX_NOMBRE_LENGTH = 100
+from src.constants import MAX_TEXTO_LENGTH
 
 
 def validar_creacion(data):
@@ -23,11 +22,11 @@ def _validar_datos(data):
             description="El campo nombre es obligatorio y debe ser un texto."
         )
 
-    if len(nombre.strip()) > MAX_NOMBRE_LENGTH:
+    if len(nombre.strip()) > MAX_TEXTO_LENGTH:
         raise BadRequestError(
             description=(
                 f"El campo 'nombre' no puede superar los "
-                f"{MAX_NOMBRE_LENGTH} caracteres."
+                f"{MAX_TEXTO_LENGTH} caracteres."
             )
         )
 
