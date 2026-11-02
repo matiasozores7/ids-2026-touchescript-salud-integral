@@ -287,3 +287,28 @@ def realizar_checkin(qr_token: str) -> dict:
         confirmado = turno_repo.obtener_turno_con_detalles(connection, turno["id"])
 
     return _serializar_turno(confirmado)
+
+
+def marcar_atendido(turno_id: int) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        estado_actual = turno["estado"]
+
+        if estado_actual == ESTADO_ATENDIDO:
+            raise ConflictError(description="El turno ya se encuentra en estado atendido.")
+
+        if estado_actual != ESTADO_CONFIRMADO:
+            raise ConflictError(
+                description=(
+                    f"Solo se pueden marcar como atendidos los turnos con check-in confirmado "
+                    f"(en sala de espera). Estado actual: '{estado_actual}'."
+                )
+            )
+
+        turno_repo.marcar_atendido(connection, turno_id)
+        atendido = turno_repo.obtener_turno_con_detalles(connection, turno_id)
+
+    return _serializar_turno(atendido)

@@ -178,3 +178,16 @@ def checkin_turno():
         data=resultado,
         message="Check-in registrado exitosamente. Paciente ingresado a sala de espera."
     )
+
+
+# -----------------------------------------------------------------------------
+# Tarea 9: PUT /turnos/<id>/atendido
+# -----------------------------------------------------------------------------
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/atendido", methods=["PUT", "PATCH"])
+def marcar_turno_atendido(turno_id: int):
+    resultado = turno_service.marcar_atendido(turno_id)
+
+    return success_response(
+        data=resultado,
+        message="Turno marcado como atendido exitosamente."
+    )

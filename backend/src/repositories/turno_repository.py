@@ -225,3 +225,14 @@ def confirmar_checkin(connection, turno_id: int, fecha_hora_llegada) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (fecha_hora_llegada, turno_id))
         return cursor.rowcount
+
+
+def marcar_atendido(connection, turno_id: int) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'atendido'
+        WHERE id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id,))
+        return cursor.rowcount
