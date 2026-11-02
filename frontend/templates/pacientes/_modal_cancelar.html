@@ -1,0 +1,31 @@
+{# Ventana de confirmación para cancelar un turno.
+   Uso: {% from "pacientes/_modal_cancelar.html" import modal_cancelar %}
+        {{ modal_cancelar(turno) }}
+   Campos que lee de t: id, medico, fecha, hora.
+#}
+{% macro modal_cancelar(t) %}
+  <div class="modal modal-cancelar fade" id="cancelar-{{ t.id }}" tabindex="-1" aria-labelledby="cancelar-titulo-{{ t.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" action="#" method="post">
+        <div class="modal-header align-items-start">
+          <div>
+            <h2 class="modal-title" id="cancelar-titulo-{{ t.id }}">¿Cancelar este turno?</h2>
+            <p class="small text-body-secondary mb-0">{{ t.medico }} · {{ t.fecha }} {{ t.hora }} h</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label small fw-medium" for="motivo-{{ t.id }}">Motivo (opcional)</label>
+          <textarea class="form-control" id="motivo-{{ t.id }}" name="motivo" rows="3" placeholder="Ej. no puedo asistir"></textarea>
+          <p class="text-xs text-secondary mt-3 mb-0">La franja quedará disponible para otros pacientes.</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="button button-outline button-large px-3" data-bs-dismiss="modal">Volver</button>
+          <button type="submit" class="button button-danger button-large px-3">Sí, cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endmacro %}
