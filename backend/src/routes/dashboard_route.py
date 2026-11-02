@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify, request
-from src.database.connection import transaction
+from flask import Blueprint, request
+from src.utils.responses import success_response
 from src.services.dashboard_service import (
     obtener_sala_espera_service,
     obtener_turnos_por_medico_especialidad_service,
@@ -10,76 +10,37 @@ from src.services.dashboard_service import (
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
+
 @dashboard_bp.route('/dashboard/sala-espera', methods=['GET'])
 def get_sala_espera():
-    try:
-        fecha = request.args.get('fecha')
-
-        with transaction() as connection:
-            pacientes = obtener_sala_espera_service(connection, fecha)
-
-        return jsonify(pacientes), 200
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO EN SALA DE ESPERA!: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    fecha = request.args.get('fecha')
+    pacientes = obtener_sala_espera_service(fecha)
+    return success_response(data=pacientes, message="Sala de espera obtenida correctamente.")
 
 
 @dashboard_bp.route('/dashboard/turnos-por-medico-especialidad', methods=['GET'])
 def get_turnos_por_medico_especialidad():
-    try:
-        fecha = request.args.get('fecha')
-
-        with transaction() as connection:
-            reporte = obtener_turnos_por_medico_especialidad_service(connection, fecha)
-
-        return jsonify(reporte), 200
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO EN TURNOS POR MEDICO Y ESPECIALIDAD!: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    fecha = request.args.get('fecha')
+    reporte = obtener_turnos_por_medico_especialidad_service(fecha)
+    return success_response(data=reporte, message="Turnos por médico y especialidad obtenidos correctamente.")
 
 
 @dashboard_bp.route('/dashboard/ocupacion-consultorios', methods=['GET'])
 def get_ocupacion_consultorios():
-    try:
-        fecha = request.args.get('fecha')
-
-        with transaction() as connection:
-            reporte = obtener_ocupacion_consultorios_service(connection, fecha)
-
-        return jsonify(reporte), 200
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO EN OCUPACION DE CONSULTORIOS!: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    fecha = request.args.get('fecha')
+    reporte = obtener_ocupacion_consultorios_service(fecha)
+    return success_response(data=reporte, message="Ocupación de consultorios obtenida correctamente.")
 
 
 @dashboard_bp.route('/dashboard/ausentismo', methods=['GET'])
 def get_ausentismo():
-    try:
-        fecha = request.args.get('fecha')
-
-        with transaction() as connection:
-            reporte = obtener_ausentismo_service(connection, fecha)
-
-        return jsonify(reporte), 200
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO EN AUSENTISMO!: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    fecha = request.args.get('fecha')
+    reporte = obtener_ausentismo_service(fecha)
+    return success_response(data=reporte, message="Reporte de ausentismo obtenido correctamente.")
 
 
 @dashboard_bp.route('/dashboard/tiempo-espera', methods=['GET'])
 def get_tiempo_espera():
-    try:
-        fecha = request.args.get('fecha')
-
-        with transaction() as connection:
-            reporte = obtener_tiempo_espera_service(connection, fecha)
-
-        return jsonify(reporte), 200
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO EN TIEMPO DE ESPERA!: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    fecha = request.args.get('fecha')
+    reporte = obtener_tiempo_espera_service(fecha)
+    return success_response(data=reporte, message="Tiempo de espera obtenido correctamente.")

@@ -46,7 +46,7 @@ def obtener_pacientes_en_sala_espera(connection, fecha: str | None = None):
 
 
 def obtener_turnos_por_medico_y_especialidad(connection, fecha: str | None = None):
-    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else "AND DATE(turnos.fecha_hora) = CURDATE()"
     params = (fecha,) if fecha else ()
 
     query = f"""
@@ -83,7 +83,7 @@ def obtener_turnos_por_medico_y_especialidad(connection, fecha: str | None = Non
 
 
 def obtener_ocupacion_consultorios(connection, fecha: str | None = None):
-    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else "AND DATE(turnos.fecha_hora) = CURDATE()"
     params = (fecha,) if fecha else ()
 
     query = f"""
@@ -93,7 +93,7 @@ def obtener_ocupacion_consultorios(connection, fecha: str | None = None):
             consultorios.piso,
             COUNT(turnos.id) AS total_turnos,
             SUM(CASE WHEN turnos.estado IN ('reservado', 'confirmado', 'atendido') THEN 1 ELSE 0 END) AS turnos_ocupados,
-            SUM(CASE WHEN turnos.estado = 'disponible' THEN 1 ELSE 0 END) AS turnos_libres
+            SUM(CASE WHEN turnos.estado IN ('disponible', 'ausente', 'cancelado') THEN 1 ELSE 0 END) AS turnos_libres
         FROM consultorios
         LEFT JOIN turnos ON turnos.consultorio_id = consultorios.id {filtro_fecha}
         GROUP BY consultorios.id, consultorios.numero_sala, consultorios.piso
@@ -106,7 +106,7 @@ def obtener_ocupacion_consultorios(connection, fecha: str | None = None):
 
 
 def obtener_estadisticas_ausentismo(connection, fecha: str | None = None):
-    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else "AND DATE(turnos.fecha_hora) = CURDATE()"
     params = (fecha,) if fecha else ()
 
     query = f"""
@@ -135,7 +135,7 @@ def obtener_estadisticas_ausentismo(connection, fecha: str | None = None):
 
 
 def obtener_estadisticas_tiempo_espera(connection, fecha: str | None = None):
-    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else ""
+    filtro_fecha = "AND DATE(turnos.fecha_hora) = %s" if fecha else "AND DATE(turnos.fecha_hora) = CURDATE()"
     params = (fecha,) if fecha else ()
 
     query = f"""

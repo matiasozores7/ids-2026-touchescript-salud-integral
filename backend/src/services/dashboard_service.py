@@ -1,3 +1,4 @@
+from src.database.connection import transaction
 from src.repositories.dashboard_repository import (
     obtener_pacientes_en_sala_espera,
     obtener_turnos_por_medico_y_especialidad,
@@ -6,8 +7,10 @@ from src.repositories.dashboard_repository import (
     obtener_estadisticas_tiempo_espera
 )
 
-def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[dict]:
-    turnos = obtener_pacientes_en_sala_espera(connection, fecha)
+
+def obtener_sala_espera_service(fecha: str | None = None) -> list[dict]:
+    with transaction() as connection:
+        turnos = obtener_pacientes_en_sala_espera(connection, fecha)
 
     for turno in turnos:
         if turno.get("fecha_hora_turno") and turno.get("fecha_hora_llegada"):
@@ -24,12 +27,14 @@ def obtener_sala_espera_service(connection, fecha: str | None = None) -> list[di
     return turnos
 
 
-def obtener_turnos_por_medico_especialidad_service(connection, fecha: str | None = None) -> list[dict]:
-    return obtener_turnos_por_medico_y_especialidad(connection, fecha)
+def obtener_turnos_por_medico_especialidad_service(fecha: str | None = None) -> list[dict]:
+    with transaction() as connection:
+        return obtener_turnos_por_medico_y_especialidad(connection, fecha)
 
 
-def obtener_ocupacion_consultorios_service(connection, fecha: str | None = None) -> list[dict]:
-    consultorios = obtener_ocupacion_consultorios(connection, fecha)
+def obtener_ocupacion_consultorios_service(fecha: str | None = None) -> list[dict]:
+    with transaction() as connection:
+        consultorios = obtener_ocupacion_consultorios(connection, fecha)
 
     for c in consultorios:
         total = c.get("total_turnos", 0)
@@ -43,8 +48,9 @@ def obtener_ocupacion_consultorios_service(connection, fecha: str | None = None)
     return consultorios
 
 
-def obtener_ausentismo_service(connection, fecha: str | None = None) -> dict:
-    medicos_data = obtener_estadisticas_ausentismo(connection, fecha)
+def obtener_ausentismo_service(fecha: str | None = None) -> dict:
+    with transaction() as connection:
+        medicos_data = obtener_estadisticas_ausentismo(connection, fecha)
 
     total_general = 0
     ausentes_general = 0
@@ -81,8 +87,9 @@ def obtener_ausentismo_service(connection, fecha: str | None = None) -> dict:
     }
 
 
-def obtener_tiempo_espera_service(connection, fecha: str | None = None) -> dict:
-    medicos_data = obtener_estadisticas_tiempo_espera(connection, fecha)
+def obtener_tiempo_espera_service(fecha: str | None = None) -> dict:
+    with transaction() as connection:
+        medicos_data = obtener_estadisticas_tiempo_espera(connection, fecha)
 
     suma_tiempos = 0.0
     total_pacientes = 0
