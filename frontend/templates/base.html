@@ -4,76 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Encontrá especialistas, reservá tus turnos y organizá tu atención médica desde un solo lugar.">
-    <title>{% block title %}ToucheHealth | Centro Médico{% endblock %}</title>
+    <title>{% block title %}Salud Integral | Centro Médico{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsives/base-responsive.css') }}">
     {% block page_styles %}{% endblock %}
   </head>
-  <body>
-    <div class="app-shell">
+  <body class="{% block body_class %}{% endblock %}">
+    <div class="app-shell d-flex flex-column min-vh-100">
       <header class="site-header">
-        <div class="header-inner">
-          <a class="brand" href="{{ url_for('index') }}" aria-label="ToucheHealth | Centro Médico, inicio">
-            <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-              <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
-              <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
-              <path d="M17 11h6v6h-6z" fill="#477f9a"/>
-            </svg>
-            <span class="brand-copy">
-              <span class="brand-name">ToucheHealth</span>
-              <span class="brand-subtitle">CENTRO MÉDICO</span>
-            </span>
-          </a>
-
-          <nav class="main-nav" aria-label="Principal">
-            <a class="active" href="{{ url_for('index') }}">Inicio</a>
-            <a href="#especialidades">Especialidades</a>
-            <a href="#profesionales">Profesionales</a>
-            <a href="#proximo-turno">Mis turnos</a>
-          </nav>
-
-          <div class="header-actions">
-            <a class="button button-primary button-small search-doctors" href="#profesionales">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
-              Buscar médicos
+        <div class="header-inner container">
+          <nav class="navbar navbar-expand-lg navbar-light p-0 w-100" aria-label="Navegación principal">
+            <a class="brand navbar-brand" href="{{ url_for('patient_home') }}" aria-label="Salud Integral, inicio">
+              <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+                <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+                <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+              </svg>
+              <span class="brand-copy">
+                <span class="brand-name">Salud Integral</span>
+                <span class="brand-subtitle">CENTRO MÉDICO</span>
+              </span>
             </a>
-            <button class="avatar avatar-small profile-avatar" type="button" aria-label="Perfil">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+
+            <button class="navbar-toggler mobile-menu" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
             </button>
-            <button class="mobile-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
-          </div>
+
+            <div class="collapse navbar-collapse main-nav" id="main-navigation">
+              <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('patient_home') }}">Inicio</a>
+                <a class="nav-link" href="#especialidades">Especialidades</a>
+                <a class="nav-link" href="#profesionales">Profesionales</a>
+                <a class="nav-link" href="{{ url_for('mis_turnos') }}">Mis turnos</a>
+              </div>
+              <div class="header-actions ms-auto">
+                <a class="button button-primary button-small search-doctors" href="#profesionales">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+                  Buscar médicos
+                </a>
+                <button class="avatar avatar-small profile-avatar" type="button" aria-label="Notificaciones, 1 sin leer">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+                  <span class="notification-badge">1</span>
+                </button>
+                <button class="avatar avatar-small profile-avatar" type="button" aria-label="Menú de perfil">
+                  MG
+                </button>
+              </div>
+            </div>
+          </nav>
         </div>
       </header>
 
-      <main class="page-content">
+      <main class="page-content flex-grow-1 container">
         {% block content %}{% endblock %}
       </main>
 
       <footer class="site-footer">
-        <div class="footer-inner">
+        <div class="footer-inner container d-flex align-items-center justify-content-between gap-4">
           <div class="footer-brand">
-            <span class="footer-brand-name">ToucheHealth</span>
+            <span class="footer-brand-name">Salud Integral</span>
             <span>Atención médica organizada en un solo lugar.</span>
           </div>
-          <nav class="footer-nav" aria-label="Enlaces del pie de página">
-            <a href="{{ url_for('index') }}">Inicio</a>
-            <a href="#especialidades">Especialidades</a>
-            <a href="#profesionales">Profesionales</a>
-          </nav>
           <div class="footer-meta">
-            <span>© ToucheHealth | Centro Médico</span>
+            <span>© Salud Integral | Centro Médico</span>
             <a href="#inicio">Ver backoffice →</a>
           </div>
         </div>
       </footer>
     </div>
-  <script src="{{ url_for('static', filename='js/navigation.js') }}" defer></script>
-  <script src="{{ url_for('static', filename='js/home.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/navigation.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}" defer></script>
+    {% block page_scripts %}{% endblock %}
   </body>
 </html>

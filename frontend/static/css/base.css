@@ -15,14 +15,9 @@
   --shadow-card: 0 1px 2px rgb(41 77 93 / 4%), 0 1px 3px rgb(41 77 93 / 4%);
 }
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   min-width: 320px;
   min-height: 100vh;
-  margin: 0;
   background: #f7f9fa;
 }
 
@@ -54,4 +49,298 @@ svg {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   clip-path: inset(50%);
+}
+
+.site-header {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgb(255 255 255 / 96%);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  min-height: 64px;
+}
+
+.brand {
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 4px;
+  line-height: 1;
+}
+
+.brand-name {
+  color: var(--petrol);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+}
+
+.main-nav .navbar-nav {
+  gap: 4px;
+}
+
+.main-nav .nav-link {
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.main-nav .nav-link:hover,
+.main-nav .nav-link.active {
+  background: var(--soft);
+  color: var(--petrol);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.search-doctors {
+  margin-right: 8px;
+}
+
+.button {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.button-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: var(--petrol);
+  color: #fff;
+}
+
+.button-outline {
+  border-color: #d7dfe5;
+  background: #fff;
+  color: #354052;
+}
+
+.button-outline:hover {
+  background: #f2f5f7;
+}
+
+.button-small {
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.button-large {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.mobile-menu {
+  border: 0;
+  color: var(--muted);
+}
+
+.mobile-menu:focus {
+  box-shadow: 0 0 0 .2rem rgb(71 127 154 / 25%);
+}
+
+.avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e2f1f0;
+  color: #327f7b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.avatar-small {
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+}
+
+.avatar-large {
+  width: 48px;
+  height: 48px;
+}
+
+.profile-avatar {
+  position: relative;
+  border: 0;
+}
+
+.profile-avatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  display: flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #d65b63;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.page-content {
+  padding-top: 28px;
+  padding-bottom: 40px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: #fff;
+}
+
+.footer-inner {
+  min-height: 88px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footer-brand {
+  display: grid;
+  gap: 5px;
+}
+
+.footer-brand-name {
+  color: var(--petrol);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 18px;
+}
+
+.footer-nav a {
+  color: var(--muted);
+}
+
+.footer-nav a:hover {
+  color: var(--primary);
+}
+
+.footer-meta {
+  display: flex;
+  gap: 16px;
+  white-space: nowrap;
+}
+
+.footer-meta a {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+  .main-nav {
+    padding-top: 10px;
+  }
+
+  .main-nav .navbar-nav {
+    gap: 2px;
+  }
+
+  .main-nav .nav-link {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  .header-actions {
+    align-items: center;
+    padding: 10px 12px 12px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .header-inner {
+    min-height: 60px;
+  }
+
+  .brand {
+    gap: 7px;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .brand-subtitle {
+    font-size: 9px;
+  }
+
+  .search-doctors {
+    display: none;
+  }
+
+  .page-content {
+    padding-top: 20px;
+    padding-bottom: 28px;
+  }
+
+  .footer-inner {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    text-align: center;
+  }
+
+  .footer-nav,
+  .footer-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
 }

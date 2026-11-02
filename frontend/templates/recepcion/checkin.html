@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in QR · Salud Integral{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/checkin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="backoffice-layout">
+  <aside class="backoffice-sidebar">
+    <a class="backoffice-brand" href="{{ url_for('index') }}" aria-label="Salud Integral, inicio">
+      <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+        <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+        <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+      </svg>
+      <span><strong>Salud Integral</strong><small>Centro Médico</small></span>
+    </a>
+    <p class="sidebar-label">Recepción</p>
+    <nav class="backoffice-nav" aria-label="Recepción">
+      <a href="{{ url_for('index') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
+      <a class="active" href="{{ url_for('backoffice_checkin') }}"><i class="bi bi-qr-code" aria-hidden="true"></i><span>Check-in QR</span></a>
+      <a href="{{ url_for('backoffice_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
+      <a href="#"><i class="bi bi-person-lines-fill" aria-hidden="true"></i><span>Sala de espera</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="{{ url_for('index') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+    </div>
+  </aside>
+
+  <div class="backoffice-main">
+    <header class="backoffice-header">
+      <div>
+        <a href="{{ url_for('index') }}">Inicio</a>
+        <span>domingo 1 de noviembre · 10:30 (hora simulada)</span>
+      </div>
+      <div class="backoffice-user">
+        <span class="backoffice-user-avatar">RV</span>
+        <span><strong>Rocío Velázquez</strong><small>Recepción</small></span>
+      </div>
+    </header>
+
+    <main class="backoffice-content checkin-content">
+      <div class="backoffice-breadcrumb" aria-label="Migas de pan">
+        <a href="{{ url_for('index') }}">Inicio</a>
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        <span>Check-in QR</span>
+      </div>
+
+      <div class="checkin-heading">
+        <div>
+          <h1>Check-in de pacientes</h1>
+          <p>Validá el código QR del turno para registrar la llegada.</p>
+        </div>
+        <span class="checkin-status"><i class="bi bi-circle-fill" aria-hidden="true"></i> Recepción abierta</span>
+      </div>
+
+      <div class="checkin-grid">
+        <section class="checkin-card scanner-card" aria-labelledby="scanner-title">
+          <div class="checkin-card-heading">
+            <div>
+              <h2 id="scanner-title">Escanear código QR</h2>
+              <p>Apuntá la cámara al código del comprobante del paciente.</p>
+            </div>
+            <span class="checkin-card-icon"><i class="bi bi-qr-code-scan" aria-hidden="true"></i></span>
+          </div>
+
+          <div class="qr-placeholder" role="img" aria-label="Área de escaneo de código QR">
+            <span class="qr-corner qr-corner-top-left"></span>
+            <span class="qr-corner qr-corner-top-right"></span>
+            <span class="qr-corner qr-corner-bottom-left"></span>
+            <span class="qr-corner qr-corner-bottom-right"></span>
+            <i class="bi bi-qr-code" aria-hidden="true"></i>
+            <span>Área de escaneo</span>
+          </div>
+
+          <div class="checkin-divider"><span>o ingresá el código manualmente</span></div>
+          <form class="checkin-code-form" action="#" method="post">
+            <label for="qr-code">Código del turno</label>
+            <div class="checkin-code-input">
+              <input id="qr-code" name="qr_code" type="text" placeholder="Ej. TURNO-1024" autocomplete="off">
+              <button class="button button-primary button-small" type="submit">Validar</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="checkin-card recent-checkins" aria-labelledby="recent-checkins-title">
+          <div class="checkin-card-heading">
+            <div>
+              <h2 id="recent-checkins-title">Últimos ingresos</h2>
+              <p>Check-ins registrados hoy</p>
+            </div>
+            <span class="recent-count">3</span>
+          </div>
+          <ul class="recent-checkins-list">
+            {% for patient, time, room in [
+              ("María Gómez", "10:18", "Sala 101"),
+              ("Lucas Fernández", "10:06", "Sala 202"),
+              ("Sofía Martínez", "09:54", "Sala 305")
+            ] %}
+              <li>
+                <span class="recent-avatar">{{ patient[0] }}</span>
+                <span class="recent-patient"><strong>{{ patient }}</strong><small>{{ room }}</small></span>
+                <time datetime="2026-11-01T{{ time }}">{{ time }}</time>
+              </li>
+            {% endfor %}
+          </ul>
+          <a class="checkin-link" href="#">Ver sala de espera <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}
