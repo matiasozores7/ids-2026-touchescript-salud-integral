@@ -7,6 +7,7 @@ from src.routes import (
     medico_bp,
     especialidades_bp,
     pacientes_bp,
+    turnos_bp,
     dashboard_bp
 )
 from src.utils.error_handlers import register_error_handlers
@@ -22,6 +23,7 @@ app.register_blueprint(health_bp, url_prefix="/api")
 app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(consultorios_bp, url_prefix="/api")
 app.register_blueprint(medico_bp, url_prefix="/api")
+app.register_blueprint(turnos_bp, url_prefix="/api")
 app.register_blueprint(especialidades_bp, url_prefix="/api")
 app.register_blueprint(pacientes_bp, url_prefix="/api")
 app.register_blueprint(dashboard_bp, url_prefix="/api")
