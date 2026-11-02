@@ -54,6 +54,9 @@ def backoffice():
 def backoffice_specialties():
     return render_template("backoffice/specialties.html")
 
+@app.get("/backoffice/pacientes")
+def backoffice_pacientes():
+    return render_template("backoffice/pacientes.html")
+
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
-
