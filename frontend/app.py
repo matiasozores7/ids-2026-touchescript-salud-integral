@@ -7,6 +7,19 @@ app = Flask(__name__)
 def index():
     return render_template("login.html")
 
+@app.get("/backoffice/consultorios")
+def backoffice_consultorios():
+    return render_template("backoffice/consultorios.html")
+
+@app.route("/backoffice/consultorios/nuevo", methods=["GET", "POST"])
+@app.route("/backoffice/consultorios/<int:consultorio_id>/editar", methods=["GET", "POST"])
+def backoffice_consultorio_form(consultorio_id=None):
+    return render_template("backoffice/consultorio_form.html")
+
+@app.get("/backoffice/check-in")
+def backoffice_checkin():
+    return render_template("recepcion/checkin.html")
+
 @app.post("/login")
 def login():
     role = request.form.get("role", "paciente")
