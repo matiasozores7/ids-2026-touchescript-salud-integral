@@ -135,3 +135,29 @@ def listar_mis_turnos():
         data={"items": items, "total": total, "_links": links},
         message="Turnos del paciente obtenidos correctamente."
     )
+
+
+# -----------------------------------------------------------------------------
+# Tarea 7: PUT /turnos/<id>/cancelar
+# -----------------------------------------------------------------------------
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/cancelar", methods=["PUT", "PATCH"])
+def cancelar_turno(turno_id: int):
+    claims = _obtener_claims_actuales()
+    es_admin = claims.get("rol") == "admin"
+    paciente_id = claims.get("perfil_id") if claims.get("rol") == "paciente" else None
+
+    # Si no hay token de paciente pero vino en query/body para pruebas
+    if paciente_id is None and not es_admin:
+        data = request.get_json(silent=True) or {}
+        paciente_id = data.get("paciente_id") or request.args.get("paciente_id", type=int)
+
+    resultado = turno_service.cancelar_turno(
+        turno_id=turno_id,
+        paciente_id=paciente_id,
+        es_admin=es_admin
+    )
+
+    return success_response(
+        data=resultado,
+        message="Turno cancelado exitosamente."
+    )

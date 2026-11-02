@@ -182,3 +182,14 @@ def contar_turnos_paciente(connection, paciente_id: int, estado: str | None = No
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         return cursor.fetchone()["total"]
+
+
+def cancelar_turno(connection, turno_id: int) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'cancelado'
+        WHERE id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id,))
+        return cursor.rowcount

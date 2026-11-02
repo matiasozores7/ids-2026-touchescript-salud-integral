@@ -3,11 +3,14 @@ from datetime import date, datetime, time, timedelta
 
 from src.constants_turnos import (
     DIAS_SEMANA_MAPA,
+    ESTADO_ATENDIDO,
+    ESTADO_AUSENTE,
+    ESTADO_CANCELADO,
     ESTADO_DISPONIBLE,
     TRANSICIONES_VALIDAS,
 )
 from src.database.connection import transaction
-from src.errors.exceptions import ConflictError, NotFoundError
+from src.errors.exceptions import ConflictError, ForbiddenError, NotFoundError
 from src.repositories import turno_repository as turno_repo
 
 
@@ -195,3 +198,36 @@ def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | N
 
     items_serializados = [_serializar_turno(item) for item in items]
     return items_serializados, total
+
+
+def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool = False) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        if not es_admin and paciente_id is not None:
+            if turno["paciente_id"] != paciente_id:
+                raise ForbiddenError(
+                    description="No tenés permiso para cancelar un turno que no te pertenece."
+                )
+
+        estado_actual = turno["estado"]
+
+        if estado_actual == ESTADO_CANCELADO:
+            raise ConflictError(description="El turno ya se encuentra cancelado.")
+
+        if estado_actual == ESTADO_ATENDIDO:
+            raise ConflictError(
+                description="No es posible cancelar un turno que ya ha sido atendido."
+            )
+
+        if estado_actual == ESTADO_AUSENTE:
+            raise ConflictError(
+                description="No es posible cancelar un turno marcado como ausente."
+            )
+
+        turno_repo.cancelar_turno(connection, turno_id)
+        cancelado = turno_repo.obtener_turno_por_id(connection, turno_id)
+
+    return _serializar_turno(cancelado)
