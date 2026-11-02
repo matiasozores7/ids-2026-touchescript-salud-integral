@@ -1,7 +1,5 @@
 .page-content {
-  width: min(100% - 32px, 1152px);
   flex: 1;
-  margin: 0 auto;
   padding: 32px 0;
 }
 
@@ -21,10 +19,7 @@
 }
 
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  align-items: center;
-  gap: 40px;
+  --bs-gutter-x: 2.5rem;
 }
 
 .eyebrow {
@@ -53,10 +48,6 @@
 }
 
 .appointment-search {
-  display: grid;
-  grid-template-columns: 1fr 1fr .8fr auto;
-  align-items: end;
-  gap: 10px;
   margin-top: 28px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -77,21 +68,19 @@
   font-weight: 600;
 }
 
-.form-field select {
-  width: 100%;
+.form-field .form-select {
   height: 42px;
   min-width: 0;
-  border: 1px solid #dfe5e9;
   border-radius: 8px;
-  padding: 0 28px 0 10px;
-  background: #fff;
   color: #354052;
+  padding-top: 0;
+  padding-bottom: 0;
   font-size: 13px;
 }
 
-.form-field select:focus {
+.form-field .form-select:focus {
   border-color: var(--primary);
-  outline: 3px solid rgb(71 127 154 / 15%);
+  box-shadow: 0 0 0 .2rem rgb(71 127 154 / 15%);
 }
 
 .search-submit {
@@ -225,9 +214,7 @@
 }
 
 .specialty-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  --bs-gutter-y: .75rem;
 }
 
 .specialty-card {
@@ -306,9 +293,7 @@
 }
 
 .doctor-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 15px;
+  --bs-gutter-y: 1rem;
 }
 
 .doctor-card {
@@ -419,9 +404,6 @@
 }
 
 .checkin-steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
   margin: 27px 0 0;
   padding: 0;
   list-style: none;
@@ -431,6 +413,53 @@
   display: flex;
   align-items: flex-start;
   gap: 13px;
+}
+
+@media (max-width: 991.98px) {
+  .hero-panel {
+    padding: 32px 28px;
+  }
+
+  .next-appointment {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .page-content {
+    padding-top: 20px;
+    padding-bottom: 28px;
+  }
+
+  .home-page {
+    gap: 36px;
+  }
+
+  .hero-panel {
+    padding: 28px 20px;
+  }
+
+  .hero-copy h1 {
+    font-size: 34px;
+  }
+
+  .appointment-search {
+    padding: 10px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkin-panel {
+    padding: 28px 24px;
+  }
+
+  .checkin-steps li {
+    gap: 10px;
+  }
 }
 
 .step-number {

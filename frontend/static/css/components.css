@@ -1,0 +1,32 @@
+/* Piezas reutilizables de las pantallas */
+
+.estado {
+  --bg: #e1f0f7;
+  --fg: #2b6a8a;
+  --bs-badge-color: var(--fg);
+  --bs-badge-padding-x: 10px;
+  --bs-badge-padding-y: 3px;
+  --bs-badge-font-size: 12px;
+  --bs-badge-font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  line-height: 1.4;
+}
+
+.estado::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.estado-confirmado { --bg: #e2f1f0; --fg: #276b67; }
+.estado-atendido   { --bg: #0f5c4a; --fg: #fff; }
+.estado-cancelado  { --bg: #fdecef; --fg: #cf3a57; }
+.estado-ausente    { --bg: #fdf2e0; --fg: #8f5a0e; }
+
+.button-danger { background: #cf3a57; color: #fff; }
+.button-danger:hover { background: #a82a43; color: #fff; }
