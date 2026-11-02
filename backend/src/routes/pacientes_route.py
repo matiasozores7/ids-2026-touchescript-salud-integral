@@ -1,10 +1,10 @@
-from flask import Blueprint, jsonify, request
-from src.database.connection import transaction
-from src.repositories.paciente_repository import obtener_todos_los_pacientes
+from flask import Blueprint, request
+from src.utils.responses import success_response
 from src.services.paciente_service import (
     crear_paciente_service,
     actualizar_paciente_service,
-    eliminar_paciente_service
+    eliminar_paciente_service,
+    obtener_pacientes_service
 )
 
 pacientes_bp = Blueprint('pacientes_bp', __name__)
@@ -12,87 +12,25 @@ pacientes_bp = Blueprint('pacientes_bp', __name__)
 
 @pacientes_bp.route('/pacientes', methods=['GET'])
 def get_pacientes():
-    try:
-        with transaction() as connection:
-            pacientes = obtener_todos_los_pacientes(connection)
-           
-        return jsonify(pacientes), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    pacientes = obtener_pacientes_service()
+    return success_response(data=pacientes, message="Pacientes obtenidos correctamente.")
 
 
 @pacientes_bp.route('/pacientes', methods=['POST'])
 def post_paciente():
-    respuesta_json = None
-    codigo_estado = 200
+    data = request.get_json() or {}
+    nuevo_id = crear_paciente_service(data)
+    return success_response(data={"id": nuevo_id}, message="Paciente creado con éxito.", status_code=201)
 
-    try:
-        data = request.get_json()
-        
-        with transaction() as conexion:
-            nuevo_id = crear_paciente_service(conexion, data)
-        
-        respuesta_json = jsonify({
-            "mensaje": "Paciente creado con éxito",
-            "id": nuevo_id
-        })
-        codigo_estado = 201
-
-    except ValueError as ve:
-        respuesta_json = jsonify({"error": str(ve)})
-        codigo_estado = 400
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO!: {str(e)}")
-        respuesta_json = jsonify({"error": str(e)})
-        codigo_estado = 500
-
-    return respuesta_json, codigo_estado
 
 @pacientes_bp.route('/pacientes/<int:paciente_id>', methods=['PUT'])
 def put_paciente(paciente_id):
-    try:
-        data = request.get_json()
-        
-        with transaction() as conexion:
-            actualizar_paciente_service(conexion, paciente_id, data)
-        
-        respuesta_json = jsonify({
-            "mensaje": f"Paciente con ID {paciente_id} actualizado con éxito",
-            "status": "success"
-        })
-        codigo_estado = 200
+    data = request.get_json() or {}
+    actualizar_paciente_service(paciente_id, data)
+    return success_response(message=f"Paciente con ID {paciente_id} actualizado con éxito.")
 
-    except ValueError as ve:
-        respuesta_json = jsonify({"error": str(ve)})
-        codigo_estado = 400
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO!: {str(e)}")
-        respuesta_json = jsonify({"error": str(e)})
-        codigo_estado = 500
-
-    return respuesta_json, codigo_estado
 
 @pacientes_bp.route('/pacientes/<int:paciente_id>', methods=['DELETE'])
 def delete_paciente(paciente_id):
-    try:
-        with transaction() as conexion:
-            eliminar_paciente_service(conexion, paciente_id)
-        
-        respuesta_json = jsonify({
-            "mensaje": f"Paciente con ID {paciente_id} dado de baja con éxito",
-            "status": "success"
-        })
-        codigo_estado = 200
-
-    except ValueError as ve:
-        respuesta_json = jsonify({"error": str(ve)})
-        codigo_estado = 400
-
-    except Exception as e:
-        print(f"¡ERROR INTERNO INESPERADO!: {str(e)}")
-        respuesta_json = jsonify({"error": str(e)})
-        codigo_estado = 500
-
-    return respuesta_json, codigo_estado
+    eliminar_paciente_service(paciente_id)
+    return success_response(message=f"Paciente con ID {paciente_id} dado de baja con éxito.")
