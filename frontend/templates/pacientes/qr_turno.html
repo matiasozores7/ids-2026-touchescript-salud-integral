@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}QR de check-in · Salud Integral{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mis-turnos.css') }}">
+{% endblock %}
+
+{% block content %}
+{% from "pacientes/_componentes.html" import estado_pill, volver %}
+
+{# 
+   Datos de qr-ejemplo
+#}
+
+{% set turnos_ejemplo = {
+  101: {'id': 101, 'codigo': 'SI-24684', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dra. Lucía Fernández', 'fecha_larga': 'Lunes 2 de noviembre',   'hora': '11:00', 'consultorio': 'Consultorio 102'},
+  102: {'id': 102, 'codigo': 'SI-24815', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dra. Valentina Pérez', 'fecha_larga': 'Martes 10 de noviembre',  'hora': '10:20', 'consultorio': 'Consultorio 201'},
+  103: {'id': 103, 'codigo': 'SI-24902', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dr. Martín González',  'fecha_larga': 'Viernes 13 de noviembre', 'hora': '10:20', 'consultorio': 'Consultorio 105'}
+} %}
+{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
+{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
+
+<div class="mis-turnos-page">
+  <div class="qr-contenedor mx-auto">
+
+    {{ volver(url_for('detalle_turno', turno_id=turno.id), 'Detalle del turno') }}
+
+    <article class="turno-card card overflow-hidden">
+      <header class="qr-encabezado text-center text-white px-4 py-3">
+        <p class="small opacity-75 mb-0">Check-in digital</p>
+        <h1 class="fw-bold mb-0">{{ turno.paciente }}</h1>
+      </header>
+
+      <div class="d-flex flex-column align-items-center gap-3 p-4 text-center">
+        <div class="border rounded-3 bg-white p-3">
+          <img class="d-block" width="188" height="188" src="{{ url_for('static', filename='img/qr-ejemplo.svg') }}" alt="Código QR del turno {{ turno.codigo }}">
+        </div>
+
+        <p class="qr-codigo font-monospace fw-bold mb-0">{{ turno.codigo }}</p>
+        {{ estado_pill(turno.estado) }}
+
+        <div>
+          <h2 class="text-lg mb-0">{{ turno.medico }}</h2>
+          <p class="small text-body-secondary mb-0">{{ turno.fecha_larga }} · {{ turno.hora }} h · {{ turno.consultorio }}</p>
+        </div>
+      </div>
+
+      <footer class="d-flex align-items-start gap-2 px-4 py-3 text-sm text-body-secondary bg-body-tertiary">
+        <svg class="flex-shrink-0 mt-1" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <span>Presentalo en recepción para registrar tu llegada.</span>
+      </footer>
+    </article>
+
+  </div>
+</div>
+{% endblock %}
