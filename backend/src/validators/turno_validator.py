@@ -70,3 +70,19 @@ def validar_generacion_turnos(data: dict) -> None:
             raise BadRequestError(
                 description="El campo 'medico_id' debe ser un número entero positivo."
             )
+
+
+def validar_reserva_turno(data: dict) -> None:
+    _validar_tipo_diccionario(data)
+
+    turno_id = data.get("turno_id")
+    if turno_id is None or not isinstance(turno_id, int) or turno_id <= 0:
+        raise BadRequestError(
+            description="El campo 'turno_id' es obligatorio y debe ser un número entero positivo."
+        )
+
+    paciente_id = data.get("paciente_id")
+    if paciente_id is not None and (not isinstance(paciente_id, int) or paciente_id <= 0):
+        raise BadRequestError(
+            description="El campo 'paciente_id' debe ser un número entero positivo."
+        )

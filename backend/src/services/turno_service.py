@@ -1,3 +1,4 @@
+import uuid
 from datetime import date, datetime, time, timedelta
 
 from src.constants_turnos import (
@@ -129,3 +130,56 @@ def generar_turnos(fecha_inicio_str: str, fecha_fin_str: str, medico_id: int | N
                     actual_segundos += duracion_segundos
 
     return turnos_creados
+
+
+def reservar_turno(turno_id: int, paciente_id: int) -> dict:
+    with transaction() as connection:
+        if not turno_repo.existe_paciente(connection, paciente_id):
+            raise NotFoundError(description="El paciente especificado no existe.")
+
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        if turno["estado"] != ESTADO_DISPONIBLE:
+            raise ConflictError(
+                description="El turno seleccionado ya no se encuentra disponible (doble reserva evitada)."
+            )
+
+        fecha_turno = turno["fecha_hora"]
+        if isinstance(fecha_turno, str):
+            fecha_turno = datetime.fromisoformat(fecha_turno)
+
+        inicio_dia = datetime.combine(fecha_turno.date(), time.min)
+        fin_dia = datetime.combine(fecha_turno.date(), time.max)
+
+        ya_tiene_turno = turno_repo.existe_reserva_paciente_con_medico_en_fecha(
+            connection,
+            paciente_id=paciente_id,
+            medico_id=turno["medico_id"],
+            fecha_inicio=inicio_dia,
+            fecha_fin=fin_dia,
+        )
+
+        if ya_tiene_turno:
+            raise ConflictError(
+                description="El paciente ya posee un turno reservado con este médico en la misma fecha."
+            )
+
+        qr_token = f"QR-{uuid.uuid4().hex}"
+
+        filas_afectadas = turno_repo.reservar_turno(
+            connection,
+            turno_id=turno_id,
+            paciente_id=paciente_id,
+            qr_token=qr_token,
+        )
+
+        if filas_afectadas == 0:
+            raise ConflictError(
+                description="No fue posible reservar el turno porque su estado cambió de forma concurrente."
+            )
+
+        reservado = turno_repo.obtener_turno_con_detalles(connection, turno_id)
+
+    return _serializar_turno(reservado)

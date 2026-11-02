@@ -71,3 +71,60 @@ def obtener_agendas_para_generacion(connection, medico_id: int | None = None) ->
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         return cursor.fetchall()
+
+
+def existe_paciente(connection, paciente_id: int) -> bool:
+    query = "SELECT id FROM pacientes WHERE id = %s"
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id,))
+        return cursor.fetchone() is not None
+
+
+def existe_reserva_paciente_con_medico_en_fecha(connection, paciente_id: int, medico_id: int, fecha_inicio, fecha_fin) -> bool:
+    query = """
+        SELECT id
+        FROM turnos
+        WHERE paciente_id = %s
+          AND medico_id = %s
+          AND fecha_hora >= %s AND fecha_hora <= %s
+          AND estado IN ('reservado', 'confirmado')
+        LIMIT 1
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id, medico_id, fecha_inicio, fecha_fin))
+        return cursor.fetchone() is not None
+
+
+def reservar_turno(connection, turno_id: int, paciente_id: int, qr_token: str) -> int:
+    query = """
+        UPDATE turnos
+        SET paciente_id = %s,
+            estado = 'reservado',
+            qr_token = %s
+        WHERE id = %s AND estado = 'disponible'
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id, qr_token, turno_id))
+        return cursor.rowcount
+
+
+def obtener_turno_con_detalles(connection, turno_id: int):
+    query = """
+        SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+               t.fecha_hora_llegada, t.estado, t.qr_token,
+               u_pac.nombre AS paciente_nombre, u_pac.apellido AS paciente_apellido,
+               u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+               e.nombre AS especialidad_nombre,
+               c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+        FROM turnos t
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+        JOIN medicos m ON t.medico_id = m.id
+        JOIN usuarios u_med ON m.usuario_id = u_med.id
+        LEFT JOIN especialidades e ON m.especialidad_id = e.id
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id,))
+        return cursor.fetchone()
