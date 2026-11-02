@@ -30,3 +30,8 @@
 
 .button-danger { background: #cf3a57; color: #fff; }
 .button-danger:hover { background: #a82a43; color: #fff; }
+
+.avatar-soft {
+  background: var(--soft);
+  color: var(--primary);
+}

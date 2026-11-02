@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% set seccion = 'medicos' %}
+
+{% set especialidades = {1: 'Clínica médica', 2: 'Cardiología', 3: 'Pediatría', 4: 'Dermatología',
+                         5: 'Traumatología', 6: 'Ginecología', 7: 'Oftalmología', 8: 'Neurología'} %}
+{% set consultorios = {1: 'Consultorio 101', 2: 'Consultorio 102', 3: 'Consultorio 104',
+                       4: 'Consultorio 201', 5: 'Consultorio 203', 6: 'Consultorio 205'} %}
+{% set coberturas = {1: 'OSDE', 2: 'Swiss Medical', 3: 'Galeno', 4: 'PAMI', 5: 'IOMA', 6: 'Particular'} %}
+{% set medicos = [
+  {'id': 1, 'titulo': 'Dra.', 'nombre': 'Lucía',    'apellido': 'Fernández', 'especialidad_id': 2, 'matricula': 'MN 112.458', 'consultorio_id': 2, 'email': 'lfernandez@saludintegral.demo', 'telefono': '11 4521-3301', 'experiencia': 14, 'coberturas': [1, 2, 3, 6],
+   'presentacion': 'Especialista en cardiología preventiva y control de hipertensión. Enfoque en hábitos y seguimiento a largo plazo.'},
+  {'id': 2, 'titulo': 'Dr.',  'nombre': 'Martín',   'apellido': 'González',  'especialidad_id': 1, 'matricula': 'MN 98.774',  'consultorio_id': 1, 'email': 'mgonzalez@saludintegral.demo', 'coberturas': [1, 2, 3, 4, 5, 6]},
+  {'id': 3, 'titulo': 'Dra.', 'nombre': 'Camila',   'apellido': 'Rodríguez', 'especialidad_id': 3, 'matricula': 'MN 130.215', 'consultorio_id': 1, 'email': 'crodriguez@saludintegral.demo', 'coberturas': [1, 2, 3, 6]},
+  {'id': 4, 'titulo': 'Dr.',  'nombre': 'Santiago', 'apellido': 'López',     'especialidad_id': 5, 'matricula': 'MN 105.632', 'consultorio_id': 3, 'email': 'slopez@saludintegral.demo', 'coberturas': [1, 2, 3, 6]},
+  {'id': 5, 'titulo': 'Dra.', 'nombre': 'Valentina', 'apellido': 'Pérez',    'especialidad_id': 4, 'matricula': 'MN 127.904', 'consultorio_id': 4, 'email': 'vperez@saludintegral.demo', 'coberturas': [1, 3, 6]},
+  {'id': 6, 'titulo': 'Dr.',  'nombre': 'Nicolás',  'apellido': 'Romero',    'especialidad_id': 8, 'matricula': 'MN 101.337', 'consultorio_id': 6, 'email': 'nromero@saludintegral.demo', 'coberturas': [1, 2, 3, 6]},
+  {'id': 7, 'titulo': 'Dra.', 'nombre': 'Sofía',    'apellido': 'Martínez',  'especialidad_id': 6, 'matricula': 'MN 118.560', 'consultorio_id': 5, 'email': 'smartinez@saludintegral.demo', 'coberturas': [1, 2, 3, 4, 6]},
+  {'id': 8, 'titulo': 'Dr.',  'nombre': 'Tomás',    'apellido': 'Herrera',   'especialidad_id': 7, 'matricula': 'MN 109.881', 'consultorio_id': 6, 'email': 'therrera@saludintegral.demo', 'coberturas': [1, 2, 3, 6]}
+] %}
+
+{% block title %}Médicos · Salud Integral{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+{% endblock %}
+
+{% block content %}
+{% set navegacion = [
+  {'clave': 'dashboard',      'nombre': 'Dashboard',       'icono': 'bi-grid-1x2-fill',   'destino': 'backoffice'},
+  {'clave': 'turnos',         'nombre': 'Turnos',          'icono': 'bi-calendar-check'},
+  {'clave': 'calendario',     'nombre': 'Calendario',      'icono': 'bi-calendar3'},
+  {'clave': 'sala-espera',    'nombre': 'Sala de espera',  'icono': 'bi-person-lines-fill'},
+  {'clave': 'checkin',        'nombre': 'Check-in QR',     'icono': 'bi-qr-code',         'destino': 'backoffice_checkin'},
+  {'clave': 'medicos',        'nombre': 'Médicos',         'icono': 'bi-person-badge',    'destino': 'backoffice_medicos'},
+  {'clave': 'especialidades', 'nombre': 'Especialidades',  'icono': 'bi-heart-pulse',     'destino': 'backoffice_specialties'},
+  {'clave': 'consultorios',   'nombre': 'Consultorios',    'icono': 'bi-building',        'destino': 'backoffice_consultorios'},
+  {'clave': 'coberturas',     'nombre': 'Coberturas',      'icono': 'bi-shield-check'},
+  {'clave': 'pacientes',      'nombre': 'Pacientes',       'icono': 'bi-people'},
+  {'clave': 'agendas',        'nombre': 'Agendas médicas', 'icono': 'bi-clock-history'},
+  {'clave': 'reportes',       'nombre': 'Reportes',        'icono': 'bi-bar-chart'},
+  {'clave': 'configuracion',  'nombre': 'Configuración',   'icono': 'bi-gear'}
+] %}
+{% set nombre_seccion = navegacion | selectattr('clave', 'equalto', seccion) | map(attribute='nombre') | first %}
+
+<div class="backoffice-layout">
+  <aside class="backoffice-sidebar">
+    <a class="backoffice-brand" href="{{ url_for('backoffice') }}" aria-label="Salud Integral, inicio">
+      <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+        <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+        <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+      </svg>
+      <span><strong>Salud Integral</strong><small>Centro Médico</small></span>
+    </a>
+
+    <p class="sidebar-label">Backoffice</p>
+    <nav class="backoffice-nav" aria-label="Backoffice">
+      {% for item in navegacion %}
+        <a class="{% if item.clave == seccion %}active{% endif %}"
+           href="{{ url_for(item.destino) if item.destino else '#' }}"
+           {% if item.clave == seccion %}aria-current="page"{% endif %}>
+          <i class="bi {{ item.icono }}" aria-hidden="true"></i><span>{{ item.nombre }}</span>
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="sidebar-footer mb-4">
+      <a href="{{ url_for('patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+    </div>
+  </aside>
+
+  <div class="backoffice-main">
+    <header class="backoffice-header">
+      <div class="flex-column align-items-start gap-1">
+        <nav aria-label="Migas de pan">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('backoffice') }}">Backoffice</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ nombre_seccion }}</li>
+          </ol>
+        </nav>
+        <span>Lunes 2 de noviembre · 10:30 (hora simulada)</span>
+      </div>
+      <div class="backoffice-user">
+        <button class="backoffice-notifications" type="button" aria-label="Notificaciones, 1 sin leer">
+          <i class="bi bi-bell" aria-hidden="true"></i><b>1</b>
+        </button>
+        <span class="backoffice-user-avatar">AA</span>
+        <span><strong>Andrés Villalba</strong><small>Administración</small></span>
+      </div>
+    </header>
+
+    <main class="backoffice-content">
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+  <div class="backoffice-heading">
+    <h1>Médicos</h1>
+    <p>Profesionales, matrículas, consultorios y coberturas aceptadas.</p>
+  </div>
+  <button class="button button-primary button-small" type="button" data-bs-toggle="modal" data-bs-target="#medico-modal">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo
+  </button>
+</div>
+
+<section class="card rounded-4 shadow-sm overflow-hidden" aria-label="Listado de médicos">
+  <div class="row g-3 align-items-center p-3">
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search" aria-hidden="true"></i></span>
+        <label class="visually-hidden" for="medicos-buscar">Buscar médico</label>
+        <input id="medicos-buscar" class="form-control border-start-0 py-2" type="search" placeholder="Buscar…" autocomplete="off">
+      </div>
+    </div>
+    <div class="col-md-7 text-md-end small text-body-secondary">
+      <span id="medicos-contador">{{ medicos | length }}</span> registros
+    </div>
+  </div>
+
+  <div class="table-responsive border-top">
+    <table class="table table-hover align-middle mb-0" id="medicos-tabla">
+      <thead class="table-light">
+        <tr>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2 ps-3">Profesional</th>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2">Especialidad</th>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2">Matrícula</th>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2">Consultorio</th>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2">Coberturas</th>
+          <th scope="col" class="small text-uppercase text-secondary fw-semibold py-2">Estado</th>
+          <th scope="col" class="py-2"><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in medicos %}
+          {% set nombre_completo = m.titulo ~ ' ' ~ m.nombre ~ ' ' ~ m.apellido %}
+          {% set datos = dict(m, nombre_completo=nombre_completo) %}
+          <tr data-busqueda="{{ (nombre_completo ~ ' ' ~ m.email ~ ' ' ~ especialidades[m.especialidad_id] ~ ' ' ~ m.matricula ~ ' ' ~ consultorios[m.consultorio_id]) | lower }}">
+            <td class="ps-3 py-3">
+              <div class="d-flex align-items-center gap-3">
+                <span class="avatar avatar-small avatar-soft" aria-hidden="true">{{ m.nombre[0] }}{{ m.apellido[0] }}</span>
+                <div class="small lh-sm">
+                  <div class="fw-medium">{{ nombre_completo }}</div>
+                  <div class="small text-body-secondary">{{ m.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="small">{{ especialidades[m.especialidad_id] }}</td>
+            <td class="small">{{ m.matricula }}</td>
+            <td class="small">{{ consultorios[m.consultorio_id] }}</td>
+            <td class="small">{{ m.coberturas | length }}</td>
+            <td><span class="badge rounded-pill fw-medium bg-success-subtle text-success-emphasis">Activo</span></td>
+            <td class="text-end pe-3 text-nowrap">
+              <button class="btn btn-sm btn-link text-body text-decoration-none" type="button"
+                      data-bs-toggle="modal" data-bs-target="#medico-modal" data-medico='{{ datos | tojson }}'
+                      aria-label="Editar a {{ nombre_completo }}">
+                <i class="bi bi-pencil" aria-hidden="true"></i>
+              </button>
+              <button class="btn btn-sm btn-link text-danger text-decoration-none" type="button"
+                      data-bs-toggle="modal" data-bs-target="#medico-baja-modal" data-medico='{{ datos | tojson }}'
+                      aria-label="Dar de baja a {{ nombre_completo }}">
+                <i class="bi bi-trash3" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="text-center text-body-secondary py-4 mb-0" id="medicos-vacio" hidden>No se encontraron médicos.</p>
+</section>
+    </main>
+  </div>
+</div>
+
+  {% include "backoffice/_medico_form_modal.html" %}
+
+  {# Confirmación de baja lógica (DELETE /api/medicos/<id>) #}
+  <div class="modal fade" id="medico-baja-modal" tabindex="-1" aria-labelledby="medico-baja-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" action="#" method="post">
+        <input type="hidden" name="id">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="medico-baja-titulo">Dar de baja al médico</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Querés dar de baja a <strong data-medico-nombre></strong>? Dejará de aparecer en el listado y no podrá iniciar sesión.</p>
+          <p class="text-body-secondary small mb-0">Si tiene turnos reservados o confirmados pendientes, primero hay que cancelarlos.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="button button-outline button-small" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="button button-danger button-small">Dar de baja</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+  <script src="{{ url_for('static', filename='js/backoffice-medicos.js') }}"></script>
+{% endblock %}
