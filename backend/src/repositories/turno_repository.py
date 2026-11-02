@@ -128,3 +128,57 @@ def obtener_turno_con_detalles(connection, turno_id: int):
     with connection.cursor() as cursor:
         cursor.execute(query, (turno_id,))
         return cursor.fetchone()
+
+
+def listar_turnos_paciente(connection, paciente_id: int, limit: int, offset: int, estado: str | None = None) -> list:
+    if estado:
+        query = """
+            SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+                   t.fecha_hora_llegada, t.estado, t.qr_token,
+                   u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+                   e.nombre AS especialidad_nombre,
+                   c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+            FROM turnos t
+            JOIN medicos m ON t.medico_id = m.id
+            JOIN usuarios u_med ON m.usuario_id = u_med.id
+            LEFT JOIN especialidades e ON m.especialidad_id = e.id
+            JOIN consultorios c ON t.consultorio_id = c.id
+            WHERE t.paciente_id = %s AND t.estado = %s
+            ORDER BY t.fecha_hora DESC
+            LIMIT %s OFFSET %s
+        """
+        params = (paciente_id, estado, limit, offset)
+    else:
+        query = """
+            SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+                   t.fecha_hora_llegada, t.estado, t.qr_token,
+                   u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+                   e.nombre AS especialidad_nombre,
+                   c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+            FROM turnos t
+            JOIN medicos m ON t.medico_id = m.id
+            JOIN usuarios u_med ON m.usuario_id = u_med.id
+            LEFT JOIN especialidades e ON m.especialidad_id = e.id
+            JOIN consultorios c ON t.consultorio_id = c.id
+            WHERE t.paciente_id = %s
+            ORDER BY t.fecha_hora DESC
+            LIMIT %s OFFSET %s
+        """
+        params = (paciente_id, limit, offset)
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
+
+
+def contar_turnos_paciente(connection, paciente_id: int, estado: str | None = None) -> int:
+    if estado:
+        query = "SELECT COUNT(*) AS total FROM turnos WHERE paciente_id = %s AND estado = %s"
+        params = (paciente_id, estado)
+    else:
+        query = "SELECT COUNT(*) AS total FROM turnos WHERE paciente_id = %s"
+        params = (paciente_id,)
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchone()["total"]

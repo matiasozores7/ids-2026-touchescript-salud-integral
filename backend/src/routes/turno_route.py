@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt, verify_jwt_in_request
 
 from src.errors.exceptions import BadRequestError
 from src.services import turno_service
+from src.utils.pagination import generate_hateoas_links, get_pagination_params
 from src.utils.responses import success_response
 from src.validators import turno_validator
 
@@ -88,4 +89,49 @@ def reservar_turno():
         data=resultado,
         message="Turno reservado exitosamente.",
         status_code=201
+    )
+
+
+# -----------------------------------------------------------------------------
+# Tarea 6: GET /turnos/mis-turnos
+# -----------------------------------------------------------------------------
+@turnos_bp.route("/turnos/mis-turnos", methods=["GET"])
+def listar_mis_turnos():
+    claims = _obtener_claims_actuales()
+    paciente_id = None
+
+    if claims.get("rol") == "paciente":
+        paciente_id = claims.get("perfil_id")
+
+    if paciente_id is None:
+        paciente_id = request.args.get("paciente_id", type=int)
+
+    if paciente_id is None:
+        raise BadRequestError(
+            description="Se requiere identificar al paciente para consultar sus turnos."
+        )
+
+    limit, offset = get_pagination_params()
+    estado = request.args.get("estado")
+    if estado:
+        estado = estado.strip().lower()
+
+    items, total = turno_service.listar_mis_turnos(
+        paciente_id=paciente_id,
+        limit=limit,
+        offset=offset,
+        estado=estado
+    )
+
+    links = generate_hateoas_links(
+        request.base_url,
+        limit,
+        offset,
+        total,
+        request.args
+    )
+
+    return success_response(
+        data={"items": items, "total": total, "_links": links},
+        message="Turnos del paciente obtenidos correctamente."
     )

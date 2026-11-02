@@ -183,3 +183,15 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
         reservado = turno_repo.obtener_turno_con_detalles(connection, turno_id)
 
     return _serializar_turno(reservado)
+
+
+def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | None = None):
+    with transaction() as connection:
+        if not turno_repo.existe_paciente(connection, paciente_id):
+            raise NotFoundError(description="No existe el paciente consultado.")
+
+        total = turno_repo.contar_turnos_paciente(connection, paciente_id, estado)
+        items = turno_repo.listar_turnos_paciente(connection, paciente_id, limit, offset, estado)
+
+    items_serializados = [_serializar_turno(item) for item in items]
+    return items_serializados, total
