@@ -137,6 +137,16 @@ def listar_mis_turnos():
     )
 
 
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
+def obtener_qr_turno(turno_id: int):
+    resultado = turno_service.obtener_qr_turno(turno_id)
+
+    return success_response(
+        data=resultado,
+        message="Código QR del turno obtenido correctamente."
+    )
+
+
 # -----------------------------------------------------------------------------
 # Tarea 7: PUT /turnos/<id>/cancelar
 # -----------------------------------------------------------------------------
