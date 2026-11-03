@@ -5,9 +5,11 @@ from src.routes import (
     auth_bp,
     consultorios_bp,
     medico_bp,
+    especialidades_bp,
     pacientes_bp,
     dashboard_bp,
-    agenda_bp
+    agenda_bp,
+    turnos_bp
 )
 from src.utils.error_handlers import register_error_handlers
 from src.utils.jwt_config import configurar_jwt
@@ -23,6 +25,8 @@ app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(consultorios_bp, url_prefix="/api")
 app.register_blueprint(medico_bp, url_prefix="/api")
 app.register_blueprint(agenda_bp, url_prefix="/api")
+app.register_blueprint(turnos_bp, url_prefix="/api")
+app.register_blueprint(especialidades_bp, url_prefix="/api")
 app.register_blueprint(pacientes_bp, url_prefix="/api")
 app.register_blueprint(dashboard_bp, url_prefix="/api")
 
