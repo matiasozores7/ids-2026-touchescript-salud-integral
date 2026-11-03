@@ -1,8 +1,9 @@
 from flask import Blueprint, request
-from flask_jwt_extended import get_jwt, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, jwt_required
 
 from src.errors.exceptions import BadRequestError
 from src.services import turno_service
+from src.utils.decorators import roles_requeridos
 from src.utils.pagination import generate_hateoas_links, get_pagination_params
 from src.utils.responses import success_response
 from src.validators import turno_validator
@@ -11,17 +12,15 @@ turnos_bp = Blueprint("turnos", __name__)
 
 
 def _obtener_claims_actuales() -> dict:
-    try:
-        verify_jwt_in_request(optional=True)
-        return get_jwt() or {}
-    except Exception:
-        return {}
+    return get_jwt()
 
 
 # -----------------------------------------------------------------------------
 # Tarea 3: PUT /turnos/<id>/estado
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/estado", methods=["PUT", "PATCH"])
+@jwt_required()
+@roles_requeridos("admin")
 def actualizar_estado_turno(turno_id: int):
     data = request.get_json(silent=True) or {}
     turno_validator.validar_actualizacion_estado(data)
@@ -39,6 +38,8 @@ def actualizar_estado_turno(turno_id: int):
 # Tarea 4: POST /turnos/generar
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/generar", methods=["POST"])
+@jwt_required()
+@roles_requeridos("admin")
 def generar_turnos():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_generacion_turnos(data)
@@ -64,6 +65,8 @@ def generar_turnos():
 # Tarea 5: POST /turnos (Reservar)
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos", methods=["POST"])
+@jwt_required()
+@roles_requeridos("paciente")
 def reservar_turno():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_reserva_turno(data)
@@ -96,6 +99,8 @@ def reservar_turno():
 # Tarea 6: GET /turnos/mis-turnos
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/mis-turnos", methods=["GET"])
+@jwt_required()
+@roles_requeridos("paciente")
 def listar_mis_turnos():
     claims = _obtener_claims_actuales()
     paciente_id = None
@@ -138,6 +143,8 @@ def listar_mis_turnos():
 
 
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
+@jwt_required()
+@roles_requeridos("paciente")
 def obtener_qr_turno(turno_id: int):
     resultado = turno_service.obtener_qr_turno(turno_id)
 
@@ -151,6 +158,8 @@ def obtener_qr_turno(turno_id: int):
 # Tarea 7: PUT /turnos/<id>/cancelar
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/cancelar", methods=["PUT", "PATCH"])
+@jwt_required()
+@roles_requeridos("paciente", "admin")
 def cancelar_turno(turno_id: int):
     claims = _obtener_claims_actuales()
     es_admin = claims.get("rol") == "admin"
@@ -177,6 +186,8 @@ def cancelar_turno(turno_id: int):
 # Tarea 8: POST /turnos/checkin
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/checkin", methods=["POST"])
+@jwt_required()
+@roles_requeridos("admin", "recepcion")
 def checkin_turno():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_checkin(data)
@@ -194,6 +205,8 @@ def checkin_turno():
 # Tarea 9: PUT /turnos/<id>/atendido
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/atendido", methods=["PUT", "PATCH"])
+@jwt_required()
+@roles_requeridos("admin", "recepcion")
 def marcar_turno_atendido(turno_id: int):
     resultado = turno_service.marcar_atendido(turno_id)
 
@@ -207,6 +220,8 @@ def marcar_turno_atendido(turno_id: int):
 # Tarea 10: POST /turnos/marcar-ausentes
 # -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/marcar-ausentes", methods=["POST"])
+@jwt_required()
+@roles_requeridos("admin")
 def marcar_turnos_ausentes():
     afectados = turno_service.marcar_ausentes()
 
