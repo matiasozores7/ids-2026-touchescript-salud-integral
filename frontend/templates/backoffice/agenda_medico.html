@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Agenda del médico · Salud Integral{% endblock %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-agendas.css') }}">
+{% endblock %}
+
+{% block body_class %}backoffice-shell{% endblock %}
+
+{% block content %}
+<div class="doctor-agenda-page">
+  <a class="back-link" href="{{ url_for('backoffice_agendas') }}">
+    <i class="bi bi-arrow-left"></i> Volver a agendas
+  </a>
+
+  <div class="doctor-title">
+    <div class="doctor-avatar">LF</div>
+    <div>
+      <h1>Dra. Lucía Fernández</h1>
+      <p>Cardiología · Consultorio 102</p>
+    </div>
+    <button class="button button-primary" id="new-agenda-button">
+      <i class="bi bi-plus-lg"></i> Nuevo bloque
+    </button>
+  </div>
+
+  <section class="weekly-card doctor-week">
+    <div class="week-grid">
+      {% for dia in ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] %}
+      <article class="day-card">
+        <h3>{{ dia }}</h3>
+
+        {% if dia in ["Lunes", "Miércoles", "Viernes"] %}
+        <div class="schedule-block">
+          <strong>09:00 – 13:00</strong>
+          <small>30 min · 8 turnos · semanal</small>
+          <button class="delete-block" aria-label="Eliminar bloque">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+        {% else %}
+        <span class="no-schedule">No atiende</span>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
