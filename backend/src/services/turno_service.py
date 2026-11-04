@@ -320,3 +320,17 @@ def marcar_ausentes() -> int:
         afectados = turno_repo.marcar_turnos_ausentes_expirados(connection, fecha_limite)
 
     return afectados
+
+
+def obtener_dias_disponibles(medico_id):
+    with transaction() as connection:
+        return turno_repo.obtener_dias_disponibles(connection, medico_id)
+
+
+def obtener_horarios_disponibles(medico_id, fecha):
+    with transaction() as connection:
+        return turno_repo.obtener_horarios_disponibles(
+            connection,
+            medico_id,
+            fecha
+        )

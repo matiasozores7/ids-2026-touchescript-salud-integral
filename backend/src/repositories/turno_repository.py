@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+
 def obtener_turno_por_id(connection, turno_id: int):
     query = """
         SELECT id, medico_id, paciente_id, consultorio_id, fecha_hora, fecha_hora_llegada, estado, qr_token
@@ -248,3 +251,66 @@ def marcar_turnos_ausentes_expirados(connection, fecha_limite) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (fecha_limite,))
         return cursor.rowcount
+
+
+def obtener_dias_disponibles(connection, medico_id: int):
+    query = """
+        SELECT DISTINCT dia_semana
+        FROM agendas
+        WHERE medico_id = %s
+        ORDER BY FIELD(
+            dia_semana,
+            'Lunes', 'Martes', 'Miercoles',
+            'Jueves', 'Viernes', 'Sabado', 'Domingo'
+        )
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (medico_id,))
+        filas = cursor.fetchall()
+
+    return [
+        fila["dia_semana"] if isinstance(fila, dict) else fila[0]
+        for fila in filas
+    ]
+
+
+def obtener_horarios_disponibles(connection, medico_id: int, fecha: str):
+    query = """
+        SELECT hora_inicio, hora_fin
+        FROM agendas
+        WHERE medico_id = %s
+          AND dia_semana = CASE DAYOFWEEK(%s)
+              WHEN 1 THEN 'Domingo'
+              WHEN 2 THEN 'Lunes'
+              WHEN 3 THEN 'Martes'
+              WHEN 4 THEN 'Miercoles'
+              WHEN 5 THEN 'Jueves'
+              WHEN 6 THEN 'Viernes'
+              WHEN 7 THEN 'Sabado'
+          END
+        ORDER BY hora_inicio
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (medico_id, fecha))
+        filas = cursor.fetchall()
+
+    horarios = []
+
+    for fila in filas:
+        inicio = fila["hora_inicio"] if isinstance(fila, dict) else fila[0]
+        fin = fila["hora_fin"] if isinstance(fila, dict) else fila[1]
+
+        if isinstance(inicio, timedelta):
+            inicio = str(inicio)
+
+        if isinstance(fin, timedelta):
+            fin = str(fin)
+
+        horarios.append({
+            "hora_inicio": str(inicio),
+            "hora_fin": str(fin)
+        })
+
+    return horarios
