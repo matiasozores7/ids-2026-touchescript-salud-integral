@@ -203,6 +203,23 @@ def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | N
     return items_serializados, total
 
 
+def obtener_qr_turno(turno_id: int) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        if not turno.get("qr_token"):
+            raise NotFoundError(
+                description="El turno todavía no tiene un código QR asociado."
+            )
+
+    return {
+        "turno_id": turno["id"],
+        "qr_token": turno["qr_token"],
+    }
+
+
 def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool = False) -> dict:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_id(connection, turno_id)

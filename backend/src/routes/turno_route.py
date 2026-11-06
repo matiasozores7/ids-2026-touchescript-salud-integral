@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt
 
 from src.errors.exceptions import BadRequestError
 from src.services import turno_service
+
 from src.utils.decorators import validar_rol, validar_token
 from src.utils.pagination import generate_hateoas_links, get_pagination_params
 from src.utils.responses import success_response
@@ -139,6 +140,18 @@ def listar_mis_turnos():
     return success_response(
         data={"items": items, "total": total, "_links": links},
         message="Turnos del paciente obtenidos correctamente."
+    )
+
+
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
+@validar_token
+@validar_rol("paciente", "admin", "recepcionista")
+def obtener_qr_turno(turno_id: int):
+    resultado = turno_service.obtener_qr_turno(turno_id)
+
+    return success_response(
+        data=resultado,
+        message="Código QR del turno obtenido correctamente."
     )
 
 
