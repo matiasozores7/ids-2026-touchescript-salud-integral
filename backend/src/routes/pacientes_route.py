@@ -5,17 +5,40 @@ from src.services.paciente_service import (
     crear_paciente_service,
     actualizar_paciente_service,
     eliminar_paciente_service,
-    obtener_pacientes_service
+    listar_pacientes_service
 )
+from src.utils.pagination import (
+    get_pagination_params,
+    generate_hateoas_links
+)
+
 
 pacientes_bp = Blueprint("pacientes_bp", __name__)
 
 
 @pacientes_bp.route("/pacientes", methods=["GET"])
-@validar_rol("admin")
+@validar_rol("paciente")
 def get_pacientes():
-    pacientes = obtener_pacientes_service()
-    return success_response(data=pacientes, message="Pacientes obtenidos correctamente.")
+    limit, offset = get_pagination_params()
+
+    items, total = listar_pacientes_service(limit, offset)
+
+    links = generate_hateoas_links(
+        request.base_url,
+        limit,
+        offset,
+        total,
+        request.args
+    )
+
+    return success_response(
+        data={
+            "items": items,
+            "total": total,
+            "_links": links
+        },
+        message="Pacientes obtenidos correctamente."
+    )
 
 
 @pacientes_bp.route("/pacientes", methods=["POST"])

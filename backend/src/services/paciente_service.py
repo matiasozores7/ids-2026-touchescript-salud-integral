@@ -7,7 +7,8 @@ from src.repositories.usuario_repository import (
     desactivar_usuario_por_id
 )
 from src.repositories.paciente_repository import (
-    obtener_todos_los_pacientes,
+    contar_pacientes,
+    listar_pacientes,
     insertar_paciente,
     actualizar_paciente_por_id,
     obtener_usuario_id_por_paciente_id,
@@ -17,9 +18,12 @@ from src.validators.paciente_validator import validar_datos_paciente, validar_da
 from src.errors.exceptions import NotFoundError, ConflictError
 
 
-def obtener_pacientes_service() -> list:
+def listar_pacientes_service(limit: int, offset: int):
     with transaction() as connection:
-        return obtener_todos_los_pacientes(connection)
+        total = contar_pacientes(connection)
+        items = listar_pacientes(connection, limit, offset)
+
+    return items, total
 
 
 def crear_paciente_service(data: dict) -> int:
