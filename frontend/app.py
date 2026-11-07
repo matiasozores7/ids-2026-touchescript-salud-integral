@@ -54,6 +54,18 @@ def backoffice():
 def backoffice_specialties():
     return render_template("backoffice/specialties.html")
 
+@app.get("/backoffice/agendas")
+def backoffice_agendas():
+    return render_template("backoffice/agendas.html")
+
+
+@app.get("/backoffice/agendas/<int:medico_id>")
+def backoffice_agenda_medico(medico_id):
+    return render_template(
+        "backoffice/agenda_medico.html",
+        medico_id=medico_id
+    )
+
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
 

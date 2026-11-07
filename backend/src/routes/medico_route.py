@@ -74,3 +74,17 @@ def eliminar_medico(medico_id):
     medico_service.eliminar_medico(medico_id)
 
     return success_response(message="Médico dado de baja exitosamente")
+
+
+@medico_bp.route(
+    "/especialidades/<int(min=1):especialidad_id>/medicos",
+    methods=["GET"]
+)
+@jwt_required()
+def listar_medicos_por_especialidad(especialidad_id):
+    resultado = medico_service.listar_por_especialidad(especialidad_id)
+
+    return success_response(
+        data=resultado,
+        message="Médicos de la especialidad"
+    )

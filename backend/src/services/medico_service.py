@@ -110,3 +110,11 @@ def eliminar_medico(medico_id: int) -> None:
             )
 
         medico_repo.desactivar_usuario(connection, medico["usuario_id"])
+
+
+def listar_por_especialidad(especialidad_id: int):
+    with transaction() as connection:
+        return medico_repo.listar_por_especialidad(
+            connection,
+            especialidad_id
+        )
