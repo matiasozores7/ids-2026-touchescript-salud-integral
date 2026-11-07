@@ -3,6 +3,7 @@ from flask import jsonify
 
 from src.database.connection import transaction
 from src.repositories import token_repository as token_repo
+from flask_jwt_extended import get_jwt
 
 
 def _respuesta_error_jwt(message: str, description: str):
@@ -59,3 +60,6 @@ def configurar_jwt(app):
         )
 
     return jwt
+
+def obtener_claims_actuales() -> dict:
+    return get_jwt() or {}

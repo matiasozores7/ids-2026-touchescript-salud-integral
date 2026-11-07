@@ -37,7 +37,7 @@ def _serializar_turno(turno: dict | None) -> dict | None:
     return {clave: _serializar_valor(valor) for clave, valor in turno.items()}
 
 
-def actualizar_estado(turno_id: int, nuevo_estado: str) -> dict:
+def actualizar_estado(turno_id: int, nuevo_estado: str) -> None:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_id(connection, turno_id)
         if turno is None:
@@ -46,7 +46,7 @@ def actualizar_estado(turno_id: int, nuevo_estado: str) -> dict:
         estado_actual = turno["estado"]
 
         if estado_actual == nuevo_estado:
-            return _serializar_turno(turno)
+            return
 
         transiciones_permitidas = TRANSICIONES_VALIDAS.get(estado_actual, set())
         if nuevo_estado not in transiciones_permitidas:
@@ -58,9 +58,6 @@ def actualizar_estado(turno_id: int, nuevo_estado: str) -> dict:
             )
 
         turno_repo.actualizar_estado_turno(connection, turno_id, nuevo_estado)
-        actualizado = turno_repo.obtener_turno_por_id(connection, turno_id)
-
-    return _serializar_turno(actualizado)
 
 
 def _time_a_segundos(valor_time) -> int:
@@ -186,8 +183,6 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
                 description="No fue posible reservar el turno porque su estado cambió de forma concurrente."
             )
 
-        reservado = turno_repo.obtener_turno_con_detalles(connection, turno_id)
-
     return turno_id
 
 
@@ -220,18 +215,18 @@ def obtener_qr_turno(turno_id: int) -> dict:
     }
 
 
-def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool = False) -> dict:
+def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool = False) -> None:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_id(connection, turno_id)
         if turno is None:
             raise NotFoundError(description="No se encontró el turno especificado.")
 
-        if not es_admin and paciente_id is not None:
-            if turno["paciente_id"] != paciente_id:
+        if not es_admin:
+            if paciente_id is None or turno["paciente_id"] != paciente_id:
                 raise ForbiddenError(
                     description="No tenés permiso para cancelar un turno que no te pertenece."
                 )
-
+            
         estado_actual = turno["estado"]
 
         if estado_actual == ESTADO_CANCELADO:
@@ -248,12 +243,8 @@ def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool
             )
 
         turno_repo.cancelar_turno(connection, turno_id)
-        cancelado = turno_repo.obtener_turno_por_id(connection, turno_id)
 
-    return _serializar_turno(cancelado)
-
-
-def realizar_checkin(qr_token: str) -> dict:
+def realizar_checkin(qr_token: str) -> None:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_qr(connection, qr_token)
         if turno is None:
@@ -301,12 +292,9 @@ def realizar_checkin(qr_token: str) -> dict:
             )
 
         turno_repo.confirmar_checkin(connection, turno["id"], ahora)
-        confirmado = turno_repo.obtener_turno_con_detalles(connection, turno["id"])
-
-    return _serializar_turno(confirmado)
 
 
-def marcar_atendido(turno_id: int) -> dict:
+def marcar_atendido(turno_id: int) -> None:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_id(connection, turno_id)
         if turno is None:
@@ -326,9 +314,6 @@ def marcar_atendido(turno_id: int) -> dict:
             )
 
         turno_repo.marcar_atendido(connection, turno_id)
-        atendido = turno_repo.obtener_turno_con_detalles(connection, turno_id)
-
-    return _serializar_turno(atendido)
 
 
 def marcar_ausentes() -> int:
