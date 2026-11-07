@@ -15,10 +15,10 @@ def crear_agenda():
     datos = request.get_json() or {}
     agenda_validator.validar(datos)
 
-    resultado = agenda_service.crear_agenda(datos)
+    agenda_id = agenda_service.crear_agenda(datos)
 
     return success_response(
-        data=resultado,
+        data={"id": agenda_id},
         message="Agenda creada exitosamente",
         status_code=201
     )
