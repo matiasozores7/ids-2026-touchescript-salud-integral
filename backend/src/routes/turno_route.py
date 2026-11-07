@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_jwt_extended import get_jwt
+from flask_jwt_extended import get_jwt, jwt_required
 
 from src.errors.exceptions import BadRequestError
 from src.services import turno_service
@@ -8,6 +8,7 @@ from src.utils.decorators import validar_rol, validar_token
 from src.utils.pagination import generate_hateoas_links, get_pagination_params
 from src.utils.responses import success_response
 from src.validators import turno_validator
+from datetime import date
 
 turnos_bp = Blueprint("turnos", __name__)
 
@@ -229,4 +230,53 @@ def marcar_turnos_ausentes():
     return success_response(
         data={"turnos_marcados": afectados},
         message=f"Se actualizaron {afectados} turnos al estado ausente."
+    )
+
+
+#------------------------------------------------------------------------------
+# GET /medicos/<id>/dias-disponibles
+#------------------------------------------------------------------------------
+
+@turnos_bp.route(
+    "/medicos/<int(min=1):medico_id>/dias-disponibles",
+    methods=["GET"]
+)
+@validar_token
+def obtener_dias_disponibles(medico_id: int):
+    dias = turno_service.obtener_dias_disponibles(medico_id)
+
+    return success_response(
+        data=dias,
+        message="Días disponibles obtenidos correctamente."
+    )
+
+
+@turnos_bp.route(
+    "/medicos/<int(min=1):medico_id>/horarios-disponibles",
+    methods=["GET"]
+)
+@validar_token
+def obtener_horarios_disponibles(medico_id: int):
+    fecha = request.args.get("fecha")
+
+    if not fecha:
+        raise BadRequestError(
+            description="El parámetro 'fecha' es obligatorio."
+        )
+
+    try:
+        date.fromisoformat(fecha)
+    except ValueError:
+        raise BadRequestError(
+            description="La fecha debe tener el formato YYYY-MM-DD."
+        )
+
+    horarios = turno_service.obtener_horarios_disponibles(
+        medico_id=medico_id,
+        fecha=fecha
+    )
+
+    return success_response(
+        data=horarios,
+        message="Horarios disponibles obtenidos correctamente."
     )
