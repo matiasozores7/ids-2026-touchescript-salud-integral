@@ -58,9 +58,9 @@ def modificar_medico(medico_id):
     data = request.get_json() or {}
     medico_validator.validar_modificacion_parcial(data)
 
-    resultado = medico_service.modificar_medico(medico_id, data)
+    medico_service.modificar_medico(medico_id, data)
 
-    return success_response(data=resultado, message="Médico modificado exitosamente")
+    return success_response(message="Médico modificado exitosamente")
 
 
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["DELETE"])

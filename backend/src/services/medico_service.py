@@ -64,7 +64,7 @@ def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
     return medico_id
 
 
-def modificar_medico(medico_id: int, datos: dict) -> dict:
+def modificar_medico(medico_id: int, datos: dict) -> None:
     with transaction() as connection:
         medico = _obtener_medico_activo(connection, medico_id)
 
@@ -93,9 +93,6 @@ def modificar_medico(medico_id: int, datos: dict) -> dict:
             connection, medico_id, medico["usuario_id"],
             nombre, apellido, email, especialidad_id
         )
-        actualizado = medico_repo.obtener_medico_por_id(connection, medico_id)
-
-    return _a_respuesta(actualizado)
 
 
 def eliminar_medico(medico_id: int) -> None:
