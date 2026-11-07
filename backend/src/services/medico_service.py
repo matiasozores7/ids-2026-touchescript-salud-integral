@@ -60,9 +60,8 @@ def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
             email_clean, password_hash, rol="medico"
         )
         medico_id = medico_repo.crear_medico(connection, usuario_id, especialidad_id)
-        medico = medico_repo.obtener_medico_por_id(connection, medico_id)
 
-    return _a_respuesta(medico)
+    return medico_id
 
 
 def modificar_medico(medico_id: int, datos: dict) -> dict:

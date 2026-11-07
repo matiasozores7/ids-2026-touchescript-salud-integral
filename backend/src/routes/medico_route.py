@@ -37,7 +37,7 @@ def crear_medico():
     data = request.get_json() or {}
     medico_validator.validar_creacion(data)
 
-    resultado = medico_service.crear_medico(
+    medico_id = medico_service.crear_medico(
         nombre=data["nombre"],
         apellido=data["apellido"],
         email=data["email"],
@@ -46,7 +46,7 @@ def crear_medico():
     )
 
     return success_response(
-        data=resultado,
+        data={"id": medico_id},
         message="Médico creado exitosamente",
         status_code=201
     )
