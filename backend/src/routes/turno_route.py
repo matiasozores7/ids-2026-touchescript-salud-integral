@@ -76,10 +76,10 @@ def reservar_turno():
         )
 
     turno_id = data["turno_id"]
-    resultado = turno_service.reservar_turno(turno_id=turno_id, paciente_id=paciente_id)
+    turno_id = turno_service.reservar_turno(turno_id=turno_id, paciente_id=paciente_id)
 
     return success_response(
-        data=resultado,
+        data={"id": turno_id},
         message="Turno reservado exitosamente.",
         status_code=201
     )
@@ -167,10 +167,9 @@ def checkin_turno():
     turno_validator.validar_checkin(data)
 
     qr_token = data["qr_token"].strip()
-    resultado = turno_service.realizar_checkin(qr_token)
+    turno_service.realizar_checkin(qr_token)
 
     return success_response(
-        data=resultado,
         message="Check-in registrado exitosamente. Paciente ingresado a sala de espera."
     )
 

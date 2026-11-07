@@ -188,7 +188,7 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
 
         reservado = turno_repo.obtener_turno_con_detalles(connection, turno_id)
 
-    return _serializar_turno(reservado)
+    return turno_id
 
 
 def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | None = None):
