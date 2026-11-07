@@ -39,13 +39,12 @@ def listar_agendas_medico(medico_id):
 @agenda_bp.route("/agendas/<int:agenda_id>", methods=["PUT"])
 @validar_rol("admin")
 def actualizar_agenda(agenda_id):
-    datos = request.get_json() or {}
+    datos = request.get_json(silent=True) or {}
     agenda_validator.validar(datos)
 
-    resultado = agenda_service.actualizar_agenda(agenda_id, datos)
+    agenda_service.actualizar_agenda(agenda_id, datos)
 
     return success_response(
-        data=resultado,
         message="Agenda actualizada exitosamente"
     )
 

@@ -69,7 +69,6 @@ def actualizar_agenda(agenda_id, datos):
             )
 
         agenda_repo.actualizar(connection, agenda_id, datos)
-        return agenda_repo.obtener(connection, agenda_id)
 
 
 def eliminar_agenda(agenda_id):
