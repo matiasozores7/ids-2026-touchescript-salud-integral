@@ -1,9 +1,8 @@
 from flask import Blueprint, request
-from flask_jwt_extended import jwt_required
 
 from src.services import agenda_service
 from src.validators import agenda_validator
-from src.utils.decorators import roles_requeridos
+from src.utils.decorators import validar_token, validar_rol
 from src.utils.responses import success_response
 
 
@@ -11,8 +10,7 @@ agenda_bp = Blueprint("agendas", __name__)
 
 
 @agenda_bp.route("/agendas", methods=["POST"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def crear_agenda():
     datos = request.get_json() or {}
     agenda_validator.validar(datos)
@@ -27,7 +25,7 @@ def crear_agenda():
 
 
 @agenda_bp.route("/medicos/<int:medico_id>/agendas", methods=["GET"])
-@jwt_required()
+@validar_token
 def listar_agendas_medico(medico_id):
     resultado = agenda_service.listar_por_medico(medico_id)
 
@@ -39,8 +37,7 @@ def listar_agendas_medico(medico_id):
 
 
 @agenda_bp.route("/agendas/<int:agenda_id>", methods=["PUT"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def actualizar_agenda(agenda_id):
     datos = request.get_json() or {}
     agenda_validator.validar(datos)
@@ -54,8 +51,7 @@ def actualizar_agenda(agenda_id):
 
 
 @agenda_bp.route("/agendas/<int:agenda_id>", methods=["DELETE"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def eliminar_agenda(agenda_id):
     agenda_service.eliminar_agenda(agenda_id)
 

@@ -1,8 +1,7 @@
 from flask import Blueprint, request
-from flask_jwt_extended import jwt_required
 
 from src.utils.responses import success_response
-from src.utils.decorators import roles_requeridos
+from src.utils.decorators import validar_rol
 from src.utils.pagination import get_pagination_params, generate_hateoas_links
 from src.services import medico_service
 from src.validators import medico_validator
@@ -11,8 +10,7 @@ medico_bp = Blueprint("medicos", __name__)
 
 
 @medico_bp.route("/medicos", methods=["GET"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def listar_medicos():
     limit, offset = get_pagination_params()
 
@@ -26,8 +24,7 @@ def listar_medicos():
 
 
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["GET"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def obtener_medico(medico_id):
     resultado = medico_service.obtener_medico(medico_id)
 
@@ -35,8 +32,7 @@ def obtener_medico(medico_id):
 
 
 @medico_bp.route("/medicos", methods=["POST"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def crear_medico():
     data = request.get_json() or {}
     medico_validator.validar_creacion(data)
@@ -57,8 +53,7 @@ def crear_medico():
 
 
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["PATCH"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def modificar_medico(medico_id):
     data = request.get_json() or {}
     medico_validator.validar_modificacion_parcial(data)
@@ -69,8 +64,7 @@ def modificar_medico(medico_id):
 
 
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["DELETE"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def eliminar_medico(medico_id):
     medico_service.eliminar_medico(medico_id)
 

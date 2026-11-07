@@ -1,8 +1,7 @@
 from flask import Blueprint, request
-from flask_jwt_extended import jwt_required
 
 from src.services import especialidades_service
-from src.utils.decorators import roles_requeridos
+from src.utils.decorators import validar_rol
 from src.utils.pagination import generate_hateoas_links, get_pagination_params
 from src.utils.responses import success_response
 from src.validators import especialidades_validator
@@ -12,8 +11,7 @@ especialidades_bp = Blueprint("especialidades", __name__)
 
 
 @especialidades_bp.route("/especialidades", methods=["GET"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def listar_especialidades():
     limit, offset = get_pagination_params()
     items, total = especialidades_service.listar_especialidades(limit, offset)
@@ -32,8 +30,7 @@ def listar_especialidades():
 
 
 @especialidades_bp.route("/especialidades", methods=["POST"])
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def crear_especialidad():
     data = request.get_json(silent=True)
     especialidades_validator.validar_creacion(data)
@@ -55,8 +52,7 @@ def crear_especialidad():
     "/especialidades/<int(min=1):especialidad_id>",
     methods=["PUT"]
 )
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def actualizar_especialidad(especialidad_id):
     data = request.get_json(silent=True)
     especialidades_validator.validar_actualizacion(data)
@@ -77,8 +73,7 @@ def actualizar_especialidad(especialidad_id):
     "/especialidades/<int(min=1):especialidad_id>",
     methods=["DELETE"]
 )
-@jwt_required()
-@roles_requeridos("admin")
+@validar_rol("admin")
 def eliminar_especialidad(especialidad_id):
     especialidades_service.eliminar_especialidad(especialidad_id)
 

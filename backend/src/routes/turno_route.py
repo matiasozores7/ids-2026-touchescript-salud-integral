@@ -17,12 +17,8 @@ def _obtener_claims_actuales() -> dict:
     return get_jwt() or {}
 
 
-# -----------------------------------------------------------------------------
-# Tarea 3: PUT /turnos/<id>/estado
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/estado", methods=["PUT", "PATCH"])
-@validar_token
-@validar_rol("admin", "recepcionista", "medico")
+@validar_rol("admin","medico")
 def actualizar_estado_turno(turno_id: int):
     data = request.get_json(silent=True) or {}
     turno_validator.validar_actualizacion_estado(data)
@@ -36,12 +32,8 @@ def actualizar_estado_turno(turno_id: int):
     )
 
 
-# -----------------------------------------------------------------------------
-# Tarea 4: POST /turnos/generar
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/generar", methods=["POST"])
-@validar_token
-@validar_rol("admin", "recepcionista")
+@validar_rol("admin")
 def generar_turnos():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_generacion_turnos(data)
@@ -63,12 +55,8 @@ def generar_turnos():
     )
 
 
-# -----------------------------------------------------------------------------
-# Tarea 5: POST /turnos (Reservar)
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos", methods=["POST"])
-@validar_token
-@validar_rol("paciente", "admin", "recepcionista")
+@validar_rol("paciente", "admin")
 def reservar_turno():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_reserva_turno(data)
@@ -96,13 +84,8 @@ def reservar_turno():
         status_code=201
     )
 
-
-# -----------------------------------------------------------------------------
-# Tarea 6: GET /turnos/mis-turnos
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/mis-turnos", methods=["GET"])
-@validar_token
-@validar_rol("paciente", "admin", "recepcionista")
+@validar_rol("paciente", "admin")
 def listar_mis_turnos():
     claims = _obtener_claims_actuales()
     paciente_id = None
@@ -145,8 +128,7 @@ def listar_mis_turnos():
 
 
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
-@validar_token
-@validar_rol("paciente", "admin", "recepcionista")
+@validar_rol("paciente", "admin")
 def obtener_qr_turno(turno_id: int):
     resultado = turno_service.obtener_qr_turno(turno_id)
 
@@ -155,13 +137,8 @@ def obtener_qr_turno(turno_id: int):
         message="Código QR del turno obtenido correctamente."
     )
 
-
-# -----------------------------------------------------------------------------
-# Tarea 7: PUT /turnos/<id>/cancelar
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/cancelar", methods=["PUT", "PATCH"])
-@validar_token
-@validar_rol("paciente", "admin", "recepcionista")
+@validar_rol("paciente", "admin")
 def cancelar_turno(turno_id: int):
     claims = _obtener_claims_actuales()
     es_admin = claims.get("rol") in ("admin", "recepcionista")
@@ -183,13 +160,8 @@ def cancelar_turno(turno_id: int):
         message="Turno cancelado exitosamente."
     )
 
-
-# -----------------------------------------------------------------------------
-# Tarea 8: POST /turnos/checkin
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/checkin", methods=["POST"])
-@validar_token
-@validar_rol("paciente", "admin", "recepcionista")
+@validar_rol("paciente", "admin")
 def checkin_turno():
     data = request.get_json(silent=True) or {}
     turno_validator.validar_checkin(data)
@@ -202,12 +174,7 @@ def checkin_turno():
         message="Check-in registrado exitosamente. Paciente ingresado a sala de espera."
     )
 
-
-# -----------------------------------------------------------------------------
-# Tarea 9: PUT /turnos/<id>/atendido
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/atendido", methods=["PUT", "PATCH"])
-@validar_token
 @validar_rol("admin", "medico")
 def marcar_turno_atendido(turno_id: int):
     resultado = turno_service.marcar_atendido(turno_id)
@@ -217,12 +184,7 @@ def marcar_turno_atendido(turno_id: int):
         message="Turno marcado como atendido exitosamente."
     )
 
-
-# -----------------------------------------------------------------------------
-# Tarea 10: POST /turnos/marcar-ausentes
-# -----------------------------------------------------------------------------
 @turnos_bp.route("/turnos/marcar-ausentes", methods=["POST"])
-@validar_token
 @validar_rol("admin", "recepcionista")
 def marcar_turnos_ausentes():
     afectados = turno_service.marcar_ausentes()
@@ -231,11 +193,6 @@ def marcar_turnos_ausentes():
         data={"turnos_marcados": afectados},
         message=f"Se actualizaron {afectados} turnos al estado ausente."
     )
-
-
-#------------------------------------------------------------------------------
-# GET /medicos/<id>/dias-disponibles
-#------------------------------------------------------------------------------
 
 @turnos_bp.route(
     "/medicos/<int(min=1):medico_id>/dias-disponibles",
@@ -249,7 +206,6 @@ def obtener_dias_disponibles(medico_id: int):
         data=dias,
         message="Días disponibles obtenidos correctamente."
     )
-
 
 @turnos_bp.route(
     "/medicos/<int(min=1):medico_id>/horarios-disponibles",
