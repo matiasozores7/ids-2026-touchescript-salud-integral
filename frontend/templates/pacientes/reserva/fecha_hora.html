@@ -1,0 +1,62 @@
+{% extends "pacientes/reserva/_base.html" %}
+
+{% set paso_actual = 3 %}
+
+{% block paso %}
+
+{% set medicos = {1: 'Dra. Camila Rodríguez', 2: 'Dr. Andrés Paz', 3: 'Dra. Laura Benítez'} %}
+{% set medico = medicos.get(medico_id|default(1)|int, medicos[1]) %}
+{% set fechas = [
+  {'valor': '2026-11-03', 'dia': 'Mar', 'num': 3,  'libres': 8},
+  {'valor': '2026-11-05', 'dia': 'Jue', 'num': 5,  'libres': 7},
+  {'valor': '2026-11-07', 'dia': 'Sáb', 'num': 7,  'libres': 9},
+  {'valor': '2026-11-10', 'dia': 'Mar', 'num': 10, 'libres': 10},
+  {'valor': '2026-11-12', 'dia': 'Jue', 'num': 12, 'libres': 8},
+  {'valor': '2026-11-14', 'dia': 'Sáb', 'num': 14, 'libres': 9},
+  {'valor': '2026-11-17', 'dia': 'Mar', 'num': 17, 'libres': 10},
+  {'valor': '2026-11-19', 'dia': 'Jue', 'num': 19, 'libres': 8},
+  {'valor': '2026-11-21', 'dia': 'Sáb', 'num': 21, 'libres': 9}
+] %}
+{% set horarios = [
+  {'hora': '09:00', 'libre': true},  {'hora': '09:20', 'libre': true},  {'hora': '09:40', 'libre': true},
+  {'hora': '10:00', 'libre': false}, {'hora': '10:20', 'libre': true},  {'hora': '10:40', 'libre': true},
+  {'hora': '11:00', 'libre': true},  {'hora': '11:20', 'libre': true},  {'hora': '11:40', 'libre': false},
+  {'hora': '12:00', 'libre': false}, {'hora': '12:20', 'libre': true},  {'hora': '12:40', 'libre': true}
+] %}
+
+<form class="reserva-card card p-4" id="form-fecha-hora" action="{{ url_for('reservar_confirmacion') }}" method="get">
+  <input type="hidden" name="medico_id" value="{{ medico_id|default(1) }}">
+
+  <h2 class="fs-6 fw-medium mb-3">Fechas disponibles con {{ medico }}</h2>
+
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    {% for f in fechas %}
+      <input class="btn-check" type="radio" name="fecha" id="fecha-{{ loop.index }}" value="{{ f.valor }}" required>
+      <label class="btn reserva-opcion reserva-fecha d-flex flex-column align-items-center gap-1" for="fecha-{{ loop.index }}">
+        <span class="text-xs">{{ f.dia }}</span>
+        <strong class="fs-5 lh-1">{{ f.num }}</strong>
+        <span class="text-xs text-body-secondary">{{ f.libres }} libres</span>
+      </label>
+    {% endfor %}
+  </div>
+
+  <p class="text-body-secondary" id="horarios-vacio">Elegí una fecha para ver los horarios.</p>
+
+  <div class="row row-cols-3 row-cols-md-6 g-2" id="horarios" hidden>
+    {% for h in horarios %}
+      <div class="col">
+        <input class="btn-check" type="radio" name="hora" id="hora-{{ loop.index }}" value="{{ h.hora }}" required{{ '' if h.libre else ' disabled' }}>
+        <label class="btn reserva-opcion w-100{{ '' if h.libre else ' text-decoration-line-through' }}" for="hora-{{ loop.index }}">{{ h.hora }}</label>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <button class="button button-primary button-large" type="submit" id="btn-continuar" disabled>Continuar</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block page_scripts %}
+  <script src="{{ url_for('static', filename='js/reservar-fecha-hora.js') }}" defer></script>
+{% endblock %}

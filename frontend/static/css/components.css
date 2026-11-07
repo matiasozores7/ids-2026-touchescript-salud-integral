@@ -30,3 +30,38 @@
 
 .button-danger { background: #cf3a57; color: #fff; }
 .button-danger:hover { background: #a82a43; color: #fff; }
+.button:disabled { opacity: .5; pointer-events: none; }
+
+.mis-turnos-page,
+.reserva-page {
+  --bs-body-color: #1f2d3d;
+  --bs-secondary-color: #5f6c7b;   /* .text-body-secondary */
+  --bs-secondary-rgb: 120, 132, 147; /* .text-secondary (= --muted) */
+  --bs-primary-rgb: 71, 127, 154;  /* .text-primary (= --primary) */
+  --bs-tertiary-bg-rgb: 238, 242, 244; /* .bg-body-tertiary */
+  --bs-border-color: var(--border);
+  --celeste: #e3f2f8;
+  color: var(--bs-body-color);
+}
+
+:is(.mis-turnos-page, .reserva-page) .button { border-radius: 10px; font-size: 14px; font-weight: 500; }
+:is(.mis-turnos-page, .reserva-page) .button-large { min-height: 44px; font-size: 15px; }
+:is(.mis-turnos-page, .reserva-page) .avatar { background: var(--celeste); color: var(--primary); }
+:is(.mis-turnos-page, .reserva-page) h1 { font-size: 30px; }
+:is(.mis-turnos-page, .reserva-page) a:not(.button):hover { color: var(--petrol); }
+
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 13px; }
+.text-lg { font-size: 17px; font-weight: 600; }
+
+/* Tarjeta de las pantallas del paciente */
+.turno-card,
+.reserva-card {
+  --bs-card-border-radius: 14px;
+  --bs-card-border-color: var(--bs-border-color);
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 575.98px) {
+  :is(.mis-turnos-page, .reserva-page) h1 { font-size: 26px; }
+}

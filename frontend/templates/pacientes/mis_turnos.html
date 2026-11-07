@@ -56,7 +56,7 @@
     {% else %}
       <div class="turnos-vacio border bg-white d-flex flex-column align-items-center gap-3 text-center text-body-secondary">
         <p class="mb-0">{{ vacio }}</p>
-        {% if id == 'proximos' %}<a class="button button-primary button-small" href="#">Reservar turno</a>{% endif %}
+        {% if id == 'proximos' %}<a class="button button-primary button-small" href="{{ url_for('reservar_especialidad') }}">Reservar turno</a>{% endif %}
       </div>
     {% endif %}
   </div>
@@ -66,7 +66,7 @@
 
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
     <h1 class="fw-bold mb-0">Mis turnos</h1>
-    <a class="button button-primary button-large" href="#">
+    <a class="button button-primary button-large" href="{{ url_for('reservar_especialidad') }}">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 13v4M10 15h4"/></svg>
       Nuevo turno
     </a>

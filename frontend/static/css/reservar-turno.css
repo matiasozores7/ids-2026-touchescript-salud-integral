@@ -1,0 +1,40 @@
+.reserva-page { --bs-border-radius: 10px; }
+
+/* Indicador de pasos: .progress de Bootstrap */
+.reserva-pasos .progress {
+  --bs-progress-height: 4px;
+  --bs-progress-bg: var(--border);
+  --bs-progress-bar-bg: var(--primary);
+}
+
+/* Tarjetas de especialidad y médico (son links) */
+a.reserva-card:hover { --bs-card-border-color: var(--primary); }
+.avatar-icono { width: 40px; height: 40px; }
+
+/* Fechas y horarios: .btn + .btn-check de Bootstrap */
+.reserva-opcion {
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: var(--border);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--soft);
+  --bs-btn-hover-border-color: var(--border);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--primary);
+  --bs-btn-active-border-color: var(--primary);
+  --bs-btn-disabled-color: var(--muted);
+  --bs-btn-disabled-bg: rgb(var(--bs-tertiary-bg-rgb));
+  --bs-btn-disabled-border-color: var(--border);
+  --bs-btn-disabled-opacity: 1;
+  --bs-btn-font-size: 15px;
+  --bs-btn-font-weight: 500;
+}
+
+.reserva-fecha {
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--celeste);
+  min-width: 80px;
+}
+
+/* Confirmación */
+.reserva-card dd { font-size: 15px; }
