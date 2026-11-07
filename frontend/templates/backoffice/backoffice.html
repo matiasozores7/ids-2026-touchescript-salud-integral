@@ -19,7 +19,7 @@
   ("Especialidades", "bi-heart-pulse", "backoffice_specialties"),
   ("Consultorios", "bi-building", "#"),
   ("Coberturas", "bi-shield-check", "#"),
-  ("Pacientes", "bi-people", "#"),
+  ("Pacientes", "bi-people", "backoffice_pacientes"),
   ("Agendas médicas", "bi-clock-history", "#"),
   ("Reportes", "bi-bar-chart", "#"),
   ("Configuración", "bi-gear", "#")
@@ -45,7 +45,7 @@
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
       {% for item, icon, target in navigation %}
-        <a class="{% if loop.first %}active{% endif %}" href="{% if target in ('backoffice', 'backoffice_specialties') %}{{ url_for(target) }}{% else %}{{ target }}{% endif %}">
+        <a class="{% if loop.first %}active{% endif %}" href="{% if target in ('backoffice', 'backoffice_specialties', 'backoffice_pacientes') %}{{ url_for(target) }}{% else %}{{ target }}{% endif %}">
           <i class="bi {{ icon }}" aria-hidden="true"></i>
           <span>{{ item }}</span>
         </a>
