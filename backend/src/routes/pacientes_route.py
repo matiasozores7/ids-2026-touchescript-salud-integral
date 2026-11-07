@@ -45,8 +45,8 @@ def get_pacientes():
 @validar_rol("admin")
 def post_paciente():
     data = request.get_json() or {}
-    nuevo_id = crear_paciente_service(data)
-    return success_response(data={"id": nuevo_id}, message="Paciente creado con éxito.", status_code=201)
+    paciente_id = crear_paciente_service(data)
+    return success_response(data={"id": paciente_id}, message="Paciente creado con éxito.", status_code=201)
 
 
 @pacientes_bp.route("/pacientes/<int:paciente_id>", methods=["PUT"])
