@@ -1,0 +1,27 @@
+{% extends "pacientes/reserva/_base.html" %}
+
+{% set paso_actual = 2 %}
+
+{% block paso %}
+{# Datos de ejemplo. Cuando se conecte el backend, reemplazar por
+   GET /especialidades/<id>/medicos (la variable especialidad_id llega desde la ruta). #}
+{% set medicos = [
+  {'id': 1, 'iniciales': 'CR', 'nombre': 'Dra. Camila Rodríguez', 'consultorio': 'Consultorio 101', 'experiencia': 9},
+  {'id': 2, 'iniciales': 'AP', 'nombre': 'Dr. Andrés Paz',        'consultorio': 'Consultorio 104', 'experiencia': 12},
+  {'id': 3, 'iniciales': 'LB', 'nombre': 'Dra. Laura Benítez',    'consultorio': 'Consultorio 203', 'experiencia': 6}
+] %}
+
+<div class="row row-cols-1 row-cols-lg-2 g-3">
+  {% for m in medicos %}
+    <div class="col">
+      <a class="reserva-card card flex-row align-items-center gap-3 p-3" href="{{ url_for('reservar_fecha_hora', medico_id=m.id) }}">
+        <span class="avatar avatar-icono" aria-hidden="true">{{ m.iniciales }}</span>
+        <div>
+          <h2 class="text-lg mb-0">{{ m.nombre }}</h2>
+          <p class="small text-body-secondary mb-0">{{ m.consultorio }} · {{ m.experiencia }} años de experiencia</p>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
