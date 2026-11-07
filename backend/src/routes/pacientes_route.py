@@ -49,9 +49,9 @@ def post_paciente():
     return success_response(data={"id": paciente_id}, message="Paciente creado con éxito.", status_code=201)
 
 
-@pacientes_bp.route("/pacientes/<int:paciente_id>", methods=["PUT"])
+@pacientes_bp.route("/pacientes/<int:paciente_id>", methods=["PATCH"])
 @validar_rol("admin")
-def put_paciente(paciente_id):
+def patch_paciente(paciente_id):
     data = request.get_json() or {}
     actualizar_paciente_service(paciente_id, data)
     return success_response(message=f"Paciente con ID {paciente_id} actualizado con éxito.")
