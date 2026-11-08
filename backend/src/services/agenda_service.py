@@ -23,7 +23,7 @@ def crear_agenda(datos):
             )
 
         agenda_id = agenda_repo.crear(connection, datos)
-        return agenda_repo.obtener(connection, agenda_id)
+        return agenda_id
 
 
 def _serializar_agenda(agenda):
@@ -69,7 +69,6 @@ def actualizar_agenda(agenda_id, datos):
             )
 
         agenda_repo.actualizar(connection, agenda_id, datos)
-        return agenda_repo.obtener(connection, agenda_id)
 
 
 def eliminar_agenda(agenda_id):

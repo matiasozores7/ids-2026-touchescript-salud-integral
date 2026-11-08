@@ -21,7 +21,20 @@ def crear_paciente(connection, usuario_id: int, cobertura_id=None) -> int:
         cursor.execute(query, (usuario_id, cobertura_id))
         return cursor.lastrowid
 
-def obtener_todos_los_pacientes(connection):
+def contar_pacientes(connection) -> int:
+    query = """
+        SELECT COUNT(*) AS total
+        FROM pacientes
+        INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
+        WHERE usuarios.activo = 1
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchone()["total"]
+
+
+def listar_pacientes(connection, limit: int, offset: int) -> list:
     query = """
         SELECT
             pacientes.id AS paciente_id,
@@ -33,10 +46,13 @@ def obtener_todos_los_pacientes(connection):
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
         LEFT JOIN coberturas ON pacientes.cobertura_id = coberturas.id
-        WHERE usuarios.activo = 1;
+        WHERE usuarios.activo = 1
+        ORDER BY usuarios.apellido, usuarios.nombre, pacientes.id
+        LIMIT %s OFFSET %s
     """
+
     with connection.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(query, (limit, offset))
         return cursor.fetchall()
 
 def insertar_paciente(connection, usuario_id: int, cobertura_id: int) -> int:
@@ -65,11 +81,19 @@ def obtener_usuario_id_por_paciente_id(connection, paciente_id: int) -> int | No
 
 def buscar_paciente_por_id(connection, paciente_id: int) -> dict | None:
     query = """
-        SELECT pacientes.id AS paciente_id, pacientes.usuario_id, usuarios.activo
+        SELECT
+            pacientes.id AS paciente_id,
+            pacientes.usuario_id,
+            pacientes.cobertura_id,
+            usuarios.nombre,
+            usuarios.apellido,
+            usuarios.email,
+            usuarios.activo
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
         WHERE pacientes.id = %s
     """
+
     with connection.cursor() as cursor:
         cursor.execute(query, (paciente_id,))
         return cursor.fetchone()
