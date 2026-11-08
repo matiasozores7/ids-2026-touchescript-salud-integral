@@ -15,7 +15,7 @@
         <h1>Tu salud, más cerca que nunca</h1>
         <p class="hero-description">Encontrá especialistas, reservá tus turnos y organizá tu atención médica desde un solo lugar.</p>
 
-        <form class="appointment-search row g-2 align-items-end" action="{{ url_for('patient_home') }}" method="get">
+        <form class="appointment-search row g-2 align-items-end" action="{{ url_for('patient.patient_home') }}" method="get">
           <label class="form-field col-md-4 col-lg-3">
             <span>Especialidad</span>
             <select class="form-select" name="especialidad">
