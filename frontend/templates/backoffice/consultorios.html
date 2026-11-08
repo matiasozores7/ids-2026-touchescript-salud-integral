@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block content %}
+{% if error %}
+  <div class="alert alert-danger" role="alert">{{ error }}</div>
+{% endif %}
 {% set navigation = [
   ("Inicio", "bi-grid-1x2-fill", "index"),
   ("Turnos", "bi-calendar-check", "#"),
@@ -26,7 +29,7 @@
 
 <div class="backoffice-layout">
   <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('index') }}" aria-label="Salud Integral, inicio">
+    <a class="backoffice-brand" href="{{ url_for('auth.mostrar_login') }}" aria-label="Salud Integral, inicio">
       <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
         <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
@@ -38,7 +41,7 @@
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
       {% for item, icon, target in navigation %}
-        <a class="{% if target == 'backoffice_consultorios' %}active{% endif %}" href="{% if target != '#' %}{{ url_for(target) }}{% else %}#{% endif %}">
+        <a class="{% if target == 'backoffice_consultorios' %}active{% endif %}" href="{% if target == 'backoffice_consultorios' %}{{ url_for('backoffice.backoffice_consultorios') }}{% else %}#{% endif %}">
           <i class="bi {{ icon }}" aria-hidden="true"></i>
           <span>{{ item }}</span>
         </a>
@@ -46,14 +49,14 @@
     </nav>
 
     <div class="sidebar-footer">
-      <a href="{{ url_for('index') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+      <a href="{{ url_for('auth.mostrar_login') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
     </div>
   </aside>
 
   <div class="backoffice-main">
     <header class="backoffice-header">
       <div>
-        <a href="{{ url_for('index') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Inicio</a>
         <span>Administración de espacios físicos</span>
       </div>
       <div class="backoffice-user">
@@ -67,7 +70,7 @@
 
     <main class="backoffice-content consultorios-content">
       <div class="backoffice-breadcrumb" aria-label="Migas de pan">
-        <a href="{{ url_for('index') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Inicio</a>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
         <span>Consultorios</span>
       </div>
@@ -77,7 +80,7 @@
           <h1>Consultorios</h1>
           <p>Administrá las salas disponibles para la atención médica.</p>
         </div>
-        <a class="button button-primary button-small" href="{{ url_for('backoffice_consultorio_form') }}">
+        <a class="button button-primary button-small" href="{{ url_for('backoffice.backoffice_consultorio_form') }}">
           <i class="bi bi-plus-lg" aria-hidden="true"></i>
           Nuevo consultorio
         </a>
@@ -90,7 +93,7 @@
             <label class="visually-hidden" for="consultorio-search">Buscar consultorio</label>
             <input id="consultorio-search" type="search" placeholder="Buscar por sala o piso">
           </div>
-          <span class="consultorios-count"><strong>4</strong> consultorios activos</span>
+          <span class="consultorios-count"><strong>{{ consultorios|length }}</strong> consultorios activos</span>
         </div>
 
         <div class="table-responsive">
@@ -105,12 +108,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for consultorio in consultorios | default([
-                {"numero_sala": "101", "piso": "Planta baja", "activo": true},
-                {"numero_sala": "202", "piso": "Primer piso", "activo": true},
-                {"numero_sala": "305", "piso": "Segundo piso", "activo": true},
-                {"numero_sala": "402", "piso": "Tercer piso", "activo": true}
-              ]) %}
+              {% for consultorio in consultorios %}
                 <tr>
                   <th scope="row">
                     <span class="consultorio-icon"><i class="bi bi-building" aria-hidden="true"></i></span>
@@ -119,12 +117,14 @@
                   <td>{{ consultorio.piso or "Sin piso asignado" }}</td>
                   <td><span class="status-active">Activo</span></td>
                   <td class="consultorio-actions">
-                    <a href="{{ url_for('backoffice_consultorio_form', consultorio_id=consultorio.id) if consultorio.id is defined else '#' }}" aria-label="Editar sala {{ consultorio.numero_sala }}">
+                    <a href="{{ url_for('backoffice.backoffice_consultorio_form', consultorio_id=consultorio.id) }}" aria-label="Editar sala {{ consultorio.numero_sala }}">
                       <i class="bi bi-pencil-square" aria-hidden="true"></i>
                     </a>
-                    <button type="button" aria-label="Dar de baja sala {{ consultorio.numero_sala }}">
-                      <i class="bi bi-trash3" aria-hidden="true"></i>
-                    </button>
+                    <form method="post" action="{{ url_for('backoffice.eliminar_consultorio', consultorio_id=consultorio.id) }}">
+                      <button type="submit" aria-label="Dar de baja sala {{ consultorio.numero_sala }}">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                      </button>
+                    </form>
                   </td>
                 </tr>
               {% endfor %}
@@ -133,7 +133,7 @@
         </div>
 
         <div class="consultorios-pagination" aria-label="Paginación de consultorios">
-          <span>Mostrando 1 a 4 de 4 resultados</span>
+          <span>Mostrando {{ consultorios|length }} resultados</span>
           <div>
             <button type="button" disabled aria-label="Página anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
             <button class="current" type="button" aria-current="page">1</button>
