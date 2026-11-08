@@ -12,7 +12,7 @@
 {% block content %}
 <div class="register-page">
   <aside class="register-intro">
-    <a class="register-brand" href="{{ url_for('index') }}" aria-label="Salud Integral, inicio">
+    <a class="register-brand" href="{{ url_for('auth.index') }}" aria-label="Salud Integral, inicio">
       <svg class="register-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
         <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
@@ -34,14 +34,14 @@
     <section class="register-panel" aria-labelledby="register-title">
       <h1 id="register-title">Crear Cuenta</h1>
       <p class="register-subtitle">Completá tus datos para reservar turnos online.</p>
-      <form class="register-form" action="{{ url_for('patient_home') }}" method="post">
+      <form class="register-form" action="{{ url_for('auth.registrar_paciente') }}" method="POST">
         <label class="register-field" for="fname">
           <span>Nombre</span>
-          <input id="fname" type="text" name="fname" required>
+          <input id="fname" type="text" name="nombre" required>
         </label>
         <label class="register-field" for="lname">
           <span>Apellido</span>
-          <input id="lname" type="text" name="lname" required>
+          <input id="lname" type="text" name="apellido" required>
         </label>
         <label class="register-field" for="dni">
           <span>DNI</span>
@@ -88,7 +88,7 @@
       </form>
       <p class="register-login">
         ¿Ya tenés cuenta?
-        <a class="register-link" href="{{ url_for('index') }}">Iniciá sesión</a>
+        <a class="register-link" href="{{ url_for('auth.index') }}">Iniciá sesión</a>
       </p>
     </section>
   </main>

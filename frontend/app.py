@@ -1,3 +1,4 @@
+# Este archivo se tiene que ir migrando a run.py y app/__init__.py en base a la integración que vamos haciendo
 from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
