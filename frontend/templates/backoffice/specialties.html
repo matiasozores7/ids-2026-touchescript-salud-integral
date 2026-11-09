@@ -11,13 +11,13 @@
 
 {% block content %}
 {% set navigation = [
-  ("Dashboard", "bi-grid-1x2-fill", "backoffice"),
+  ("Dashboard", "bi-grid-1x2-fill", "backoffice.backoffice"),
   ("Turnos", "bi-calendar-check", "#"),
   ("Calendario", "bi-calendar3", "#"),
   ("Sala de espera", "bi-person-lines-fill", "#"),
   ("Check-in QR", "bi-qr-code", "#"),
   ("Médicos", "bi-person-badge", "#"),
-  ("Especialidades", "bi-heart-pulse", "specialties"),
+  ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_specialties"),
   ("Consultorios", "bi-building", "#"),
   ("Coberturas", "bi-shield-check", "#"),
   ("Pacientes", "bi-people", "#"),
@@ -25,20 +25,9 @@
   ("Reportes", "bi-bar-chart", "#"),
   ("Configuración", "bi-gear", "#")
 ] %}
-{% set specialties = [
-  ("Clínica médica", "20 min", "bi-clipboard2-pulse"),
-  ("Cardiología", "30 min", "bi-heart-pulse"),
-  ("Pediatría", "20 min", "bi-emoji-smile"),
-  ("Dermatología", "20 min", "bi-person-badge"),
-  ("Traumatología", "20 min", "bi-universal-access"),
-  ("Ginecología", "30 min", "bi-gender-female"),
-  ("Oftalmología", "20 min", "bi-eye"),
-  ("Neurología", "30 min", "bi-activity")
-] %}
-
 <div class="backoffice-layout">
   <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('backoffice') }}" aria-label="Salud Integral, inicio">
+    <a class="backoffice-brand" href="{{ url_for('backoffice.backoffice') }}" aria-label="Salud Integral, inicio">
       <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
         <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
@@ -49,20 +38,20 @@
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
       {% for item, icon, target in navigation %}
-        <a class="{% if target == 'specialties' %}active{% endif %}" href="{% if target == 'backoffice' %}{{ url_for(target) }}{% elif target == 'specialties' %}{{ url_for('backoffice_specialties') }}{% else %}{{ target }}{% endif %}">
+        <a class="{% if target == 'backoffice.backoffice_specialties' %}active{% endif %}" href="{{ url_for(target) if target != '#' else target }}">
           <i class="bi {{ icon }}" aria-hidden="true"></i><span>{{ item }}</span>
         </a>
       {% endfor %}
     </nav>
     <div class="sidebar-footer mb-4">
-      <a href="{{ url_for('patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+      <a href="{{ url_for('patient.patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
     </div>
   </aside>
 
   <div class="backoffice-main">
     <header class="backoffice-header">
       <div>
-        <div class="backoffice-breadcrumb"><a href="{{ url_for('backoffice') }}">Backoffice</a><span>/ Especialidades</span></div>
+        <div class="backoffice-breadcrumb"><a href="{{ url_for('backoffice.backoffice') }}">Backoffice</a><span>/ Especialidades</span></div>
         <span>domingo 1 de noviembre · 10:30 (hora simulada)</span>
       </div>
       <div class="backoffice-user">
@@ -75,10 +64,18 @@
     </header>
 
     <main class="backoffice-content specialties-admin-content">
+      {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+          <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }}"
+               {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+            {{ mensaje }}
+          </div>
+        {% endfor %}
+      {% endwith %}
       <div class="specialties-admin-heading">
         <div>
           <h1>Especialidades</h1>
-          <p>Áreas de atención y duración estándar de los turnos.</p>
+          <p>Administrá las áreas de atención disponibles.</p>
         </div>
         <button class="button button-primary button-small" type="button" data-specialty-modal-open>
           <i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo
@@ -92,7 +89,7 @@
             <span class="visually-hidden">Buscar especialidad</span>
             <input id="admin-specialty-search" type="search" placeholder="Buscar…" autocomplete="off">
           </label>
-          <span class="specialties-count"><strong id="specialties-visible-count">8</strong> registros</span>
+          <span class="specialties-count"><strong id="specialties-visible-count">{{ especialidades | length }}</strong> registros</span>
         </div>
 
         <div class="table-responsive">
@@ -100,32 +97,40 @@
             <thead>
               <tr>
                 <th scope="col">Especialidad</th>
-                <th scope="col">Profesionales</th>
-                <th scope="col">Duración</th>
-                <th scope="col">Estado</th>
+                <th scope="col">Descripción</th>
                 <th scope="col"><span class="visually-hidden">Acciones</span></th>
               </tr>
             </thead>
             <tbody id="specialties-table-body">
-              {% for name, duration, icon in specialties %}
-                <tr data-specialty="{{ name | lower }}">
+              {% for especialidad in especialidades %}
+                <tr data-specialty="{{ especialidad.nombre | lower }}">
                   <th scope="row">
-                    <span class="specialty-table-icon"><i class="bi {{ icon }}" aria-hidden="true"></i></span>
-                    {{ name }}
+                    <span class="specialty-table-icon"><i class="bi bi-heart-pulse" aria-hidden="true"></i></span>
+                    {{ especialidad.nombre }}
                   </th>
-                  <td>1</td>
-                  <td>{{ duration }}</td>
-                  <td><span class="status-active">Activo</span></td>
+                  <td>{{ especialidad.descripcion or "Sin descripción" }}</td>
                   <td class="specialty-actions">
-                    <button type="button" aria-label="Editar {{ name }}"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-                    <button type="button" aria-label="Eliminar {{ name }}"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                    <button type="button"
+                            aria-label="Editar {{ especialidad.nombre }}"
+                            data-specialty-edit
+                            data-specialty-name="{{ especialidad.nombre }}"
+                            data-specialty-description="{{ especialidad.descripcion or '' }}"
+                            data-specialty-action="{{ url_for('backoffice.actualizar_especialidad', especialidad_id=especialidad.id) }}">
+                      <i class="bi bi-pencil" aria-hidden="true"></i>
+                    </button>
+                    <form action="{{ url_for('backoffice.eliminar_especialidad', especialidad_id=especialidad.id) }}"
+                          method="post" data-specialty-delete-form>
+                      <button type="submit" aria-label="Eliminar {{ especialidad.nombre }}">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                      </button>
+                    </form>
                   </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
-        <p class="specialties-table-empty" id="specialties-table-empty" hidden>No se encontraron especialidades.</p>
+        <p class="specialties-table-empty" id="specialties-table-empty" {% if especialidades %}hidden{% endif %}>No se encontraron especialidades.</p>
       </section>
     </main>
   </div>
@@ -139,31 +144,15 @@
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     </header>
-    <form class="specialty-form" action="#" method="post">
+    <form class="specialty-form"
+          action="{{ url_for('backoffice.backoffice_specialties') }}"
+          method="post"
+          data-specialty-create-action="{{ url_for('backoffice.backoffice_specialties') }}">
       <div class="specialty-form-grid">
         <div>
           <label for="specialty-name">Nombre <span>*</span></label>
           <input id="specialty-name" name="name" class="form-control" type="text" required>
         </div>
-        <div>
-          <label for="specialty-icon">Ícono</label>
-          <select id="specialty-icon" name="icon" class="form-select">
-            <option value="bi-heart-pulse">heart-pulse</option>
-            <option value="bi-clipboard2-pulse">clipboard2-pulse</option>
-            <option value="bi-person-badge">person-badge</option>
-            <option value="bi-eye">eye</option>
-            <option value="bi-activity">activity</option>
-          </select>
-        </div>
-        <div>
-          <label for="specialty-duration">Duración del turno (min) <span>*</span></label>
-          <input id="specialty-duration" name="duration" class="form-control" type="number" min="1" value="20" required>
-        </div>
-        <label class="specialty-switch-field" for="specialty-active">
-          <span>Activa</span>
-          <input id="specialty-active" name="active" type="checkbox" checked>
-          <span class="specialty-switch" aria-hidden="true"></span>
-        </label>
         <div class="specialty-description-field">
           <label for="specialty-description">Descripción</label>
           <textarea id="specialty-description" name="description" class="form-control" rows="4"></textarea>
