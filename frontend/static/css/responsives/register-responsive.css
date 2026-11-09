@@ -1,0 +1,196 @@
+@media (max-width: 1100px) {
+  .register-page {
+    grid-template-columns: minmax(320px, 42%) 1fr;
+  }
+
+  .register-intro {
+    padding: 48px 4vw;
+  }
+
+  .register-content {
+    padding: 40px 32px;
+  }
+
+  .register-intro-copy {
+    margin-bottom: 20vh;
+  }
+
+  .register-intro-copy h1 {
+    font-size: clamp(30px, 3.5vw, 38px);
+  }
+
+  .register-intro-copy p {
+    font-size: 15px;
+  }
+}
+
+/* Tablets verticales y móviles grandes */
+@media (max-width: 768px) {
+  .register-page {
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+  }
+
+  .register-intro {
+    min-height: auto;
+    padding: 28px 32px 32px;
+    gap: 35px;
+  }
+
+  .register-intro-copy {
+    max-width: 600px;
+    margin: 0;
+  }
+
+  .register-intro-copy h1 {
+    font-size: clamp(27px, 5vw, 36px);
+  }
+
+  .register-intro-copy p {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  .register-content {
+    align-items: flex-start;
+    padding: 42px 32px;
+  }
+
+  .register-panel {
+    width: min(100%, 550px);
+    margin: 0 auto;
+  }
+
+  .register-panel h1 {
+    font-size: 34px;
+  }
+
+  .register-subtitle {
+    margin-bottom: 28px;
+    font-size: 16px;
+  }
+}
+
+/* Celulares */
+@media (max-width: 576px) {
+  .register-intro {
+    padding: 24px 22px 28px;
+    gap: 28px;
+  }
+
+  .register-brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .register-brand-copy strong {
+    font-size: 15px;
+  }
+
+  .register-intro-copy h1 {
+    font-size: 28px;
+    letter-spacing: -0.8px;
+  }
+
+  .register-intro-copy p {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .register-content {
+    padding: 32px 22px 40px;
+  }
+
+  .register-panel h1 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+
+  .register-subtitle {
+    margin: 10px 0 26px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .register-form {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .register-field-full,
+  .register-terms,
+  .register-submit {
+    grid-column: 1;
+  }
+
+  .register-field input,
+  .register-field select {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .register-field span,
+  .register-terms {
+    font-size: 13px;
+  }
+
+  .register-submit {
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .register-login {
+    margin-top: 22px;
+    font-size: 13px;
+  }
+}
+
+/* Celulares pequeños */
+@media (max-width: 360px) {
+  .register-intro {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .register-content {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .register-intro-copy h1 {
+    font-size: 25px;
+  }
+
+  .register-panel h1 {
+    font-size: 27px;
+  }
+}
+
+/* Pantallas con poca altura */
+@media (min-width: 769px) and (max-height: 750px) {
+  .register-intro {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+
+  .register-intro-copy {
+    margin-bottom: 8vh;
+  }
+
+  .register-content {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .register-panel {
+    margin-top: 0;
+  }
+
+  .register-subtitle {
+    margin-bottom: 24px;
+  }
+
+  .register-form {
+    gap: 14px;
+  }
+}
