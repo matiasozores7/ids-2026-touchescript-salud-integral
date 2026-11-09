@@ -8,6 +8,19 @@ from flask_jwt_extended import get_jwt
 
 auth_bp = Blueprint("auth", __name__)
 
+@auth_bp.route("/auth/me", methods=["GET"])
+@validar_token
+def obtener_usuario_actual():
+    claims = get_jwt()
+
+    return success_response(
+        data={
+            "rol": claims.get("rol"),
+            "perfil_id": claims.get("perfil_id")
+        },
+        message="Usuario autenticado correctamente."
+    )
+
 @auth_bp.route("/auth/registro", methods=["POST"])
 def registrar_usuario():
     data = request.get_json() or {}
