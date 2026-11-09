@@ -8,9 +8,11 @@
 {% endblock %}
 
 {% block content %}
-{% if error %}
-  <div class="alert alert-danger" role="alert">{{ error }}</div>
-{% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}" role="alert">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
 {% set navigation = [
   ("Inicio", "bi-grid-1x2-fill", "index"),
   ("Turnos", "bi-calendar-check", "#"),
@@ -41,7 +43,7 @@
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
       {% for item, icon, target in navigation %}
-        <a class="{% if target == 'backoffice_consultorios' %}active{% endif %}" href="{% if target == 'backoffice_consultorios' %}{{ url_for('backoffice.backoffice_consultorios') }}{% else %}#{% endif %}">
+        <a class="{% if target == 'backoffice_consultorios' %}active{% endif %}" href="{% if target == 'backoffice_consultorios' %}{{ url_for('backoffice.listar_consultorios') }}{% else %}#{% endif %}">
           <i class="bi {{ icon }}" aria-hidden="true"></i>
           <span>{{ item }}</span>
         </a>
@@ -56,7 +58,7 @@
   <div class="backoffice-main">
     <header class="backoffice-header">
       <div>
-        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.listar_consultorios') }}">Inicio</a>
         <span>Administración de espacios físicos</span>
       </div>
       <div class="backoffice-user">
@@ -70,7 +72,7 @@
 
     <main class="backoffice-content consultorios-content">
       <div class="backoffice-breadcrumb" aria-label="Migas de pan">
-        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.listar_consultorios') }}">Inicio</a>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
         <span>Consultorios</span>
       </div>
@@ -80,7 +82,7 @@
           <h1>Consultorios</h1>
           <p>Administrá las salas disponibles para la atención médica.</p>
         </div>
-        <a class="button button-primary button-small" href="{{ url_for('backoffice.backoffice_consultorio_form') }}">
+        <a class="button button-primary button-small" href="{{ url_for('backoffice.formulario_consultorio') }}">
           <i class="bi bi-plus-lg" aria-hidden="true"></i>
           Nuevo consultorio
         </a>
@@ -117,7 +119,7 @@
                   <td>{{ consultorio.piso or "Sin piso asignado" }}</td>
                   <td><span class="status-active">Activo</span></td>
                   <td class="consultorio-actions">
-                    <a href="{{ url_for('backoffice.backoffice_consultorio_form', consultorio_id=consultorio.id) }}" aria-label="Editar sala {{ consultorio.numero_sala }}">
+                    <a href="{{ url_for('backoffice.formulario_consultorio', consultorio_id=consultorio.id) }}" aria-label="Editar sala {{ consultorio.numero_sala }}">
                       <i class="bi bi-pencil-square" aria-hidden="true"></i>
                     </a>
                     <form method="post" action="{{ url_for('backoffice.eliminar_consultorio', consultorio_id=consultorio.id) }}">

@@ -1,73 +1,55 @@
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
+from app.errors.exceptions import AppError
+from app.constants.roles import ADMIN
 from app.services import consultorio_service
+from app.utils.access_control import proteger_por_rol
 
 
 backoffice_bp = Blueprint("backoffice", __name__)
+backoffice_bp.before_request(proteger_por_rol(ADMIN))
 
 
-def _render_consultorios(error: str | None = None):
+@backoffice_bp.get("/")
+def dashboard():
+    return render_template("backoffice/backoffice.html")
+
+
+def _render_consultorios():
     try:
         consultorios = consultorio_service.listar_consultorios()
-    except RuntimeError as exc:
-        return render_template(
-            "backoffice/consultorios.html",
-            consultorios=[],
-            error=str(exc),
-        )
+    except AppError as error:
+        flash(error.message, "error")
+        consultorios = []
 
     return render_template(
         "backoffice/consultorios.html",
         consultorios=consultorios,
-        error=error,
     )
 
 
-@backoffice_bp.get("/backoffice/consultorios")
-def backoffice_consultorios():
-    if not session.get("access_token"):
-        return redirect(url_for("auth.mostrar_login"))
+@backoffice_bp.get("/consultorios")
+def listar_consultorios():
     return _render_consultorios()
 
 
-@backoffice_bp.route(
-    "/backoffice/consultorios/nuevo",
-    methods=["GET", "POST"],
-)
-@backoffice_bp.route(
-    "/backoffice/consultorios/<int:consultorio_id>/editar",
-    methods=["GET", "POST"],
-)
-def backoffice_consultorio_form(consultorio_id: int | None = None):
-    if not session.get("access_token"):
-        return redirect(url_for("auth.mostrar_login"))
-
+@backoffice_bp.route("/consultorios/nuevo", methods=["GET", "POST"])
+@backoffice_bp.route("/consultorios/<int:consultorio_id>/editar", methods=["GET", "POST"])
+def formulario_consultorio(consultorio_id: int | None = None):
     consultorio = None
+
     if consultorio_id is not None:
         try:
-            consultorio = next(
-                (
-                    item
-                    for item in consultorio_service.listar_consultorios()
-                    if item.get("id") == consultorio_id
-                ),
-                None,
-            )
-        except RuntimeError as exc:
-            return render_template(
-                "backoffice/consultorio_form.html",
-                consultorio=None,
-                error=str(exc),
-            )
-
-        if consultorio is None:
-            return redirect(url_for("backoffice.backoffice_consultorios"))
+            consultorio = consultorio_service.obtener_consultorio(consultorio_id)
+        except AppError as error:
+            flash(error.message, "error")
+            return redirect(url_for("backoffice.listar_consultorios"))
 
     if request.method == "POST":
-        numero_sala = request.form.get("numero_sala", "").strip()
-        piso = request.form.get("piso", "").strip()
-
         try:
+            numero_sala = request.form.get("numero_sala", "").strip()
+            piso = request.form.get("piso", "").strip() or None
+
             if consultorio_id is None:
                 consultorio_service.crear_consultorio(numero_sala, piso)
             else:
@@ -76,29 +58,25 @@ def backoffice_consultorio_form(consultorio_id: int | None = None):
                     numero_sala,
                     piso,
                 )
-        except RuntimeError as exc:
-            return render_template(
-                "backoffice/consultorio_form.html",
-                consultorio=consultorio,
-                error=str(exc),
-            )
-
-        return redirect(url_for("backoffice.backoffice_consultorios"))
+        except AppError as error:
+            flash(error.message, "error")
+        else:
+            flash("Consultorio guardado correctamente.", "success")
+            return redirect(url_for("backoffice.listar_consultorios"))
 
     return render_template(
         "backoffice/consultorio_form.html",
         consultorio=consultorio,
-        error=None,
     )
 
 
-@backoffice_bp.post("/backoffice/consultorios/<int:consultorio_id>/eliminar")
+@backoffice_bp.post("/consultorios/<int:consultorio_id>/eliminar")
 def eliminar_consultorio(consultorio_id: int):
-    if not session.get("access_token"):
-        return redirect(url_for("auth.mostrar_login"))
-
     try:
         consultorio_service.eliminar_consultorio(consultorio_id)
-        return redirect(url_for("backoffice.backoffice_consultorios"))
-    except RuntimeError as exc:
-        return _render_consultorios(error=str(exc))
+    except AppError as error:
+        flash(error.message, "error")
+    else:
+        flash("Consultorio dado de baja correctamente.", "success")
+
+    return redirect(url_for("backoffice.listar_consultorios"))

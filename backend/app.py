@@ -9,7 +9,8 @@ from src.routes import (
     pacientes_bp,
     dashboard_bp,
     agenda_bp,
-    turnos_bp
+    turnos_bp,
+    coberturas_bp
 )
 from src.utils.error_handlers import register_error_handlers
 from src.utils.jwt_config import configurar_jwt
@@ -29,6 +30,7 @@ app.register_blueprint(turnos_bp, url_prefix="/api")
 app.register_blueprint(especialidades_bp, url_prefix="/api")
 app.register_blueprint(pacientes_bp, url_prefix="/api")
 app.register_blueprint(dashboard_bp, url_prefix="/api")
+app.register_blueprint(coberturas_bp, url_prefix="/api")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(app.config['PORT']), debug=True)

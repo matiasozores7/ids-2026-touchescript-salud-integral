@@ -8,9 +8,11 @@
 {% endblock %}
 
 {% block content %}
-{% if error %}
-  <div class="alert alert-danger" role="alert">{{ error }}</div>
-{% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}" role="alert">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
 <div class="backoffice-layout">
   <aside class="backoffice-sidebar">
     <a class="backoffice-brand" href="{{ url_for('auth.mostrar_login') }}" aria-label="Salud Integral, inicio">
@@ -23,9 +25,9 @@
     </a>
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
-      <a href="{{ url_for('backoffice.backoffice_consultorios') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
+      <a href="{{ url_for('backoffice.dashboard') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
       <a href="#"><i class="bi bi-qr-code" aria-hidden="true"></i><span>Check-in QR</span></a>
-      <a class="active" href="{{ url_for('backoffice.backoffice_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
+      <a class="active" href="{{ url_for('backoffice.listar_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
       <a href="#"><i class="bi bi-heart-pulse" aria-hidden="true"></i><span>Especialidades</span></a>
     </nav>
     <div class="sidebar-footer">
@@ -36,7 +38,7 @@
   <div class="backoffice-main">
     <header class="backoffice-header">
       <div>
-        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Consultorios</a>
+        <a href="{{ url_for('backoffice.listar_consultorios') }}">Consultorios</a>
         <span>Alta y modificación de salas</span>
       </div>
       <div class="backoffice-user">
@@ -47,9 +49,9 @@
 
     <main class="backoffice-content consultorios-content">
       <div class="backoffice-breadcrumb" aria-label="Migas de pan">
-        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.dashboard') }}">Inicio</a>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
-        <a href="{{ url_for('backoffice.backoffice_consultorios') }}">Consultorios</a>
+        <a href="{{ url_for('backoffice.listar_consultorios') }}">Consultorios</a>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
         <span>{{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}</span>
       </div>
@@ -78,7 +80,7 @@
           </div>
 
           <div class="consultorio-form-footer">
-            <a class="button button-outline button-small" href="{{ url_for('backoffice.backoffice_consultorios') }}">Cancelar</a>
+            <a class="button button-outline button-small" href="{{ url_for('backoffice.listar_consultorios') }}">Cancelar</a>
             <button class="button button-primary button-small" type="submit">
               <i class="bi bi-check-lg" aria-hidden="true"></i>
               Guardar consultorio

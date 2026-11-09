@@ -1,77 +1,72 @@
-import requests
+from app.clients.api_client import api_request
+from app.errors.exceptions import ExternalServiceError
+from app.constants.roles import ROLES_VALIDOS
 
-from flask import current_app
-
-
-def login_usuario(email: str, password: str) -> dict:
-    url = f"{current_app.config['API_BASE_URL']}/auth/login"
-
-    try:
-        response = requests.post(
-            url,
-            json={
-                "email": email,
-                "password": password
-            },
-            timeout=10
-        )
-
-        resultado = response.json()
-
-    except requests.Timeout:
-        raise RuntimeError("El servidor de autenticación no respondió.")
-
-    except requests.RequestException:
-        raise RuntimeError("No se pudo conectar con el servidor.")
-
-    except ValueError:
-        raise RuntimeError("El servidor devolvió una respuesta inválida.")
-
-    if not response.ok:
-        raise RuntimeError(
-            resultado.get("message", "No se pudo iniciar sesión.")
-        )
-
-    return resultado["data"]
-
-def registrar_paciente(
-    nombre: str,
-    apellido: str,
-    email: str,
-    password: str,
-    cobertura_id: int | None = None
-) -> dict:
-    url = f"{current_app.config['API_BASE_URL']}/auth/registro"
-
-    try:
-        response = requests.post(
-            url,
-            json={
-                "nombre": nombre,
-                "apellido": apellido,
-                "email": email,
-                "password": password,
-                "cobertura_id": cobertura_id
-            },
-            timeout=10
-        )
-        resultado = response.json()
-
-    except requests.Timeout:
-        raise RuntimeError("El servidor de registro no respondió.")
-    except requests.RequestException:
-        raise RuntimeError("No se pudo conectar con el servidor.")
-    except ValueError:
-        raise RuntimeError("El servidor devolvió una respuesta inválida.")
-
-    if not response.ok:
-        raise RuntimeError(
-            resultado.get("message", "No se pudo registrar el paciente.")
-        )
+def obtener_usuario_actual() -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint="/auth/me",
+        authenticated=True
+    )
 
     data = resultado.get("data")
 
-    if not isinstance(data, dict) or not data.get("access_token"):
-        raise RuntimeError("La respuesta no contiene el token de acceso.")
+    if (
+        not isinstance(data, dict)
+        or data.get("rol") not in ROLES_VALIDOS
+    ):
+        raise ExternalServiceError(
+            "La respuesta de autenticación tiene un formato inválido."
+        )
+
+    return data
+
+def login_usuario(email: str, password: str) -> dict:
+
+    resultado = api_request(
+        method="POST",
+        endpoint="/auth/login",
+        json={
+            "email": email,
+            "password": password
+        }
+    )
+
+    data = resultado.get("data")
+
+    if (not isinstance(data, dict) or not isinstance(data.get("access_token"), str)
+        or not data["access_token"]
+    ):
+        raise ExternalServiceError("La respuesta de autenticación tiene un formato inválido.")
+
+    return data
+
+def registrar_paciente(
+    nombre: str, apellido: str, email: str,
+    password: str, cobertura_id: int | None = None
+) -> dict:
+
+    resultado = api_request(
+        method="POST",
+        endpoint="/auth/registro",
+        json={
+            "nombre": nombre,
+            "apellido": apellido,
+            "email": email,
+            "password": password,
+            "cobertura_id": cobertura_id
+        }
+    )
+
+    data = resultado.get("data")
+
+    if (
+        not isinstance(data, dict)
+        or not isinstance(data.get("access_token"), str)
+        or not data["access_token"]
+    ):
+        raise ExternalServiceError(
+            "La respuesta de registro tiene un formato inválido."
+        )
 
     return data

@@ -34,58 +34,57 @@
     <section class="register-panel" aria-labelledby="register-title">
       <h1 id="register-title">Crear Cuenta</h1>
       <p class="register-subtitle">Completá tus datos para reservar turnos online.</p>
+
+      {% if error %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+      {% endif %}
+
       <form class="register-form" action="{{ url_for('auth.registrar_paciente') }}" method="POST">
+
         <label class="register-field" for="fname">
           <span>Nombre</span>
           <input id="fname" type="text" name="nombre" required>
         </label>
+
         <label class="register-field" for="lname">
           <span>Apellido</span>
           <input id="lname" type="text" name="apellido" required>
         </label>
-        <label class="register-field" for="dni">
-          <span>DNI</span>
-          <input id="dni" type="text" name="dni" required>
-        </label>
-        <label class="register-field" for="birth-date">
-          <span>Fecha de nacimiento</span>
-          <input id="birth-date" type="date" name="birth-date" required>
-        </label>
+
         <label class="register-field register-field-full" for="email">
           <span>Correo electrónico</span>
           <input id="email" type="email" name="email" required>
         </label>
-        <label class="register-field" for="telephone">
-          <span>Teléfono</span>
-          <input id="telephone" type="tel" name="tel" required>
-        </label>
+
         <label class="register-field" for="medical-coverage">
           <span>Cobertura médica</span>
-          <select id="medical-coverage" name="medical-coverage">
-            <option value>Seleccionar...</option>
-            <option value="opt-osde">OSDE</option>
-            <option value="opt-swiss">Swiss Medical</option>
-            <option value="opt-galeno">Galeno</option>
-            <option value="opt-pami">PAMI</option>
-            <option value="opt-ioma">IOMA</option>
-            <option value="opt-part">Particular</option>
+
+          <select id="medical-coverage" name="cobertura_id">
+            <option value="">Seleccionar...</option>
+
+            {% for cobertura in coberturas %}
+              <option value="{{ cobertura.id }}">
+                {{ cobertura.nombre }}
+              </option>
+            {% endfor %}
           </select>
         </label>
-        <label class="register-field" for="member-number">
-          <span>N.° de afiliado</span>
-          <input type="text" name="member-number" id="member-number">
-        </label>
+
         <label class="register-field" for="password">
           <span>Contraseña</span>
           <input type="password" name="password" id="password" required>
         </label>
-        <p class="register-optional">Opcional para particulares</p>
+
         <label class="register-terms">
-          <input type="checkbox" name="terms-privacy-policy">
+          <input type="checkbox" name="terms-privacy-policy" required>
           <span>Acepto los términos y la política de privacidad</span>
         </label>
+
         <button class="register-submit" type="submit">Crear cuenta</button>
       </form>
+
       <p class="register-login">
         ¿Ya tenés cuenta?
         <a class="register-link" href="{{ url_for('auth.index') }}">Iniciá sesión</a>

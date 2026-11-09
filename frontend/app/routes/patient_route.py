@@ -1,8 +1,9 @@
-
 from flask import Blueprint, render_template
+from app.constants.roles import PACIENTE
+from app.utils.access_control import proteger_por_rol
 
 patient_bp = Blueprint("patient", __name__)
-
+patient_bp.before_request(proteger_por_rol(PACIENTE))
 
 @patient_bp.route("/pacientes", methods=["GET", "POST"])
 def patient_home():
