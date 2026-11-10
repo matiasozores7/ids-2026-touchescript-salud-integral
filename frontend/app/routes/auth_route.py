@@ -22,8 +22,14 @@ def mostrar_login():
 
 @auth_bp.route("/login", methods=["POST"])
 def iniciar_sesion():
+    role = request.form.get("role", "paciente")
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "")
+
+    # Si se seleccionó perfil de recepción o administración, ingresa directamente al Backoffice
+    if role in {"recepcion", "administracion"}:
+        session["role"] = role
+        return redirect(url_for("backoffice.backoffice"))
 
     try:
         resultado = auth_service.login_usuario(

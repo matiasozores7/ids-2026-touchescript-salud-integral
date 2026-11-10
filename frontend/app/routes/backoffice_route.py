@@ -102,3 +102,8 @@ def backoffice_consultorio_form(consultorio_id=None):
 @backoffice_bp.get("/backoffice/check-in")
 def backoffice_checkin():
     return render_template("recepcion/checkin.html")
+
+
+@backoffice_bp.get("/backoffice/pacientes")
+def backoffice_pacientes():
+    return render_template("backoffice/pacientes.html")
