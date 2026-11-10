@@ -209,6 +209,7 @@
         <div class="form-group form-group-full">
           <label for="campo-cobertura">Cobertura médica <span class="required">*</span></label>
           <select id="campo-cobertura" name="cobertura_id" class="form-select" required>
+            <option value="" disabled selected>Seleccionar cobertura...</option>
             {% for cob in coberturas %}
               <option value="{{ cob.id }}">{{ cob.nombre }}</option>
             {% endfor %}

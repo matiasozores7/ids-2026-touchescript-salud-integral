@@ -15,7 +15,6 @@
   const passRequired = document.querySelector("#pass-required");
   const passHelp = document.querySelector("#pass-help");
 
-  // Referencias del Popup Modal de eliminación
   const deleteModal = document.querySelector("#delete-modal");
   const deletePatientName = document.querySelector("#delete-patient-name");
   const formDelete = document.querySelector("#form-delete-paciente");
@@ -35,7 +34,6 @@
     document.body.classList.toggle("modal-open", isOpen);
   };
 
-  // Abrir modal de nuevo paciente
   document.querySelector("#btn-nuevo-paciente")?.addEventListener("click", () => {
     if (!patientForm) return;
     patientForm.reset();
@@ -49,7 +47,6 @@
     toggleModal(true);
   });
 
-  // Abrir modal de editar paciente
   document.querySelectorAll("[data-edit-patient]").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (!patientForm) return;
@@ -60,9 +57,8 @@
       if (campoNombre) campoNombre.value = btn.dataset.nombre || "";
       if (campoApellido) campoApellido.value = btn.dataset.apellido || "";
       if (campoEmail) campoEmail.value = btn.dataset.email || "";
-      if (campoCobertura) campoCobertura.value = btn.dataset.coberturaId || "4";
+      if (campoCobertura) campoCobertura.value = btn.dataset.coberturaId || "";
 
-      // En edición la contraseña no es obligatoria
       if (campoPassword) {
         campoPassword.value = "";
         campoPassword.required = false;
@@ -74,7 +70,6 @@
     });
   });
 
-  // Abrir modal de confirmación de eliminación
   document.querySelectorAll("[data-delete-patient]").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (deletePatientName) deletePatientName.textContent = btn.dataset.name || "este paciente";
@@ -83,7 +78,6 @@
     });
   });
 
-  // Cerrar modales con botones
   document.querySelectorAll("#btn-cerrar-modal, #btn-cancelar-modal").forEach((btn) => {
     btn.addEventListener("click", () => toggleModal(false));
   });
@@ -92,7 +86,6 @@
     toggleDeleteModal(false);
   });
 
-  // Cerrar haciendo clic en el backdrop
   patientModal?.addEventListener("click", (e) => {
     if (e.target === patientModal) toggleModal(false);
   });
@@ -101,7 +94,6 @@
     if (e.target === deleteModal) toggleDeleteModal(false);
   });
 
-  // Cerrar con Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       if (patientModal && !patientModal.hidden) toggleModal(false);
@@ -109,7 +101,6 @@
     }
   });
 
-  // Filtro de búsqueda en tiempo real
   searchInput?.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
     let matches = 0;

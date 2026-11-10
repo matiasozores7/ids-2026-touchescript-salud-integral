@@ -9,6 +9,7 @@ from src.repositories.usuario_repository import (
 from src.repositories.paciente_repository import (
     contar_pacientes,
     listar_pacientes,
+    listar_coberturas,
     insertar_paciente,
     actualizar_paciente_por_id,
     obtener_usuario_id_por_paciente_id,
@@ -24,6 +25,12 @@ def listar_pacientes_service(limit: int, offset: int):
         items = listar_pacientes(connection, limit, offset)
 
     return items, total
+
+
+def listar_coberturas_service() -> list:
+    with transaction() as connection:
+        return listar_coberturas(connection)
+
 
 
 def crear_paciente_service(data: dict) -> int:

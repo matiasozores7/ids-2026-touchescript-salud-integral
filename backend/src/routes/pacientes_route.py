@@ -5,7 +5,8 @@ from src.services.paciente_service import (
     crear_paciente_service,
     actualizar_paciente_service,
     eliminar_paciente_service,
-    listar_pacientes_service
+    listar_pacientes_service,
+    listar_coberturas_service
 )
 from src.utils.pagination import (
     get_pagination_params,
@@ -62,3 +63,11 @@ def patch_paciente(paciente_id):
 def delete_paciente(paciente_id):
     eliminar_paciente_service(paciente_id)
     return success_response(message=f"Paciente con ID {paciente_id} dado de baja con éxito.")
+
+
+@pacientes_bp.route("/coberturas", methods=["GET"])
+@validar_rol("admin", "recepcionista", "paciente")
+def get_coberturas():
+    items = listar_coberturas_service()
+    return success_response(data={"items": items}, message="Coberturas obtenidas correctamente.")
+

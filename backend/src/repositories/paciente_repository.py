@@ -42,6 +42,7 @@ def listar_pacientes(connection, limit: int, offset: int) -> list:
             usuarios.nombre AS nombre,
             usuarios.apellido AS apellido,
             usuarios.email AS email,
+            pacientes.cobertura_id AS cobertura_id,
             coberturas.nombre AS cobertura_medica
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
@@ -54,6 +55,18 @@ def listar_pacientes(connection, limit: int, offset: int) -> list:
     with connection.cursor() as cursor:
         cursor.execute(query, (limit, offset))
         return cursor.fetchall()
+
+
+def listar_coberturas(connection) -> list:
+    query = """
+        SELECT id, nombre
+        FROM coberturas
+        ORDER BY id
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchall()
+
 
 def insertar_paciente(connection, usuario_id: int, cobertura_id: int) -> int:
     cursor = connection.cursor()

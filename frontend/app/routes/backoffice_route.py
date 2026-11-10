@@ -12,20 +12,6 @@ from app.services import backoffice_service
 
 backoffice_bp = Blueprint("backoffice", __name__)
 
-COBERTURAS_DISPONIBLES = [
-    {"id": 1, "nombre": "OSDE"},
-    {"id": 2, "nombre": "Swiss Medical"},
-    {"id": 3, "nombre": "IOMA"},
-    {"id": 4, "nombre": "Particular"}
-]
-
-COBERTURA_NOMBRE_A_ID = {
-    "OSDE": 1,
-    "Swiss Medical": 2,
-    "IOMA": 3,
-    "Particular": 4
-}
-
 
 def _render_especialidades():
     try:
@@ -48,24 +34,22 @@ def _render_especialidades():
 
 def _render_pacientes():
     try:
-        resultado = backoffice_service.listar_pacientes(
-            session.get("access_token")
-        )
+        access_token = session.get("access_token")
+        resultado = backoffice_service.listar_pacientes(access_token)
         pacientes = resultado["items"]
         total = resultado.get("total", len(pacientes))
-        for p in pacientes:
-            if "cobertura_id" not in p:
-                p["cobertura_id"] = COBERTURA_NOMBRE_A_ID.get(p.get("cobertura_medica"), 4)
+        coberturas = backoffice_service.listar_coberturas(access_token)
     except RuntimeError as exception:
         pacientes = []
         total = 0
+        coberturas = []
         flash(str(exception), "error")
 
     return render_template(
         "backoffice/pacientes.html",
         pacientes=pacientes,
         total=total,
-        coberturas=COBERTURAS_DISPONIBLES
+        coberturas=coberturas
     )
 
 
@@ -134,7 +118,10 @@ def backoffice_pacientes():
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip() or "Salud1234!"
         cobertura_raw = request.form.get("cobertura_id", "").strip()
-        cobertura_id = int(cobertura_raw) if cobertura_raw.isdigit() else 4
+        cobertura_id = int(cobertura_raw) if cobertura_raw.isdigit() else None
+
+        if not cobertura_id:
+            raise RuntimeError("Debe seleccionar una cobertura médica válida.")
 
         backoffice_service.crear_paciente(
             access_token=session.get("access_token"),

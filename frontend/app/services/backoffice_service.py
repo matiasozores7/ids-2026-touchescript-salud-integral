@@ -174,3 +174,16 @@ def eliminar_paciente(access_token: str, paciente_id: int) -> None:
         f"/pacientes/{paciente_id}",
         access_token
     )
+
+
+def listar_coberturas(access_token: str) -> list:
+    resultado = _solicitar(
+        "GET",
+        "/coberturas",
+        access_token
+    )
+    data = resultado.get("data")
+    if isinstance(data, dict) and isinstance(data.get("items"), list):
+        return data["items"]
+    return []
+
