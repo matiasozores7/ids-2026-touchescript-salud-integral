@@ -6,7 +6,7 @@
 {% macro modal_cancelar(t) %}
   <div class="modal modal-cancelar fade" id="cancelar-{{ t.id }}" tabindex="-1" aria-labelledby="cancelar-titulo-{{ t.id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <form class="modal-content" action="#" method="post">
+      <form class="modal-content" action="{{ url_for('patient.cancelar_turno_paciente', turno_id=t.id) }}" method="post">
         <div class="modal-header align-items-start">
           <div>
             <h2 class="modal-title" id="cancelar-titulo-{{ t.id }}">¿Cancelar este turno?</h2>

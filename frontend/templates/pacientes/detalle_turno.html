@@ -11,25 +11,20 @@
 {% from "pacientes/_componentes.html" import estado_pill, icono_qr, volver %}
 {% from "pacientes/_modal_cancelar.html" import modal_cancelar %}
 
-{#
-   Datos de ejemplo
-#}
-
-{% set turnos_ejemplo = {
-  101: {'id': 101, 'codigo': 'SI-24684', 'fecha_larga': 'Lunes 2 de noviembre',    'fecha': 'lunes 2 de noviembre',    'hora': '11:00', 'duracion': '30 min', 'iniciales': 'LF', 'medico': 'Dra. Lucía Fernández', 'especialidad': 'Cardiología',    'consultorio': 'Consultorio 102 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  102: {'id': 102, 'codigo': 'SI-24815', 'fecha_larga': 'Martes 10 de noviembre',   'fecha': 'martes 10 de noviembre',  'hora': '10:20', 'duracion': '20 min', 'iniciales': 'VP', 'medico': 'Dra. Valentina Pérez', 'especialidad': 'Dermatología',   'consultorio': 'Consultorio 201 · Piso 2', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  103: {'id': 103, 'codigo': 'SI-24902', 'fecha_larga': 'Viernes 13 de noviembre',  'fecha': 'viernes 13 de noviembre', 'hora': '10:20', 'duracion': '20 min', 'iniciales': 'MG', 'medico': 'Dr. Martín González',  'especialidad': 'Clínica médica', 'consultorio': 'Consultorio 105 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  91:  {'id': 91,  'codigo': 'SI-23977', 'fecha_larga': 'Martes 13 de octubre',     'fecha': 'martes 13 de octubre',    'hora': '12:30', 'duracion': '30 min', 'iniciales': 'SM', 'medico': 'Dra. Sofía Martínez',  'especialidad': 'Ginecología',    'consultorio': 'Consultorio 203 · Piso 2', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'cancelado'},
-  92:  {'id': 92,  'codigo': 'SI-23871', 'fecha_larga': 'Martes 6 de octubre',      'fecha': 'martes 6 de octubre',     'hora': '08:30', 'duracion': '30 min', 'iniciales': 'TH', 'medico': 'Dr. Tomás Herrera',    'especialidad': 'Oftalmología',   'consultorio': 'Consultorio 110 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': '08:21 h', 'estado': 'atendido'},
-  93:  {'id': 93,  'codigo': 'SI-23850', 'fecha_larga': 'Lunes 5 de octubre',       'fecha': 'lunes 5 de octubre',      'hora': '08:00', 'duracion': '20 min', 'iniciales': 'MG', 'medico': 'Dr. Martín González',  'especialidad': 'Clínica médica', 'consultorio': 'Consultorio 105 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': '07:52 h', 'estado': 'atendido'}
-} %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
 {% set activo = turno.estado in ['reservado', 'confirmado'] %}
 
 <div class="mis-turnos-page">
 
-  {{ volver(url_for('mis_turnos'), 'Mis turnos') }}
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+      <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+           {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+        {{ mensaje }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  {{ volver(url_for('patient.mis_turnos'), 'Mis turnos') }}
 
   <article class="turno-card detalle-card card p-3 p-sm-4">
 
@@ -48,7 +43,6 @@
         <h2 class="text-lg mb-0">{{ turno.medico }}</h2>
         <p class="small text-body-secondary mb-0">{{ turno.especialidad }}</p>
       </div>
-      <a class="small fw-semibold text-primary" href="#">Ver perfil</a>
     </div>
 
     <dl class="row g-3 mb-4">
@@ -62,7 +56,7 @@
 
     {% if activo %}
       <div class="d-flex flex-wrap gap-2 border-top pt-4">
-        <a class="button button-primary button-large px-3" href="{{ url_for('qr_turno', turno_id=turno.id) }}">{{ icono_qr() }} Ver QR de check-in</a>
+        <a class="button button-primary button-large px-3" href="{{ url_for('patient.qr_turno', turno_id=turno.id) }}">{{ icono_qr() }} Ver QR de check-in</a>
         <button class="button button-outline button-large px-3" type="button" data-bs-toggle="modal" data-bs-target="#cancelar-{{ turno.id }}">Cancelar turno</button>
       </div>
     {% endif %}

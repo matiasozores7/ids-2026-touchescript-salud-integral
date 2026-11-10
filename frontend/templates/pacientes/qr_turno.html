@@ -10,22 +10,10 @@
 {% block content %}
 {% from "pacientes/_componentes.html" import estado_pill, volver %}
 
-{# 
-   Datos de qr-ejemplo
-#}
-
-{% set turnos_ejemplo = {
-  101: {'id': 101, 'codigo': 'SI-24684', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dra. Lucía Fernández', 'fecha_larga': 'Lunes 2 de noviembre',   'hora': '11:00', 'consultorio': 'Consultorio 102'},
-  102: {'id': 102, 'codigo': 'SI-24815', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dra. Valentina Pérez', 'fecha_larga': 'Martes 10 de noviembre',  'hora': '10:20', 'consultorio': 'Consultorio 201'},
-  103: {'id': 103, 'codigo': 'SI-24902', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dr. Martín González',  'fecha_larga': 'Viernes 13 de noviembre', 'hora': '10:20', 'consultorio': 'Consultorio 105'}
-} %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
-
 <div class="mis-turnos-page">
   <div class="qr-contenedor mx-auto">
 
-    {{ volver(url_for('detalle_turno', turno_id=turno.id), 'Detalle del turno') }}
+    {{ volver(url_for('patient.detalle_turno', turno_id=turno.id), 'Detalle del turno') }}
 
     <article class="turno-card card overflow-hidden">
       <header class="qr-encabezado text-center text-white px-4 py-3">
@@ -38,7 +26,7 @@
           <img class="d-block" width="188" height="188" src="{{ url_for('static', filename='img/qr-ejemplo.svg') }}" alt="Código QR del turno {{ turno.codigo }}">
         </div>
 
-        <p class="qr-codigo font-monospace fw-bold mb-0">{{ turno.codigo }}</p>
+        <p class="qr-codigo font-monospace fw-bold mb-0">{{ qr_token or turno.qr_token or turno.codigo }}</p>
         {{ estado_pill(turno.estado) }}
 
         <div>

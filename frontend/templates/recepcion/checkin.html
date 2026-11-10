@@ -10,7 +10,7 @@
 {% block content %}
 <div class="backoffice-layout">
   <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('index') }}" aria-label="Salud Integral, inicio">
+    <a class="backoffice-brand" href="{{ url_for('backoffice.backoffice') }}" aria-label="Salud Integral, inicio">
       <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
         <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
@@ -20,34 +20,43 @@
     </a>
     <p class="sidebar-label">Recepción</p>
     <nav class="backoffice-nav" aria-label="Recepción">
-      <a href="{{ url_for('index') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
-      <a class="active" href="{{ url_for('backoffice_checkin') }}"><i class="bi bi-qr-code" aria-hidden="true"></i><span>Check-in QR</span></a>
-      <a href="{{ url_for('backoffice_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
+      <a href="{{ url_for('backoffice.backoffice') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
+      <a class="active" href="{{ url_for('backoffice.backoffice_checkin') }}"><i class="bi bi-qr-code" aria-hidden="true"></i><span>Check-in QR</span></a>
+      <a href="{{ url_for('backoffice.backoffice_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
       <a href="#"><i class="bi bi-person-lines-fill" aria-hidden="true"></i><span>Sala de espera</span></a>
     </nav>
     <div class="sidebar-footer">
-      <a href="{{ url_for('index') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+      <a href="{{ url_for('patient.patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
     </div>
   </aside>
 
   <div class="backoffice-main">
     <header class="backoffice-header">
       <div>
-        <a href="{{ url_for('index') }}">Inicio</a>
-        <span>domingo 1 de noviembre · 10:30 (hora simulada)</span>
+        <a href="{{ url_for('backoffice.backoffice') }}">Inicio</a>
+        <span>Recepción de turnos</span>
       </div>
       <div class="backoffice-user">
         <span class="backoffice-user-avatar">RV</span>
-        <span><strong>Rocío Velázquez</strong><small>Recepción</small></span>
+        <span><strong>Recepción</strong><small>Administración</small></span>
       </div>
     </header>
 
     <main class="backoffice-content checkin-content">
       <div class="backoffice-breadcrumb" aria-label="Migas de pan">
-        <a href="{{ url_for('index') }}">Inicio</a>
+        <a href="{{ url_for('backoffice.backoffice') }}">Inicio</a>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
         <span>Check-in QR</span>
       </div>
+
+      {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+          <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+               {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+            {{ mensaje }}
+          </div>
+        {% endfor %}
+      {% endwith %}
 
       <div class="checkin-heading">
         <div>
@@ -77,10 +86,10 @@
           </div>
 
           <div class="checkin-divider"><span>o ingresá el código manualmente</span></div>
-          <form class="checkin-code-form" action="#" method="post">
+          <form class="checkin-code-form" action="{{ url_for('backoffice.backoffice_checkin') }}" method="post">
             <label for="qr-code">Código del turno</label>
             <div class="checkin-code-input">
-              <input id="qr-code" name="qr_code" type="text" placeholder="Ej. TURNO-1024" autocomplete="off">
+              <input id="qr-code" name="qr_code" type="text" placeholder="Ej. QR-c57b37e669ad4238976ad595661088cf" autocomplete="off" required>
               <button class="button button-primary button-small" type="submit">Validar</button>
             </div>
           </form>

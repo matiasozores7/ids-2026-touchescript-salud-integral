@@ -8,7 +8,7 @@ from flask import (
     flash
 )
 
-from app.services import backoffice_service
+from app.services import backoffice_service, turno_service
 
 backoffice_bp = Blueprint("backoffice", __name__)
 
@@ -99,6 +99,19 @@ def backoffice_consultorios():
 def backoffice_consultorio_form(consultorio_id=None):
     return render_template("backoffice/consultorio_form.html")
 
-@backoffice_bp.get("/backoffice/check-in")
+@backoffice_bp.route("/backoffice/check-in", methods=["GET", "POST"])
 def backoffice_checkin():
+    if request.method == "POST":
+        qr_code = request.form.get("qr_code", "").strip()
+        try:
+            mensaje = turno_service.realizar_checkin(
+                access_token=session.get("access_token"),
+                qr_token=qr_code
+            )
+            flash(mensaje or "Check-in registrado exitosamente.", "success")
+        except RuntimeError as exception:
+            flash(str(exception), "error")
+
+        return redirect(url_for("backoffice.backoffice_checkin"))
+
     return render_template("recepcion/checkin.html")

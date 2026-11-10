@@ -14,7 +14,7 @@
 <div class="row row-cols-1 row-cols-lg-2 g-3">
   {% for m in medicos %}
     <div class="col">
-      <a class="reserva-card card flex-row align-items-center gap-3 p-3" href="{{ url_for('reservar_fecha_hora', medico_id=m.id) }}">
+      <a class="reserva-card card flex-row align-items-center gap-3 p-3" href="{{ url_for('patient.reservar_fecha_hora', medico_id=m.id) }}">
         <span class="avatar avatar-icono" aria-hidden="true">{{ m.iniciales }}</span>
         <div>
           <h2 class="text-lg mb-0">{{ m.nombre }}</h2>

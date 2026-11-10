@@ -9,19 +9,9 @@
 
 {% block content %}
 {% from "pacientes/_componentes.html" import estado_pill, icono_qr %}
-{# 
-   Datos de ejemplo
-#}
-{% set proximos = [
-  {'id': 101, 'dia': 'Lunes',   'hora': '11:00', 'iniciales': 'LF', 'medico': 'Dra. Lucía Fernández',  'especialidad': 'Cardiología',    'fecha': 'lunes 2 de noviembre',    'estado': 'reservado'},
-  {'id': 102, 'dia': 'Martes',  'hora': '10:20', 'iniciales': 'VP', 'medico': 'Dra. Valentina Pérez',  'especialidad': 'Dermatología',   'fecha': 'martes 10 de noviembre',  'estado': 'reservado'},
-  {'id': 103, 'dia': 'Viernes', 'hora': '10:20', 'iniciales': 'MG', 'medico': 'Dr. Martín González',   'especialidad': 'Clínica médica', 'fecha': 'viernes 13 de noviembre', 'estado': 'reservado'}
-] %}
-{% set historial = [
-  {'id': 91, 'dia': 'Martes', 'hora': '12:30', 'iniciales': 'SM', 'medico': 'Dra. Sofía Martínez', 'especialidad': 'Ginecología',    'fecha': 'martes 13 de octubre', 'estado': 'cancelado'},
-  {'id': 92, 'dia': 'Martes', 'hora': '08:30', 'iniciales': 'TH', 'medico': 'Dr. Tomás Herrera',   'especialidad': 'Oftalmología',   'fecha': 'martes 6 de octubre',  'estado': 'atendido'},
-  {'id': 93, 'dia': 'Lunes',  'hora': '08:00', 'iniciales': 'MG', 'medico': 'Dr. Martín González', 'especialidad': 'Clínica médica', 'fecha': 'lunes 5 de octubre',   'estado': 'atendido'}
-] %}
+
+{% set proximos = proximos|default([]) %}
+{% set historial = historial|default([]) %}
 
 {% macro tarjeta_turno(t) %}
   <article class="turno-card card flex-md-row align-items-md-center gap-3 p-3">
@@ -40,9 +30,9 @@
 
     <div class="d-flex align-items-center flex-wrap gap-2">
       {{ estado_pill(t.estado) }}
-      <a class="button button-outline button-small" href="{{ url_for('detalle_turno', turno_id=t.id) }}">Detalle</a>
+      <a class="button button-outline button-small" href="{{ url_for('patient.detalle_turno', turno_id=t.id) }}">Detalle</a>
       {% if t.estado in ['reservado', 'confirmado'] %}
-        <a class="button button-primary button-small" href="{{ url_for('qr_turno', turno_id=t.id) }}">{{ icono_qr() }} QR</a>
+        <a class="button button-primary button-small" href="{{ url_for('patient.qr_turno', turno_id=t.id) }}">{{ icono_qr() }} QR</a>
       {% endif %}
     </div>
   </article>
@@ -56,7 +46,7 @@
     {% else %}
       <div class="turnos-vacio border bg-white d-flex flex-column align-items-center gap-3 text-center text-body-secondary">
         <p class="mb-0">{{ vacio }}</p>
-        {% if id == 'proximos' %}<a class="button button-primary button-small" href="{{ url_for('reservar_especialidad') }}">Reservar turno</a>{% endif %}
+        {% if id == 'proximos' %}<a class="button button-primary button-small" href="{{ url_for('patient.reservar_especialidad') }}">Reservar turno</a>{% endif %}
       </div>
     {% endif %}
   </div>
@@ -64,9 +54,18 @@
 
 <div class="mis-turnos-page">
 
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+      <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+           {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+        {{ mensaje }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
     <h1 class="fw-bold mb-0">Mis turnos</h1>
-    <a class="button button-primary button-large" href="{{ url_for('reservar_especialidad') }}">
+    <a class="button button-primary button-large" href="{{ url_for('patient.reservar_especialidad') }}">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 13v4M10 15h4"/></svg>
       Nuevo turno
     </a>

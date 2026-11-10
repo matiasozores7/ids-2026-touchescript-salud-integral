@@ -1,3 +1,5 @@
+import base64
+import json
 from flask import (
     Blueprint,
     render_template,
@@ -11,9 +13,23 @@ from app.services import auth_service
 
 auth_bp = Blueprint("auth", __name__)
 
+
+def _obtener_claims(token: str) -> dict:
+    try:
+        partes = token.split(".")
+        if len(partes) >= 2:
+            payload_b64 = partes[1]
+            payload_b64 += "=" * ((4 - len(payload_b64) % 4) % 4)
+            return json.loads(base64.urlsafe_b64decode(payload_b64).decode("utf-8"))
+    except Exception:
+        pass
+    return {}
+
+
 @auth_bp.route("/", methods=["GET"])
 def index():
     return render_template("login.html")
+
 
 @auth_bp.route("/login", methods=["GET"])
 def mostrar_login():
@@ -31,7 +47,14 @@ def iniciar_sesion():
             password=password
         )
 
-        session["access_token"] = resultado["access_token"]
+        token = resultado["access_token"]
+        session["access_token"] = token
+        claims = _obtener_claims(token)
+        rol = claims.get("rol")
+        session["rol"] = rol
+
+        if rol in ("admin", "medico"):
+            return redirect(url_for("backoffice.backoffice"))
 
         return redirect(url_for("patient.patient_home"))
 
@@ -42,6 +65,12 @@ def iniciar_sesion():
             "login.html",
             error=str(error)
         )
+
+
+@auth_bp.route("/logout", methods=["GET", "POST"])
+def cerrar_sesion():
+    session.clear()
+    return redirect(url_for("auth.mostrar_login"))
 
 @auth_bp.route("/registro", methods=["GET"])
 def mostrar_registro():
