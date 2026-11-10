@@ -24,7 +24,7 @@
   {'hora': '12:00', 'libre': false}, {'hora': '12:20', 'libre': true},  {'hora': '12:40', 'libre': true}
 ] %}
 
-<form class="reserva-card card p-4" id="form-fecha-hora" action="{{ url_for('reservar_confirmacion') }}" method="get">
+<form class="reserva-card card p-4" id="form-fecha-hora" action="{{ url_for('patient.reservar_confirmacion') }}" method="get">
   <input type="hidden" name="medico_id" value="{{ medico_id|default(1) }}">
 
   <h2 class="fs-6 fw-medium mb-3">Fechas disponibles con {{ medico }}</h2>

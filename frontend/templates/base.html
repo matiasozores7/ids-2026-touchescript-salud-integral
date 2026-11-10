@@ -59,7 +59,7 @@
         </div>
       </header>
 
-      <main class="page-content flex-grow-1 container">
+      <main class="{% block main_class %}page-content flex-grow-1 container{% endblock %}">
         {% block content %}{% endblock %}
       </main>
 
