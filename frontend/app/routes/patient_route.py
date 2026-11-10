@@ -38,22 +38,173 @@ MESES = {
     12: "diciembre"
 }
 
+MAPA_DIAS = {
+    "0": 0, "1": 0, "lunes": 0,
+    "2": 1, "martes": 1,
+    "3": 2, "miercoles": 2, "miércoles": 2,
+    "4": 3, "jueves": 3,
+    "5": 4, "viernes": 4,
+    "6": 5, "sabado": 5, "sábado": 5,
+    "7": 6, "domingo": 6,
+}
+
 
 @patient_bp.route("/pacientes", methods=["GET", "POST"])
 def patient_home():
     token = session.get("access_token")
-    proximo_turno = None
+    if not token:
+        flash("Debés iniciar sesión para acceder al panel de pacientes.", "error")
+        return redirect(url_for("auth.mostrar_login"))
 
-    if token:
+    proximo_turno = None
+    try:
+        turnos = turno_service.listar_mis_turnos(token)
+        proximos = [t for t in turnos if t["estado"] in ("reservado", "confirmado")]
+        if proximos:
+            proximo_turno = proximos[0]
+    except RuntimeError:
+        pass
+
+    try:
+        especialidades = turno_service.listar_especialidades(token)
+        medicos_raw = turno_service.listar_medicos(token)
+    except RuntimeError:
+        especialidades = []
+        medicos_raw = []
+
+    medicos = []
+    for m in medicos_raw:
+        nom = m.get("nombre", "")
+        ape = m.get("apellido", "")
+        inits = f"{nom[:1]}{ape[:1]}".upper() if nom and ape else "MD"
+        m_id = m.get("id")
+        prefijo = "Dra." if nom.lower().endswith("a") else "Dr."
+        nombre_completo = f"{prefijo} {nom} {ape}".strip()
+
+        proxima_disp = "Consultar disponibilidad"
+        consultorio_desc = "Consultorio asignado"
+
         try:
-            turnos = turno_service.listar_mis_turnos(token)
-            proximos = [t for t in turnos if t["estado"] in ("reservado", "confirmado")]
-            if proximos:
-                proximo_turno = proximos[0]
+            disponibles = turno_service.obtener_turnos_disponibles(token, m_id)
+            futuros = []
+            for t in disponibles:
+                fh = t.get("fecha_hora")
+                if fh:
+                    try:
+                        dt = datetime.fromisoformat(fh)
+                        if dt > datetime.now():
+                            futuros.append((dt, t))
+                    except ValueError:
+                        pass
+            if futuros:
+                dt_prox, t_prox = futuros[0]
+                dia_nom = DIAS_SEMANA.get(dt_prox.weekday(), "")
+                mes_nom = MESES.get(dt_prox.month, "")
+                proxima_disp = f"{dia_nom} {dt_prox.day} de {mes_nom} · {dt_prox.strftime('%H:%M')}"
+                sala = t_prox.get("consultorio_sala", "")
+                piso = t_prox.get("consultorio_piso", "")
+                consultorio_desc = f"Consultorio {sala}" + (f" · Piso {piso}" if piso else "")
         except RuntimeError:
             pass
 
-    return render_template("pacientes/home.html", proximo_turno=proximo_turno)
+        medicos.append({
+            "id": m_id,
+            "nombre": nom,
+            "apellido": ape,
+            "nombre_completo": nombre_completo,
+            "iniciales": inits,
+            "especialidad": m.get("especialidad", ""),
+            "especialidad_id": m.get("especialidad_id"),
+            "email": m.get("email", ""),
+            "proxima_disponibilidad": proxima_disp,
+            "consultorio": consultorio_desc
+        })
+
+    especialidad_filtro = request.args.get("especialidad", "").strip()
+    medico_filtro = (request.args.get("medico_id") or request.args.get("q", "")).strip()
+    dia_filtro = request.args.get("dia", "").strip()
+    buscar_param = request.args.get("buscar")
+
+    busqueda_realizada = bool(buscar_param or especialidad_filtro or medico_filtro or dia_filtro)
+    turnos_busqueda = []
+
+    if busqueda_realizada:
+        medicos_consulta = medicos
+        if medico_filtro:
+            try:
+                m_id_int = int(medico_filtro)
+                medicos_consulta = [m for m in medicos if m["id"] == m_id_int]
+            except ValueError:
+                medicos_consulta = [
+                    m for m in medicos
+                    if medico_filtro.lower() in m["apellido"].lower() or medico_filtro.lower() in m["nombre"].lower()
+                ]
+        elif especialidad_filtro:
+            try:
+                esp_id_int = int(especialidad_filtro)
+                medicos_consulta = [m for m in medicos if m.get("especialidad_id") == esp_id_int]
+            except ValueError:
+                pass
+
+        dia_objetivo = MAPA_DIAS.get(dia_filtro.lower()) if dia_filtro else None
+
+        for med in medicos_consulta:
+            try:
+                disponibles = turno_service.obtener_turnos_disponibles(token, med["id"])
+            except RuntimeError:
+                continue
+
+            for t in disponibles:
+                fh = t.get("fecha_hora")
+                if not fh:
+                    continue
+                try:
+                    dt = datetime.fromisoformat(fh)
+                except ValueError:
+                    continue
+
+                if dt <= datetime.now():
+                    continue
+
+                if dia_objetivo is not None and dt.weekday() != dia_objetivo:
+                    continue
+
+                dia_nom = DIAS_SEMANA.get(dt.weekday(), "")
+                mes_nom = MESES.get(dt.month, "")
+                fecha_str = dt.strftime("%Y-%m-%d")
+                hora_str = dt.strftime("%H:%M")
+                fecha_form = f"{dia_nom} {dt.day} de {mes_nom}"
+
+                sala = t.get("consultorio_sala", "")
+                piso = t.get("consultorio_piso", "")
+                consultorio_str = f"Consultorio {sala}" + (f" · Piso {piso}" if piso else "")
+
+                turnos_busqueda.append({
+                    "id": t.get("id"),
+                    "medico_id": med["id"],
+                    "medico": med["nombre_completo"],
+                    "iniciales": med["iniciales"],
+                    "especialidad": med["especialidad"],
+                    "fecha": fecha_str,
+                    "fecha_formateada": fecha_form,
+                    "hora": hora_str,
+                    "consultorio": consultorio_str,
+                    "dt": dt
+                })
+
+        turnos_busqueda.sort(key=lambda x: x["dt"])
+
+    return render_template(
+        "pacientes/home.html",
+        proximo_turno=proximo_turno,
+        especialidades=especialidades,
+        medicos=medicos,
+        turnos_busqueda=turnos_busqueda,
+        busqueda_realizada=busqueda_realizada,
+        filtro_especialidad=especialidad_filtro,
+        filtro_medico=medico_filtro,
+        filtro_dia=dia_filtro
+    )
 
 
 @patient_bp.route("/mis-turnos", methods=["GET"])
@@ -194,6 +345,9 @@ def reservar_fecha_hora(medico_id: int):
         medico = {}
         turnos_disponibles_raw = []
 
+    dia_filtro = request.args.get("dia", "").strip()
+    dia_objetivo = MAPA_DIAS.get(dia_filtro.lower()) if dia_filtro else None
+
     fechas_dict = {}
     turnos_lista = []
 
@@ -207,6 +361,9 @@ def reservar_fecha_hora(medico_id: int):
             continue
 
         if dt <= datetime.now():
+            continue
+
+        if dia_objetivo is not None and dt.weekday() != dia_objetivo:
             continue
 
         fecha_val = dt.strftime("%Y-%m-%d")
