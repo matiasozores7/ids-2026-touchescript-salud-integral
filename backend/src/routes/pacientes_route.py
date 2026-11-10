@@ -17,7 +17,7 @@ pacientes_bp = Blueprint("pacientes_bp", __name__)
 
 
 @pacientes_bp.route("/pacientes", methods=["GET"])
-@validar_rol("paciente")
+@validar_rol("admin", "recepcionista", "paciente")
 def get_pacientes():
     limit, offset = get_pagination_params()
 

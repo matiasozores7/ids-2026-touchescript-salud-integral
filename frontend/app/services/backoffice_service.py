@@ -106,3 +106,71 @@ def eliminar_especialidad(access_token: str, especialidad_id: int) -> None:
         f"/especialidades/{especialidad_id}",
         access_token
     )
+
+
+def listar_pacientes(access_token: str) -> dict:
+    resultado = _solicitar(
+        "GET",
+        "/pacientes?_limit=100&_offset=0",
+        access_token
+    )
+    data = resultado.get("data")
+
+    if not isinstance(data, dict) or not isinstance(data.get("items"), list):
+        raise RuntimeError("El servidor devolvió una lista de pacientes inválida.")
+
+    return data
+
+
+def crear_paciente(
+    access_token: str,
+    nombre: str,
+    apellido: str,
+    email: str,
+    password: str,
+    cobertura_id: int
+) -> None:
+    _solicitar(
+        "POST",
+        "/pacientes",
+        access_token,
+        json={
+            "nombre": nombre,
+            "apellido": apellido,
+            "email": email,
+            "password": password,
+            "cobertura_id": cobertura_id
+        }
+    )
+
+
+def actualizar_paciente(
+    access_token: str,
+    paciente_id: int,
+    nombre: str,
+    apellido: str,
+    email: str,
+    cobertura_id: int | None = None
+) -> None:
+    payload = {
+        "nombre": nombre,
+        "apellido": apellido,
+        "email": email
+    }
+    if cobertura_id is not None:
+        payload["cobertura_id"] = cobertura_id
+
+    _solicitar(
+        "PATCH",
+        f"/pacientes/{paciente_id}",
+        access_token,
+        json=payload
+    )
+
+
+def eliminar_paciente(access_token: str, paciente_id: int) -> None:
+    _solicitar(
+        "DELETE",
+        f"/pacientes/{paciente_id}",
+        access_token
+    )

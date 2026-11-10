@@ -11,9 +11,11 @@ from app.services import auth_service
 
 auth_bp = Blueprint("auth", __name__)
 
+
 @auth_bp.route("/", methods=["GET"])
 def index():
     return render_template("login.html")
+
 
 @auth_bp.route("/login", methods=["GET"])
 def mostrar_login():
@@ -26,28 +28,35 @@ def iniciar_sesion():
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "")
 
-    # Si se seleccionó perfil de recepción o administración, ingresa directamente al Backoffice
-    if role in {"recepcion", "administracion"}:
-        session["role"] = role
-        return redirect(url_for("backoffice.backoffice"))
+    if not email or not password:
+        return render_template(
+            "login.html",
+            error="Por favor ingresá correo electrónico y contraseña."
+        )
 
     try:
+        # Se solicita el token JWT oficial al backend
         resultado = auth_service.login_usuario(
             email=email,
             password=password
         )
 
+        session["role"] = role
         session["access_token"] = resultado["access_token"]
 
+        # Si el usuario es de administración o recepción, va al Backoffice
+        if role in {"recepcion", "administracion"}:
+            return redirect(url_for("backoffice.backoffice"))
+
+        # Si es paciente, va al portal del paciente
         return redirect(url_for("patient.patient_home"))
 
     except RuntimeError as error:
-        print("LOGIN: error:", error)
-
         return render_template(
             "login.html",
             error=str(error)
         )
+
 
 @auth_bp.route("/registro", methods=["GET"])
 def mostrar_registro():
