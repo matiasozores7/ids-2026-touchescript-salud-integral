@@ -60,6 +60,11 @@ Se implementó el servicio modular `frontend/app/services/turno_service.py` y se
 - Se implementó el endpoint `GET /api/medicos/<int:medico_id>/turnos-disponibles` con soporte opcional de filtro por `?fecha=YYYY-MM-DD`.
 - Devuelve los turnos pre-generados con estado `'disponible'` junto a su `id`, horario y consultorio, permitiendo al frontend asociar el slot exacto (`turno_id`) para enviar al confirmar la reserva en `POST /api/turnos`.
 
+### D. Validaciones Temporales (Bloqueo de Turnos Pasados) — *Resuelto*
+- **Listado de disponibles:** Se incorporó la condición SQL `AND t.fecha_hora > NOW()` en `obtener_turnos_disponibles` y un filtro en el frontend para evitar que turnos cuya fecha y hora ya pasaron se muestren al paciente.
+- **Reserva de turnos:** En `reservar_turno` (`turno_service.py`), se agregó la validación que rechaza con `ConflictError` (409) cualquier intento de reservar un turno cuya `fecha_hora <= datetime.now()`.
+- **Generación de turnos:** En `validar_generacion_turnos`, se valida que la `fecha_fin` no sea anterior a la fecha actual (`BadRequestError`), y en el generador de slots se omiten automáticamente aquellos horarios que hayan quedado en el pasado dentro del día de hoy.
+
 ---
 
 ## 3. Próximas Mejoras Sugeridas (Backlog)
