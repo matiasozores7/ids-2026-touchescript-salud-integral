@@ -42,7 +42,10 @@ def crear_medico():
         apellido=data["apellido"],
         email=data["email"],
         password=data["password"],
-        especialidad_id=data["especialidad_id"]
+        especialidad_id=data["especialidad_id"],
+        matricula=data["matricula"],
+        telefono=data.get("telefono"),
+        cobertura_ids=data.get("cobertura_ids", [])
     )
 
     return success_response(

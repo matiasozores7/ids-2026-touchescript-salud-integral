@@ -9,6 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS turnos;
 DROP TABLE IF EXISTS agendas;
 DROP TABLE IF EXISTS consultorios;
+DROP TABLE IF EXISTS medicos_coberturas;
 DROP TABLE IF EXISTS medicos;
 DROP TABLE IF EXISTS pacientes;
 DROP TABLE IF EXISTS especialidades;
@@ -28,6 +29,7 @@ CREATE TABLE usuarios (
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(30),
     password_hash VARCHAR(255) NOT NULL,
     rol ENUM('paciente', 'admin', 'medico') NOT NULL,
     activo BOOLEAN NOT NULL DEFAULT TRUE
@@ -51,8 +53,17 @@ CREATE TABLE medicos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL UNIQUE,
     especialidad_id INT NOT NULL,
+    matricula VARCHAR(50) NOT NULL UNIQUE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (especialidad_id) REFERENCES especialidades(id)
+);
+
+CREATE TABLE medicos_coberturas (
+    medico_id INT NOT NULL,
+    cobertura_id INT NOT NULL,
+    PRIMARY KEY (medico_id, cobertura_id),
+    FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE,
+    FOREIGN KEY (cobertura_id) REFERENCES coberturas(id) ON DELETE CASCADE
 );
 
 CREATE TABLE consultorios (

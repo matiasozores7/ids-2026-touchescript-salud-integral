@@ -6,12 +6,14 @@ INSERT INTO coberturas (nombre) VALUES
 ('IOMA'), 
 ('Particular');
 
-INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo) VALUES 
-('Admin', 'Sistema', 'admin@clinica.com', 'hash_admin_123', 'admin', TRUE),
-('Recepción', 'Uno', 'recepcion@clinica.com', 'hash_recepcion_123', 'admin', TRUE),
-('Roberto', 'Fernández', 'roberto@clinica.com', 'hash_medico_123', 'medico', TRUE),
-('Juan', 'Perez', 'juan@mail.com', 'hash_paciente_1', 'paciente', TRUE),
-('Ana', 'Gomez', 'ana@mail.com', 'hash_paciente_2', 'paciente', TRUE);
+INSERT INTO usuarios
+    (nombre, apellido, email, telefono, password_hash, rol, activo)
+VALUES
+('Admin', 'Sistema', 'admin@clinica.com', '11 4000-0001', 'hash_admin_123', 'admin', TRUE),
+('Recepción', 'Uno', 'recepcion@clinica.com', '11 4000-0002', 'hash_recepcion_123', 'admin', TRUE),
+('Roberto', 'Fernández', 'roberto@clinica.com', '11 4000-0003', 'hash_medico_123', 'medico', TRUE),
+('Juan', 'Perez', 'juan@mail.com', '11 4000-0004', 'hash_paciente_1', 'paciente', TRUE),
+('Ana', 'Gomez', 'ana@mail.com', '11 4000-0005', 'hash_paciente_2', 'paciente', TRUE);
       
 
 INSERT INTO pacientes (usuario_id, cobertura_id) VALUES 
@@ -22,8 +24,13 @@ INSERT INTO especialidades (nombre, descripcion) VALUES
 ('Clínica Médica', 'Atención integral de pacientes adultos'),
 ('Cardiología', 'Diagnóstico y tratamiento de enfermedades cardiovasculares');
 
-INSERT INTO medicos (usuario_id, especialidad_id) VALUES 
-(3, 1);
+INSERT INTO medicos (usuario_id, especialidad_id, matricula) VALUES
+(3, 1, 'MN 100001');
+
+INSERT INTO medicos_coberturas (medico_id, cobertura_id) VALUES
+(1, 1),
+(1, 2),
+(1, 4);
 
 INSERT INTO consultorios (numero_sala, piso) VALUES 
 ('101A', '1'), 

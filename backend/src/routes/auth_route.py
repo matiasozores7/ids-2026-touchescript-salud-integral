@@ -31,7 +31,8 @@ def registrar_usuario():
         apellido=data["apellido"],
         email=data["email"],
         password=data["password"],
-        cobertura_id=data.get("cobertura_id")
+        cobertura_id=data.get("cobertura_id"),
+        telefono=data.get("telefono")
     )
 
     return success_response(data=resultado, message="Usuario registrado exitosamente", status_code=201)

@@ -42,6 +42,7 @@ def listar_pacientes(connection, limit: int, offset: int) -> list:
             usuarios.nombre AS nombre,
             usuarios.apellido AS apellido,
             usuarios.email AS email,
+            usuarios.telefono AS telefono,
             coberturas.nombre AS cobertura_medica
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
@@ -88,6 +89,7 @@ def buscar_paciente_por_id(connection, paciente_id: int) -> dict | None:
             usuarios.nombre,
             usuarios.apellido,
             usuarios.email,
+            usuarios.telefono,
             usuarios.activo
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
