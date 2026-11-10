@@ -8,12 +8,17 @@
 
 {% block paso %}
 
-{% set reserva = {
-  'id': 101, 'codigo': 'SI-30002', 'medico_id': 1,
-  'medico': 'Dra. Camila Rodríguez', 'especialidad': 'Pediatría',
-  'fecha_larga': 'Sábado 21 de noviembre', 'hora': '12:20',
-  'consultorio': 'Consultorio 101', 'paciente': 'María Gómez', 'cobertura': 'OSDE'
-} %}
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+  {% for categoria, mensaje in mensajes %}
+    <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+         {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+      {{ mensaje }}
+    </div>
+  {% endfor %}
+{% endwith %}
+
+{% set nombre_medico = (medico.nombre ~ ' ' ~ medico.apellido) if (medico.nombre and medico.apellido) else (medico.nombre or 'Profesional asignado') %}
+{% set esp = medico.especialidad or 'Clínica Médica' %}
 
 {% if resultado %}
   <div class="reserva-card card p-4 mx-auto text-center" style="max-width: 32rem">
@@ -21,40 +26,46 @@
       <i class="bi bi-check-circle" aria-hidden="true"></i>
     </div>
     <h1 class="fs-4 fw-bold mb-1">¡Turno reservado!</h1>
-    <p class="text-body-secondary">Tu código es {{ reserva.codigo }}.</p>
-
-    <div class="bg-body-tertiary rounded-3 p-3 text-start mb-4">
-      <p class="fw-semibold mb-0">{{ reserva.medico }}</p>
-      <p class="small text-primary mb-2">{{ reserva.especialidad }}</p>
-      <p class="small mb-0">{{ reserva.fecha_larga }} · {{ reserva.hora }} h</p>
-      <p class="small text-body-secondary mb-0">{{ reserva.consultorio }} · {{ reserva.cobertura }}</p>
-    </div>
+    <p class="text-body-secondary">Tu turno fue confirmado exitosamente.</p>
 
     <div class="d-flex gap-2">
-      <a class="button button-outline button-large flex-fill" href="{{ url_for('patient.detalle_turno', turno_id=reserva.id) }}">Ver detalle</a>
-      <a class="button button-primary button-large flex-fill" href="{{ url_for('patient.qr_turno', turno_id=reserva.id) }}">{{ icono_qr() }} Ver QR</a>
+      <a class="button button-primary button-large flex-fill" href="{{ url_for('patient.mis_turnos') }}">Ir a Mis turnos</a>
     </div>
   </div>
 {% else %}
   <form class="reserva-card card p-4" style="max-width: 36rem" action="{{ url_for('patient.reservar_resultado') }}" method="post">
+    <input type="hidden" name="turno_id" value="{{ turno_id }}">
+    <input type="hidden" name="medico_id" value="{{ medico_id }}">
+
     <h2 class="fs-5 fw-semibold mb-3">Revisá tu turno</h2>
 
     <dl class="row g-3 mb-4">
-      {% for etiqueta, valor in [
-        ('Profesional', reserva.medico), ('Especialidad', reserva.especialidad),
-        ('Fecha', reserva.fecha_larga), ('Hora', reserva.hora ~ ' h'),
-        ('Consultorio', reserva.consultorio), ('Paciente', reserva.paciente),
-        ('Cobertura', reserva.cobertura)
-      ] %}
-        <div class="col-6">
-          <dt class="text-sm text-body-secondary fw-normal">{{ etiqueta }}</dt>
-          <dd class="fw-medium mb-0">{{ valor }}</dd>
-        </div>
-      {% endfor %}
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Profesional</dt>
+        <dd class="fw-medium mb-0">{{ nombre_medico }}</dd>
+      </div>
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Especialidad</dt>
+        <dd class="fw-medium mb-0">{{ esp }}</dd>
+      </div>
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Fecha</dt>
+        <dd class="fw-medium mb-0">{{ fecha_formateada or fecha }}</dd>
+      </div>
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Hora</dt>
+        <dd class="fw-medium mb-0">{{ hora }} h</dd>
+      </div>
+      {% if consultorio %}
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Consultorio</dt>
+        <dd class="fw-medium mb-0">{{ consultorio }}</dd>
+      </div>
+      {% endif %}
     </dl>
 
     <div class="d-flex justify-content-between">
-      <a class="button button-outline button-large" href="{{ url_for('patient.reservar_fecha_hora', medico_id=reserva.medico_id) }}">Volver</a>
+      <a class="button button-outline button-large" href="{{ url_for('patient.reservar_fecha_hora', medico_id=medico_id) }}">Volver</a>
       <button class="button button-primary button-large" type="submit">Confirmar reserva</button>
     </div>
   </form>

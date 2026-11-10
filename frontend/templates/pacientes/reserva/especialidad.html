@@ -4,25 +4,27 @@
 
 {% block paso %}
 
-{% set especialidades = [
-  {'id': 1, 'nombre': 'Clínica médica', 'duracion': '20 min', 'icono': 'clipboard2-pulse'},
-  {'id': 2, 'nombre': 'Cardiología',    'duracion': '30 min', 'icono': 'heart-pulse'},
-  {'id': 3, 'nombre': 'Pediatría',      'duracion': '20 min', 'icono': 'emoji-smile'},
-  {'id': 4, 'nombre': 'Dermatología',   'duracion': '20 min', 'icono': 'person-bounding-box'},
-  {'id': 5, 'nombre': 'Traumatología',  'duracion': '20 min', 'icono': 'bandaid'},
-  {'id': 6, 'nombre': 'Ginecología',    'duracion': '30 min', 'icono': 'gender-female'},
-  {'id': 7, 'nombre': 'Oftalmología',   'duracion': '20 min', 'icono': 'eye'},
-  {'id': 8, 'nombre': 'Neurología',     'duracion': '30 min', 'icono': 'activity'}
-] %}
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+  {% for categoria, mensaje in mensajes %}
+    <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+         {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+      {{ mensaje }}
+    </div>
+  {% endfor %}
+{% endwith %}
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
-  {% for e in especialidades %}
+  {% for e in especialidades|default([]) %}
     <div class="col">
       <a class="reserva-card card h-100 p-3" href="{{ url_for('patient.reservar_medico', especialidad_id=e.id) }}">
-        <span class="avatar avatar-icono rounded-3 fs-5 mb-3" aria-hidden="true"><i class="bi bi-{{ e.icono }}"></i></span>
+        <span class="avatar avatar-icono rounded-3 fs-5 mb-3" aria-hidden="true"><i class="bi bi-{{ e.icono|default('clipboard2-pulse') }}"></i></span>
         <h2 class="text-lg mb-0">{{ e.nombre }}</h2>
-        <p class="text-sm text-body-secondary mb-0">{{ e.duracion }}</p>
+        <p class="text-sm text-body-secondary mb-0">{{ e.descripcion or 'Atención profesional' }}</p>
       </a>
+    </div>
+  {% else %}
+    <div class="col-12 text-center text-body-secondary py-5">
+      <p>No hay especialidades disponibles en este momento.</p>
     </div>
   {% endfor %}
 </div>

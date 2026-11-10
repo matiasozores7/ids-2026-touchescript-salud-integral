@@ -314,3 +314,25 @@ def obtener_horarios_disponibles(connection, medico_id: int, fecha: str):
         })
 
     return horarios
+
+
+def obtener_turnos_disponibles(connection, medico_id: int, fecha: str | None = None) -> list:
+    query = """
+        SELECT t.id, t.medico_id, t.consultorio_id, t.fecha_hora, t.estado,
+               c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+        FROM turnos t
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.medico_id = %s
+          AND t.estado = 'disponible'
+    """
+    params = [medico_id]
+
+    if fecha:
+        query += " AND DATE(t.fecha_hora) = %s"
+        params.append(fecha)
+
+    query += " ORDER BY t.fecha_hora ASC"
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, tuple(params))
+        return cursor.fetchall()

@@ -238,3 +238,30 @@ def obtener_horarios_disponibles(medico_id: int):
         data=horarios,
         message="Horarios disponibles obtenidos correctamente."
     )
+
+
+@turnos_bp.route(
+    "/medicos/<int(min=1):medico_id>/turnos-disponibles",
+    methods=["GET"]
+)
+@validar_token
+def obtener_turnos_disponibles(medico_id: int):
+    fecha = request.args.get("fecha")
+
+    if fecha:
+        try:
+            date.fromisoformat(fecha)
+        except ValueError:
+            raise BadRequestError(
+                description="La fecha debe tener el formato YYYY-MM-DD."
+            )
+
+    turnos = turno_service.obtener_turnos_disponibles(
+        medico_id=medico_id,
+        fecha=fecha
+    )
+
+    return success_response(
+        data=turnos,
+        message="Turnos disponibles obtenidos correctamente."
+    )

@@ -10,11 +10,12 @@ medico_bp = Blueprint("medicos", __name__)
 
 
 @medico_bp.route("/medicos", methods=["GET"])
-@validar_rol("admin")
+@validar_rol("admin", "paciente")
 def listar_medicos():
     limit, offset = get_pagination_params()
+    especialidad_id = request.args.get("especialidad_id", type=int)
 
-    items, total = medico_service.listar_medicos(limit, offset)
+    items, total = medico_service.listar_medicos(limit, offset, especialidad_id=especialidad_id)
     links = generate_hateoas_links(request.base_url, limit, offset, total, request.args)
 
     return success_response(
@@ -24,7 +25,7 @@ def listar_medicos():
 
 
 @medico_bp.route("/medicos/<int(min=1):medico_id>", methods=["GET"])
-@validar_rol("admin")
+@validar_rol("admin", "paciente")
 def obtener_medico(medico_id):
     resultado = medico_service.obtener_medico(medico_id)
 

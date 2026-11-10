@@ -219,3 +219,37 @@ def obtener_horarios_disponibles(access_token: str, medico_id: int, fecha: str) 
         access_token
     )
     return resultado.get("data", [])
+
+
+def listar_especialidades(access_token: str) -> list[dict]:
+    resultado = _solicitar(
+        "GET",
+        "/especialidades?_limit=100&_offset=0",
+        access_token
+    )
+    data = resultado.get("data", {})
+    return data.get("items", []) if isinstance(data, dict) else []
+
+
+def listar_medicos(access_token: str, especialidad_id: int | None = None) -> list[dict]:
+    ruta = "/medicos?_limit=100&_offset=0"
+    if especialidad_id:
+        ruta += f"&especialidad_id={especialidad_id}"
+
+    resultado = _solicitar("GET", ruta, access_token)
+    data = resultado.get("data", {})
+    return data.get("items", []) if isinstance(data, dict) else []
+
+
+def obtener_medico(access_token: str, medico_id: int) -> dict:
+    resultado = _solicitar("GET", f"/medicos/{medico_id}", access_token)
+    return resultado.get("data", {})
+
+
+def obtener_turnos_disponibles(access_token: str, medico_id: int, fecha: str | None = None) -> list[dict]:
+    ruta = f"/medicos/{medico_id}/turnos-disponibles"
+    if fecha:
+        ruta += f"?fecha={fecha}"
+
+    resultado = _solicitar("GET", ruta, access_token)
+    return resultado.get("data", [])

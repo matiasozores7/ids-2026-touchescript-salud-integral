@@ -4,30 +4,24 @@
 
 {% block paso %}
 
-{% set medicos = {1: 'Dra. Camila Rodríguez', 2: 'Dr. Andrés Paz', 3: 'Dra. Laura Benítez'} %}
-{% set medico = medicos.get(medico_id|default(1)|int, medicos[1]) %}
-{% set fechas = [
-  {'valor': '2026-11-03', 'dia': 'Mar', 'num': 3,  'libres': 8},
-  {'valor': '2026-11-05', 'dia': 'Jue', 'num': 5,  'libres': 7},
-  {'valor': '2026-11-07', 'dia': 'Sáb', 'num': 7,  'libres': 9},
-  {'valor': '2026-11-10', 'dia': 'Mar', 'num': 10, 'libres': 10},
-  {'valor': '2026-11-12', 'dia': 'Jue', 'num': 12, 'libres': 8},
-  {'valor': '2026-11-14', 'dia': 'Sáb', 'num': 14, 'libres': 9},
-  {'valor': '2026-11-17', 'dia': 'Mar', 'num': 17, 'libres': 10},
-  {'valor': '2026-11-19', 'dia': 'Jue', 'num': 19, 'libres': 8},
-  {'valor': '2026-11-21', 'dia': 'Sáb', 'num': 21, 'libres': 9}
-] %}
-{% set horarios = [
-  {'hora': '09:00', 'libre': true},  {'hora': '09:20', 'libre': true},  {'hora': '09:40', 'libre': true},
-  {'hora': '10:00', 'libre': false}, {'hora': '10:20', 'libre': true},  {'hora': '10:40', 'libre': true},
-  {'hora': '11:00', 'libre': true},  {'hora': '11:20', 'libre': true},  {'hora': '11:40', 'libre': false},
-  {'hora': '12:00', 'libre': false}, {'hora': '12:20', 'libre': true},  {'hora': '12:40', 'libre': true}
-] %}
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+  {% for categoria, mensaje in mensajes %}
+    <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }} mb-4"
+         {% if categoria == 'success' %}role="status"{% else %}role="alert"{% endif %}>
+      {{ mensaje }}
+    </div>
+  {% endfor %}
+{% endwith %}
 
+{% set nombre_medico = (medico.nombre ~ ' ' ~ medico.apellido) if (medico.nombre and medico.apellido) else (medico.nombre or 'el profesional') %}
+
+{% if fechas %}
 <form class="reserva-card card p-4" id="form-fecha-hora" action="{{ url_for('patient.reservar_confirmacion') }}" method="get">
   <input type="hidden" name="medico_id" value="{{ medico_id|default(1) }}">
+  <input type="hidden" name="fecha" id="input-fecha" value="">
+  <input type="hidden" name="hora" id="input-hora" value="">
 
-  <h2 class="fs-6 fw-medium mb-3">Fechas disponibles con {{ medico }}</h2>
+  <h2 class="fs-6 fw-medium mb-3">Fechas disponibles con {{ nombre_medico }}</h2>
 
   <div class="d-flex flex-wrap gap-2 mb-4">
     {% for f in fechas %}
@@ -40,13 +34,13 @@
     {% endfor %}
   </div>
 
-  <p class="text-body-secondary" id="horarios-vacio">Elegí una fecha para ver los horarios.</p>
+  <p class="text-body-secondary" id="horarios-vacio">Elegí una fecha para ver los horarios disponibles.</p>
 
   <div class="row row-cols-3 row-cols-md-6 g-2" id="horarios" hidden>
-    {% for h in horarios %}
-      <div class="col">
-        <input class="btn-check" type="radio" name="hora" id="hora-{{ loop.index }}" value="{{ h.hora }}" required{{ '' if h.libre else ' disabled' }}>
-        <label class="btn reserva-opcion w-100{{ '' if h.libre else ' text-decoration-line-through' }}" for="hora-{{ loop.index }}">{{ h.hora }}</label>
+    {% for t in turnos_lista %}
+      <div class="col turno-slot" data-fecha="{{ t.fecha }}" hidden>
+        <input class="btn-check" type="radio" name="turno_id" id="turno-{{ t.id }}" value="{{ t.id }}" data-hora="{{ t.hora }}" required>
+        <label class="btn reserva-opcion w-100" for="turno-{{ t.id }}">{{ t.hora }}</label>
       </div>
     {% endfor %}
   </div>
@@ -55,6 +49,15 @@
     <button class="button button-primary button-large" type="submit" id="btn-continuar" disabled>Continuar</button>
   </div>
 </form>
+{% else %}
+<div class="reserva-card card p-5 text-center text-body-secondary">
+  <p class="fs-5 mb-2">No hay turnos disponibles para este profesional actualmente.</p>
+  <p class="text-sm mb-4">Por favor seleccioná otro profesional o intentá más tarde.</p>
+  <div class="d-flex justify-content-center">
+    <a class="button button-primary button-large" href="{{ url_for('patient.reservar_especialidad') }}">Elegir otro profesional</a>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block page_scripts %}

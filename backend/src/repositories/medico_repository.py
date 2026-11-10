@@ -21,20 +21,24 @@ def crear_medico(connection, usuario_id: int, especialidad_id: int) -> int:
         return cursor.lastrowid
 
 
-def contar_medicos(connection) -> int:
+def contar_medicos(connection, especialidad_id: int | None = None) -> int:
     query = """
         SELECT COUNT(*) AS total
         FROM medicos m
         JOIN usuarios u ON u.id = m.usuario_id
         WHERE u.activo = TRUE
     """
+    params = []
+    if especialidad_id is not None:
+        query += " AND m.especialidad_id = %s"
+        params.append(especialidad_id)
 
     with connection.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(query, tuple(params))
         return cursor.fetchone()["total"]
 
 
-def listar_medicos(connection, limit, offset):
+def listar_medicos(connection, limit, offset, especialidad_id: int | None = None):
     query = """
         SELECT m.id, u.nombre, u.apellido, u.email,
                m.especialidad_id, e.nombre AS especialidad
@@ -42,12 +46,20 @@ def listar_medicos(connection, limit, offset):
         JOIN usuarios u ON u.id = m.usuario_id
         JOIN especialidades e ON e.id = m.especialidad_id
         WHERE u.activo = TRUE
+    """
+    params = []
+    if especialidad_id is not None:
+        query += " AND m.especialidad_id = %s"
+        params.append(especialidad_id)
+
+    query += """
         ORDER BY u.apellido, u.nombre
         LIMIT %s OFFSET %s
     """
+    params.extend([limit, offset])
 
     with connection.cursor() as cursor:
-        cursor.execute(query, (limit, offset))
+        cursor.execute(query, tuple(params))
         return cursor.fetchall()
 
 
