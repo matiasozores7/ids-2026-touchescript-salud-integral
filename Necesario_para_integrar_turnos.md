@@ -65,6 +65,10 @@ Se implementó el servicio modular `frontend/app/services/turno_service.py` y se
 - **Reserva de turnos:** En `reservar_turno` (`turno_service.py`), se agregó la validación que rechaza con `ConflictError` (409) cualquier intento de reservar un turno cuya `fecha_hora <= datetime.now()`.
 - **Generación de turnos:** En `validar_generacion_turnos`, se valida que la `fecha_fin` no sea anterior a la fecha actual (`BadRequestError`), y en el generador de slots se omiten automáticamente aquellos horarios que hayan quedado en el pasado dentro del día de hoy.
 
+### E. Buscador de Turnos y Reserva desde Profesionales Destacados — *Resuelto*
+- **Buscador en Home (`GET /pacientes`):** Se poblaron dinámicamente los selectores de `Especialidad` y `Profesional` desde el backend. Al pulsar el botón "Buscar turnos", se consultan en vivo los turnos futuros disponibles en el backend filtrando por especialidad, médico y/o día preferido de la semana (Lunes, Martes, etc.), renderizando una sección de resultados interactiva con botón directo de reserva hacia la pantalla de confirmación.
+- **Profesionales Destacados:** Se reemplazaron las tarjetas estáticas por un renderizado dinámico de los médicos activos con su especialidad, consultorio y su próxima disponibilidad calculada en vivo. Los botones "Reservar turno" y "Ver turnos" ahora navegan directamente al selector de fecha y hora (`/reservar-turno/medicos/<id>/fecha-hora`) de dicho profesional.
+
 ---
 
 ## 3. Próximas Mejoras Sugeridas (Backlog)
