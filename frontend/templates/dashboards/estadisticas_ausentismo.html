@@ -9,11 +9,11 @@
         </div>
     </div>
 
-    <!-- Tarjeta de Alerta Médica -->
+    <!-- Tarjeta de Alerta Médica General Dinámica -->
     <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm" role="alert">
         <div>
-            <strong>Métrica Crítica:</strong> El ausentismo promedio general de esta semana se encuentra en un <span
-                class="fw-bold">15.4%</span>.
+            <strong>Métrica Crítica:</strong> El ausentismo promedio general del centro médico se encuentra en un <span
+                class="fw-bold">{{ promedio_general }}%</span>.
         </div>
     </div>
 
@@ -31,27 +31,25 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if reporte_ausentismo %}
+                    {% for item in reporte_ausentismo %}
                     <tr>
-                        <td class="fw-semibold">Dr. Gómez</td>
-                        <td>Cardiología</td>
-                        <td class="text-center">100</td>
-                        <td class="text-center text-danger fw-bold">8</td>
-                        <td class="text-center text-danger fw-bold">8.0%</td>
+                        <td class="fw-semibold">{{ item.medico }}</td>
+                        <td>{{ item.especialidad }}</td>
+                        <td class="text-center">{{ item.asignados }}</td>
+                        <td class="text-center text-danger fw-bold">{{ item.ausentes }}</td>
+                        <td
+                            class="text-center fw-bold {% if item.tasa > 15 %}text-danger{% elif item.tasa > 8 %}text-warning{% else %}text-success{% endif %}">
+                            {{ item.tasa }}%
+                        </td>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                        <td class="fw-semibold">Dra. Lanzillotta</td>
-                        <td>Clínica Médica</td>
-                        <td class="text-center">150</td>
-                        <td class="text-center text-danger fw-bold">30</td>
-                        <td class="text-center text-danger fw-bold">20.0%</td>
+                        <td colspan="5" class="text-center text-muted py-4">No se registran estadísticas de ausentismo
+                            acumuladas.</td>
                     </tr>
-                    <tr>
-                        <td class="fw-semibold">Dr. Martínez</td>
-                        <td>Traumatología</td>
-                        <td class="text-center">80</td>
-                        <td class="text-center text-danger fw-bold">4</td>
-                        <td class="text-center text-danger fw-bold">5.0%</td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

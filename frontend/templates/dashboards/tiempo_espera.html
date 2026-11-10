@@ -23,20 +23,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if registros_espera %}
+                    {% for reg in registros_espera %}
                     <tr>
-                        <td class="fw-semibold">Esteban Quito</td>
-                        <td>Dr. Martínez</td>
-                        <td class="text-center font-monospace">07:55</td>
-                        <td class="text-center font-monospace">08:12</td>
-                        <td class="text-center"><span class="badge bg-success">17 min</span></td>
+                        <td class="fw-semibold">{{ reg.paciente }}</td>
+                        <td>{{ reg.medico }}</td>
+                        <td class="text-center font-monospace">{{ reg.hora_checkin }}</td>
+                        <td class="text-center font-monospace">{{ reg.hora_atencion }}</td>
+                        <td class="text-center">
+                            <span
+                                class="badge {% if reg.demora_minutos > 20 %}bg-danger{% else %}bg-success{% endif %}">
+                                {{ reg.demora_minutos }} min
+                            </span>
+                        </td>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                        <td class="fw-semibold">Juan Carlos Pérez</td>
-                        <td>Dr. Gómez</td>
-                        <td class="text-center font-monospace">08:14</td>
-                        <td class="text-center font-monospace">08:45</td>
-                        <td class="text-center"><span class="badge bg-danger">31 min</span></td>
+                        <td colspan="5" class="text-center text-muted py-4">No hay registros de atención cargados para
+                            calcular demoras hoy.</td>
                     </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

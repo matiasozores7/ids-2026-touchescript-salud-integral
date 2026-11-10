@@ -9,25 +9,27 @@
         </div>
     </div>
 
-    <!-- Filtros de búsqueda rápidos con Bootstrap -->
+    <!-- Filtros de búsqueda -->
     <div class="card bg-light p-3 mb-4 shadow-sm">
-        <div class="row g-2">
+        <form class="row g-2" method="GET" action="/backoffice/turnos-especialidad">
             <div class="col-md-5">
-                <input type="text" class="form-control" placeholder="Buscar por médico...">
+                <input type="text" class="form-control" name="medico" value="{{ medico_buscado }}"
+                    placeholder="Buscar por médico...">
             </div>
             <div class="col-md-5">
-                <select class="form-select">
-                    <option selected>Todas las especialidades</option>
-                    <option>Clínica Médica</option>
-                    <option>Pediatría</option>
-                    <option>Cardiología</option>
-                    <option>Traumatología</option>
+                <select class="form-select" name="especialidad">
+                    <option value="Todas las especialidades" {% if id_especialidad_sel=='Todas las especialidades'
+                        %}selected{% endif %}>Todas las especialidades</option>
+                    {% for esp in especialidades_disponibles %}
+                    <option value="{{ esp.id }}" {% if id_especialidad_sel==esp.id|string %}selected{% endif %}>{{
+                        esp.nombre }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="col-md-2">
-                <button class="btn btn-primary w-100">Filtrar</button>
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Tabla de datos -->
@@ -44,27 +46,22 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if reporte_turnos %}
+                    {% for fila in reporte_turnos %}
                     <tr>
-                        <td><span class="badge bg-info text-dark">Cardiología</span></td>
-                        <td class="fw-semibold">Dr. Gómez</td>
-                        <td class="text-center fw-bold">14</td>
-                        <td class="text-center text-success">8</td>
-                        <td class="text-center text-warning">6</td>
+                        <td><span class="badge bg-info text-dark">{{ fila.especialidad }}</span></td>
+                        <td class="fw-semibold">{{ fila.medico }}</td>
+                        <td class="text-center fw-bold">{{ fila.totales }}</td>
+                        <td class="text-center text-success">{{ fila.completados }}</td>
+                        <td class="text-center text-warning">{{ fila.pendientes }}</td>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                        <td><span class="badge bg-info text-dark">Clínica Médica</span></td>
-                        <td class="fw-semibold">Dra. Lanzillotta</td>
-                        <td class="text-center fw-bold">22</td>
-                        <td class="text-center text-success">15</td>
-                        <td class="text-center text-warning">7</td>
+                        <td colspan="5" class="text-center text-muted py-4">No se encontraron registros de turnos para
+                            el día de hoy.</td>
                     </tr>
-                    <tr>
-                        <td><span class="badge bg-info text-dark">Traumatología</span></td>
-                        <td class="fw-semibold">Dr. Martínez</td>
-                        <td class="text-center fw-bold">10</td>
-                        <td class="text-center text-success">9</td>
-                        <td class="text-center text-warning">1</td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

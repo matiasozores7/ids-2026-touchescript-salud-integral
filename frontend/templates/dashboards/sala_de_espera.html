@@ -9,13 +9,13 @@
         </div>
     </div>
 
-    <!-- Tarjetas de Resumen con Bootstrap -->
+    <!-- Tarjetas de Resumen Dinámicas -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
             <div class="card bg-light border-start border-primary border-3 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title text-primary text-uppercase small">En Espera</h5>
-                    <p class="card-text display-6 fw-bold m-0">4</p>
+                    <p class="card-text display-6 fw-bold m-0">{{ cant_espera }}</p>
                 </div>
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="card bg-light border-start border-success border-3 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title text-success text-uppercase small">Ya Atendidos</h5>
-                    <p class="card-text display-6 fw-bold m-0">12</p>
+                    <p class="card-text display-6 fw-bold m-0">{{ cant_atendidos }}</p>
                 </div>
             </div>
         </div>
@@ -31,13 +31,13 @@
             <div class="card bg-light border-start border-danger border-3 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title text-danger text-uppercase small">Ausentes</h5>
-                    <p class="card-text display-6 fw-bold m-0">2</p>
+                    <p class="card-text display-6 fw-bold m-0">{{ cant_ausentes }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tabla Responsiva de Bootstrap -->
+    <!-- Tabla Responsiva Dinámica -->
     <div class="card shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -53,33 +53,33 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if pacientes %}
+                    {% for p in pacientes %}
                     <tr>
-                        <td><strong>#1</strong></td>
-                        <td>08:14</td>
-                        <td class="fw-semibold">Juan Carlos Pérez</td>
-                        <td>Dr. Gómez</td>
-                        <td>Cardiología</td>
-                        <td>Consultorio 3</td>
-                        <td><span class="badge bg-warning text-dark rounded-pill">En Espera</span></td>
+                        <td><strong>{{ '#' ~ loop.index if p.estado == 'En Espera' else '-' }}</strong></td>
+                        <td>{{ p.hora_llegada }}</td>
+                        <td class="fw-semibold {% if p.estado == 'Atendido' %}text-muted{% endif %}">{{ p.paciente }}
+                        </td>
+                        <td class="{% if p.estado == 'Atendido' %}text-muted{% endif %}">{{ p.medico }}</td>
+                        <td>{{ p.especialidad }}</td>
+                        <td>{{ p.consultorio }}</td>
+                        <td>
+                            {% if p.estado == 'En Espera' %}
+                            <span class="badge bg-warning text-dark rounded-pill">En Espera</span>
+                            {% elif p.estado == 'Atendido' %}
+                            <span class="badge bg-success rounded-pill">Atendido</span>
+                            {% else %}
+                            <span class="badge bg-danger rounded-pill">Ausente</span>
+                            {% endif %}
+                        </td>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                        <td><strong>#2</strong></td>
-                        <td>08:22</td>
-                        <td class="fw-semibold">María Belén Rodríguez</td>
-                        <td>Dra. Lanzillotta</td>
-                        <td>Clínica Médica</td>
-                        <td>Consultorio 1</td>
-                        <td><span class="badge bg-warning text-dark rounded-pill">En Espera</span></td>
+                        <td colspan="7" class="text-center text-muted py-4">No hay movimientos de pacientes registrados
+                            para el día de hoy.</td>
                     </tr>
-                    <tr>
-                        <td>-</td>
-                        <td>07:55</td>
-                        <td class="text-muted">Esteban Quito</td>
-                        <td class="text-muted">Dr. Martínez</td>
-                        <td class="text-muted">Traumatología</td>
-                        <td class="text-muted">Consultorio 5</td>
-                        <td><span class="badge bg-success rounded-pill">Atendido</span></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -9,49 +9,37 @@
         </div>
     </div>
 
-    <!-- Cuadrícula de Consultorios (Estilo tarjetas visuales de Bootstrap) -->
+    <!-- Cuadrícula de Consultorios Dinámica -->
     <div class="row g-3">
-        <!-- Consultorio 1 (Ocupado) -->
+        {% if consultorios %}
+        {% for con in consultorios %}
         <div class="col-12 col-sm-6 col-md-4">
-            <div class="card border-danger shadow-sm">
-                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">Consultorio 1</span>
-                    <span class="badge bg-light text-danger font-monospace">OCUPADO</span>
+            <div class="card {% if con.ocupado %}border-danger{% else %}border-success{% endif %} shadow-sm">
+                <div
+                    class="card-header {% if con.ocupado %}bg-danger{% else %}bg-success{% endif %} text-white d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Consultorio {{ con.numero }}</span>
+                    <span
+                        class="badge bg-light {% if con.ocupado %}text-danger{% else %}text-success{% endif %} font-monospace">
+                        {{ 'OCUPADO' if con.ocupado else 'LIBRE' }}
+                    </span>
                 </div>
                 <div class="card-body">
-                    <p class="card-text mb-1"><strong>Médico:</strong> Dra. Lanzillotta</p>
-                    <p class="card-text text-muted small">Especialidad: Clínica Médica</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Consultorio 2 (Libre) -->
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="card border-success shadow-sm">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">Consultorio 2</span>
-                    <span class="badge bg-light text-success font-monospace">LIBRE</span>
-                </div>
-                <div class="card-body">
+                    {% if con.ocupado %}
+                    <p class="card-text mb-1"><strong>Médico:</strong> {{ con.medico }}</p>
+                    <p class="card-text text-muted small">Especialidad: {{ con.especialidad }}</p>
+                    {% else %}
                     <p class="card-text mb-1 text-muted"><em>Sin profesional asignado en este bloque</em></p>
                     <p class="card-text text-muted small">-</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
-
-        <!-- Consultorio 3 (Ocupado) -->
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="card border-danger shadow-sm">
-                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">Consultorio 3</span>
-                    <span class="badge bg-light text-danger font-monospace">OCUPADO</span>
-                </div>
-                <div class="card-body">
-                    <p class="card-text mb-1"><strong>Médico:</strong> Dr. Gómez</p>
-                    <p class="card-text text-muted small">Especialidad: Cardiología</p>
-                </div>
-            </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p class="text-center text-muted py-4">No hay consultorios configurados en el sistema médico.</p>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
