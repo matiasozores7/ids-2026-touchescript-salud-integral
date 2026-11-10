@@ -324,6 +324,7 @@ def obtener_turnos_disponibles(connection, medico_id: int, fecha: str | None = N
         JOIN consultorios c ON t.consultorio_id = c.id
         WHERE t.medico_id = %s
           AND t.estado = 'disponible'
+          AND t.fecha_hora > NOW()
     """
     params = [medico_id]
 

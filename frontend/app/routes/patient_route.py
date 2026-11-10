@@ -206,6 +206,9 @@ def reservar_fecha_hora(medico_id: int):
         except ValueError:
             continue
 
+        if dt <= datetime.now():
+            continue
+
         fecha_val = dt.strftime("%Y-%m-%d")
         hora_val = dt.strftime("%H:%M")
         dia_semana_nombre = DIAS_SEMANA.get(dt.weekday(), "")[:3]
@@ -248,6 +251,17 @@ def reservar_confirmacion():
     turno_id = request.args.get("turno_id", type=int)
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
+
+    if fecha and hora:
+        try:
+            dt_turno = datetime.fromisoformat(f"{fecha}T{hora}")
+            if dt_turno <= datetime.now():
+                flash("El turno seleccionado ya ha pasado y no puede ser reservado.", "error")
+                if medico_id:
+                    return redirect(url_for("patient.reservar_fecha_hora", medico_id=medico_id))
+                return redirect(url_for("patient.reservar_especialidad"))
+        except Exception:
+            pass
 
     medico = {}
     if medico_id:

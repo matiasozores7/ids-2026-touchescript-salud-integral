@@ -109,9 +109,14 @@ def generar_turnos(fecha_inicio_str: str, fecha_fin_str: str, medico_id: int | N
                     continue
 
                 actual_segundos = segundos_inicio
+                ahora = datetime.now()
                 while actual_segundos + duracion_segundos <= segundos_fin:
                     hora_slot = _segundos_a_time(actual_segundos)
                     fecha_hora_slot = datetime.combine(dia_actual, hora_slot)
+
+                    if fecha_hora_slot <= ahora:
+                        actual_segundos += duracion_segundos
+                        continue
 
                     hay_conflicto = turno_repo.existe_turno_en_horario(
                         connection,
@@ -152,6 +157,11 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
         fecha_turno = turno["fecha_hora"]
         if isinstance(fecha_turno, str):
             fecha_turno = datetime.fromisoformat(fecha_turno)
+
+        if fecha_turno <= datetime.now():
+            raise ConflictError(
+                description="El turno seleccionado ya ha pasado y no puede ser reservado."
+            )
 
         inicio_dia = datetime.combine(fecha_turno.date(), time.min)
         fin_dia = datetime.combine(fecha_turno.date(), time.max)

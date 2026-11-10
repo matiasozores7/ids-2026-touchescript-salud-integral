@@ -64,6 +64,11 @@ def validar_generacion_turnos(data: dict) -> None:
             description="La 'fecha_inicio' no puede ser posterior a la 'fecha_fin'."
         )
 
+    if fecha_fin < datetime.now().date():
+        raise BadRequestError(
+            description="La 'fecha_fin' no puede ser anterior a la fecha actual."
+        )
+
     medico_id = data.get("medico_id")
     if medico_id is not None:
         if not isinstance(medico_id, int) or medico_id <= 0:
