@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="h2">Sala de Espera del Día</h1>
+            <p class="text-muted">Monitoreo de pacientes en tiempo real ordenados por orden de llegada</p>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen con Bootstrap -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card bg-light border-start border-primary border-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary text-uppercase small">En Espera</h5>
+                    <p class="card-text display-6 fw-bold m-0">4</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card bg-light border-start border-success border-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success text-uppercase small">Ya Atendidos</h5>
+                    <p class="card-text display-6 fw-bold m-0">12</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card bg-light border-start border-danger border-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-danger text-uppercase small">Ausentes</h5>
+                    <p class="card-text display-6 fw-bold m-0">2</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Responsiva de Bootstrap -->
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Orden</th>
+                        <th>Hora Llegada</th>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Especialidad</th>
+                        <th>Consultorio</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>#1</strong></td>
+                        <td>08:14</td>
+                        <td class="fw-semibold">Juan Carlos Pérez</td>
+                        <td>Dr. Gómez</td>
+                        <td>Cardiología</td>
+                        <td>Consultorio 3</td>
+                        <td><span class="badge bg-warning text-dark rounded-pill">En Espera</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>#2</strong></td>
+                        <td>08:22</td>
+                        <td class="fw-semibold">María Belén Rodríguez</td>
+                        <td>Dra. Lanzillotta</td>
+                        <td>Clínica Médica</td>
+                        <td>Consultorio 1</td>
+                        <td><span class="badge bg-warning text-dark rounded-pill">En Espera</span></td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>07:55</td>
+                        <td class="text-muted">Esteban Quito</td>
+                        <td class="text-muted">Dr. Martínez</td>
+                        <td class="text-muted">Traumatología</td>
+                        <td class="text-muted">Consultorio 5</td>
+                        <td><span class="badge bg-success rounded-pill">Atendido</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

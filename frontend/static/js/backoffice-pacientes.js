@@ -6,8 +6,16 @@ const modal = document.querySelector("#patient-modal");
 const modalTitle = document.querySelector("#patient-modal-title");
 const form = document.querySelector("#form-paciente");
 
-let selectedRow = null;
+// Referencias del Popup Modal de eliminación
+const deleteModal = document.querySelector("#delete-modal");
+const deletePatientName = document.querySelector("#delete-patient-name");
+const btnCancelarEliminar = document.querySelector("#btn-cancelar-eliminar");
+const btnConfirmarEliminar = document.querySelector("#btn-confirmar-eliminar");
 
+let selectedRow = null;
+let rowToDelete = null;
+
+// Control del modal de alta / edición
 const toggleModal = (isOpen, row = null) => {
   modal.hidden = !isOpen;
   document.body.classList.toggle("modal-open", isOpen);
@@ -31,13 +39,45 @@ const toggleModal = (isOpen, row = null) => {
   form.elements["nombre"]?.focus();
 };
 
+// Control del popup modal de confirmación de eliminación
+const toggleDeleteModal = (isOpen, row = null) => {
+  if (!deleteModal) return;
+  deleteModal.hidden = !isOpen;
+  document.body.classList.toggle("modal-open", isOpen);
+  rowToDelete = isOpen ? row : null;
+
+  if (isOpen && row && deletePatientName) {
+    deletePatientName.textContent = `${row.dataset.nombre || ""} ${row.dataset.apellido || ""}`.trim();
+  }
+};
+
+// Listeners de apertura y cierre de modales
 document.querySelector("#btn-nuevo-paciente")?.addEventListener("click", () => toggleModal(true));
 document.querySelectorAll("#btn-cerrar-modal, #btn-cancelar-modal").forEach((btn) => {
   btn.addEventListener("click", () => toggleModal(false));
 });
-modal?.addEventListener("click", (e) => { if (e.target === modal) toggleModal(false); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) toggleModal(false); });
+btnCancelarEliminar?.addEventListener("click", () => toggleDeleteModal(false));
 
+modal?.addEventListener("click", (e) => { if (e.target === modal) toggleModal(false); });
+deleteModal?.addEventListener("click", (e) => { if (e.target === deleteModal) toggleDeleteModal(false); });
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (!modal.hidden) toggleModal(false);
+    if (deleteModal && !deleteModal.hidden) toggleDeleteModal(false);
+  }
+});
+
+// Confirmar baja de paciente en el popup modal
+btnConfirmarEliminar?.addEventListener("click", () => {
+  if (rowToDelete) {
+    rowToDelete.remove();
+    actualizarVisibles();
+  }
+  toggleDeleteModal(false);
+});
+
+// Acciones en la tabla: Editar y Eliminar
 tableBody?.addEventListener("click", (e) => {
   const row = e.target.closest("tr");
   if (!row) return;
@@ -45,13 +85,11 @@ tableBody?.addEventListener("click", (e) => {
   if (e.target.closest("[data-edit-patient]")) {
     toggleModal(true, row);
   } else if (e.target.closest("[data-delete-patient]")) {
-    if (confirm(`¿Dar de baja al paciente ${row.dataset.nombre} ${row.dataset.apellido}?`)) {
-      row.remove();
-      actualizarVisibles();
-    }
+    toggleDeleteModal(true, row);
   }
 });
 
+// Guardar formulario en interfaz (alta y edición seguras con cloneNode y textContent, sin innerHTML)
 form?.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -67,6 +105,7 @@ form?.addEventListener("submit", (e) => {
   const searchStr = `${nombre} ${apellido} ${dni} ${email} ${cob}`.toLowerCase();
 
   if (selectedRow) {
+    // Modo Edición: actualiza fila existente
     selectedRow.dataset.nombre = nombre;
     selectedRow.dataset.apellido = apellido;
     selectedRow.dataset.dni = dni;
@@ -91,6 +130,7 @@ form?.addEventListener("submit", (e) => {
     if (cells[2]) cells[2].textContent = tel || "-";
     if (cells[3]) cells[3].textContent = cob;
   } else {
+    // Modo Alta: clonamos una fila existente (cero innerHTML)
     const plantilla = tableBody?.querySelector("tr");
     if (plantilla) {
       const nuevaFila = plantilla.cloneNode(true);
@@ -132,6 +172,7 @@ form?.addEventListener("submit", (e) => {
   toggleModal(false);
 });
 
+// Buscador en tiempo real y contador de registros
 const actualizarVisibles = () => {
   const rows = Array.from(tableBody?.querySelectorAll("tr") || []);
   const visibles = rows.filter((r) => !r.hidden).length;

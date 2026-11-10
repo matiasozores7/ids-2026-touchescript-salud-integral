@@ -60,12 +60,11 @@ def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
             email_clean, password_hash, rol="medico"
         )
         medico_id = medico_repo.crear_medico(connection, usuario_id, especialidad_id)
-        medico = medico_repo.obtener_medico_por_id(connection, medico_id)
 
-    return _a_respuesta(medico)
+    return medico_id
 
 
-def modificar_medico(medico_id: int, datos: dict) -> dict:
+def modificar_medico(medico_id: int, datos: dict) -> None:
     with transaction() as connection:
         medico = _obtener_medico_activo(connection, medico_id)
 
@@ -94,9 +93,6 @@ def modificar_medico(medico_id: int, datos: dict) -> dict:
             connection, medico_id, medico["usuario_id"],
             nombre, apellido, email, especialidad_id
         )
-        actualizado = medico_repo.obtener_medico_por_id(connection, medico_id)
-
-    return _a_respuesta(actualizado)
 
 
 def eliminar_medico(medico_id: int) -> None:
@@ -110,3 +106,11 @@ def eliminar_medico(medico_id: int) -> None:
             )
 
         medico_repo.desactivar_usuario(connection, medico["usuario_id"])
+
+
+def listar_por_especialidad(especialidad_id: int):
+    with transaction() as connection:
+        return medico_repo.listar_por_especialidad(
+            connection,
+            especialidad_id
+        )

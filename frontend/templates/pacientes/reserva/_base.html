@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar turno · Salud Integral{% endblock %}
+
+{% block page_styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/reservar-turno.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="reserva-page">
+
+  {% block encabezado %}
+    {% set pasos = ['Especialidad', 'Profesional', 'Fecha y hora', 'Confirmar'] %}
+    <h1 class="fw-bold mb-1">Reservar turno</h1>
+    <p class="text-body-secondary mb-4">Completá los pasos para confirmar tu reserva.</p>
+
+    <ol class="reserva-pasos row row-cols-4 g-2 list-unstyled mb-4" aria-label="Pasos de la reserva">
+      {% for nombre in pasos %}
+        {% set n = loop.index %}
+        <li class="col"{% if n == paso_actual %} aria-current="step"{% endif %}>
+          <div class="progress">{% if n <= paso_actual %}<div class="progress-bar w-100"></div>{% endif %}</div>
+          <span class="d-inline-flex align-items-center gap-1 mt-2 small {{ 'fw-medium' if n == paso_actual else 'text-body-secondary' }}">
+            {% if n < paso_actual %}<i class="bi bi-check2 text-primary" aria-hidden="true"></i>{% endif %}
+            {{ nombre }}
+          </span>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endblock %}
+
+  {% block paso %}{% endblock %}
+
+</div>
+{% endblock %}

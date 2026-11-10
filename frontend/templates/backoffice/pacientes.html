@@ -11,16 +11,16 @@
 
 {% block content %}
 {% set navigation = [
-  ("Dashboard", "bi-grid-1x2-fill", "backoffice"),
+  ("Dashboard", "bi-grid-1x2-fill", "backoffice.backoffice"),
   ("Turnos", "bi-calendar-check", "#"),
   ("Calendario", "bi-calendar3", "#"),
   ("Sala de espera", "bi-person-lines-fill", "#"),
-  ("Check-in QR", "bi-qr-code", "backoffice_checkin"),
-  ("Médicos", "bi-person-badge", "#"),
-  ("Especialidades", "bi-heart-pulse", "backoffice_specialties"),
-  ("Consultorios", "bi-building", "backoffice_consultorios"),
+  ("Check-in QR", "bi-qr-code", "backoffice.backoffice_checkin"),
+  ("Médicos", "bi-person-badge", "backoffice.backoffice_medicos"),
+  ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_specialties"),
+  ("Consultorios", "bi-building", "backoffice.backoffice_consultorios"),
   ("Coberturas", "bi-shield-check", "#"),
-  ("Pacientes", "bi-people", "backoffice_pacientes"),
+  ("Pacientes", "bi-people", "backoffice.backoffice_pacientes"),
   ("Agendas médicas", "bi-clock-history", "#"),
   ("Reportes", "bi-bar-chart", "#"),
   ("Configuración", "bi-gear", "#")
@@ -50,7 +50,7 @@
 
 <div class="backoffice-layout">
   <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('backoffice') }}" aria-label="Salud Integral, inicio">
+    <a class="backoffice-brand" href="{{ url_for('backoffice.backoffice') }}" aria-label="Salud Integral, inicio">
       <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
         <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
         <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
@@ -62,7 +62,7 @@
     <p class="sidebar-label">Backoffice</p>
     <nav class="backoffice-nav" aria-label="Backoffice">
       {% for item, icon, target in navigation %}
-        <a class="{% if target == 'backoffice_pacientes' %}active{% endif %}" href="{% if target == 'backoffice' %}{{ url_for(target) }}{% elif target == 'backoffice_pacientes' %}{{ url_for('backoffice_pacientes') }}{% elif target == 'backoffice_consultorios' %}{{ url_for('backoffice_consultorios') }}{% elif target == 'backoffice_specialties' %}{{ url_for('backoffice_specialties') }}{% elif target == 'backoffice_checkin' %}{{ url_for('backoffice_checkin') }}{% else %}#{% endif %}">
+        <a class="{% if target == 'backoffice.backoffice_pacientes' %}active{% endif %}" href="{{ url_for(target) if target != '#' else target }}">
           <i class="bi {{ icon }}" aria-hidden="true"></i>
           <span>{{ item }}</span>
         </a>
@@ -70,7 +70,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <a href="{{ url_for('patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
+      <a href="{{ url_for('patient.patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
     </div>
   </aside>
 
@@ -78,7 +78,7 @@
     <header class="backoffice-header">
       <div>
         <div class="backoffice-breadcrumb">
-          <a href="{{ url_for('backoffice') }}">Backoffice</a>
+          <a href="{{ url_for('backoffice.backoffice') }}">Backoffice</a>
           <span>/ Pacientes</span>
         </div>
         <span>Lunes 2 De Noviembre · 10:30 (hora simulada)</span>
@@ -175,6 +175,7 @@
   </div>
 </div>
 
+{# Modal de Alta / Edición de Paciente #}
 <div class="patient-modal-backdrop" id="patient-modal" hidden>
   <div class="patient-modal" role="dialog" aria-modal="true" aria-labelledby="patient-modal-title">
     <header class="patient-modal-header">
@@ -238,6 +239,27 @@
         <button type="submit" class="button button-primary button-small" id="btn-guardar-modal">Guardar</button>
       </footer>
     </form>
+  </div>
+</div>
+
+{# Popup Modal con Estilos CSS para Confirmar Baja de Paciente #}
+<div class="patient-modal-backdrop" id="delete-modal" hidden>
+  <div class="patient-modal delete-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="delete-modal-content">
+      <div class="delete-modal-icon">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+      </div>
+      <div class="delete-modal-body">
+        <h2 id="delete-modal-title">¿Dar de baja paciente?</h2>
+        <p>¿Estás seguro de que deseas dar de baja a <strong id="delete-patient-name"></strong>? Esta acción quitará al paciente del listado activo.</p>
+      </div>
+      <footer class="delete-modal-footer">
+        <button type="button" class="button button-outline button-small" id="btn-cancelar-eliminar">Cancelar</button>
+        <button type="button" class="button button-danger button-small" id="btn-confirmar-eliminar">
+          <i class="bi bi-trash3" aria-hidden="true"></i> Dar de baja
+        </button>
+      </footer>
+    </div>
   </div>
 </div>
 {% endblock %}

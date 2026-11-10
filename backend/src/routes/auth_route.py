@@ -3,8 +3,8 @@ from flask import Blueprint, request, jsonify
 from src.utils.responses import success_response
 from src.validators import auth_validator
 from src.services import auth_service
-from src.utils.decorators import roles_requeridos
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.utils.decorators import validar_token
+from flask_jwt_extended import get_jwt
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -33,27 +33,9 @@ def login():
 
 
 @auth_bp.route("/auth/logout", methods=["POST"])
-@jwt_required()
+@validar_token
 def logout():
     claims = get_jwt()
     auth_service.logout_usuario(jti=claims["jti"], exp=claims["exp"])
 
     return success_response(message="Sesión cerrada exitosamente")
-
-# Endpoint para probar autenticidad y autorización por roles, a futuro eliminar este endpoint
-@auth_bp.route("/auth/protegido", methods=["GET"])
-@jwt_required()
-@roles_requeridos("paciente")
-def ruta_protegida():
-    usuario_id = get_jwt_identity()
-    claims = get_jwt()
-
-    return jsonify({
-        "status": "ok",
-        "message": "Token válido",
-        "data": {
-            "usuario_id": usuario_id,
-            "rol": claims.get("rol"),
-            "perfil_id": claims.get("perfil_id")
-        }
-    }), 200

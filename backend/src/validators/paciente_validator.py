@@ -29,16 +29,27 @@ def validar_datos_paciente(data: dict):
 
 
 def validar_datos_actualizacion_paciente(data: dict):
-    if not data:
+    if not isinstance(data, dict) or not data:
         raise BadRequestError(
-            description="El cuerpo de la petición (JSON) está vacío.",
-            message="Faltan campos obligatorios."
+            description="El cuerpo de la petición debe contener al menos un campo modificable."
         )
 
-    _validar_campos_requeridos(data, ["nombre", "apellido", "email"])
+    campos_modificables = ["nombre", "apellido", "email", "cobertura_id"]
 
-    if not data.get("cobertura_id"):
+    if not any(campo in data for campo in campos_modificables):
         raise BadRequestError(
-            description="El campo 'cobertura_id' es obligatorio.",
-            message="Faltan campos obligatorios."
+            description="Debe enviar al menos un campo modificable."
         )
+
+    _validar_campos_requeridos(
+        data,
+        [campo for campo in ["nombre", "apellido", "email"] if campo in data]
+    )
+
+    if "cobertura_id" in data:
+        cobertura_id = data["cobertura_id"]
+
+        if not isinstance(cobertura_id, int) or isinstance(cobertura_id, bool) or cobertura_id <= 0:
+            raise BadRequestError(
+                description="El campo 'cobertura_id' debe ser un identificador válido."
+            )

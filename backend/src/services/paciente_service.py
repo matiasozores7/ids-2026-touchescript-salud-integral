@@ -7,7 +7,8 @@ from src.repositories.usuario_repository import (
     desactivar_usuario_por_id
 )
 from src.repositories.paciente_repository import (
-    obtener_todos_los_pacientes,
+    contar_pacientes,
+    listar_pacientes,
     insertar_paciente,
     actualizar_paciente_por_id,
     obtener_usuario_id_por_paciente_id,
@@ -17,9 +18,12 @@ from src.validators.paciente_validator import validar_datos_paciente, validar_da
 from src.errors.exceptions import NotFoundError, ConflictError
 
 
-def obtener_pacientes_service() -> list:
+def listar_pacientes_service(limit: int, offset: int):
     with transaction() as connection:
-        return obtener_todos_los_pacientes(connection)
+        total = contar_pacientes(connection)
+        items = listar_pacientes(connection, limit, offset)
+
+    return items, total
 
 
 def crear_paciente_service(data: dict) -> int:
@@ -53,13 +57,46 @@ def actualizar_paciente_service(paciente_id: int, data: dict) -> None:
     validar_datos_actualizacion_paciente(data)
 
     with transaction() as connection:
-        usuario_id = obtener_usuario_id_por_paciente_id(connection, paciente_id)
+        paciente = buscar_paciente_por_id(connection, paciente_id)
 
-        if not usuario_id:
-            raise NotFoundError(description=f"El paciente con ID {paciente_id} no existe.")
+        if not paciente or not paciente["activo"]:
+            raise NotFoundError(
+                description=f"No existe un paciente activo con ID {paciente_id}."
+            )
 
-        actualizar_usuario_por_id(connection, usuario_id, data)
-        actualizar_paciente_por_id(connection, paciente_id, data.get("cobertura_id"))
+        usuario_id = paciente["usuario_id"]
+
+        nombre = data["nombre"].strip() if "nombre" in data else paciente["nombre"]
+        apellido = data["apellido"].strip() if "apellido" in data else paciente["apellido"]
+        email = paciente["email"]
+        cobertura_id = data.get("cobertura_id", paciente["cobertura_id"])
+
+        if "email" in data:
+            email = data["email"].strip().lower()
+            usuario_existente = buscar_usuario_por_email(connection, email)
+
+            if usuario_existente and usuario_existente["id"] != usuario_id:
+                raise ConflictError(
+                    message="El correo electrónico ya se encuentra registrado.",
+                    description="Ya existe un usuario registrado con ese correo electrónico."
+                )
+
+        actualizar_usuario_por_id(
+            connection,
+            usuario_id,
+            {
+                "nombre": nombre,
+                "apellido": apellido,
+                "email": email
+            }
+        )
+
+        if "cobertura_id" in data:
+            actualizar_paciente_por_id(
+                connection,
+                paciente_id,
+                cobertura_id
+            )
 
 
 def eliminar_paciente_service(paciente_id: int) -> None:
