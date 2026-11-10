@@ -32,7 +32,6 @@
   <main class="login-content col-lg-6 d-flex align-items-center justify-content-center">
     <section class="login-card w-100" aria-labelledby="login-title">
       <h2 id="login-title">Iniciar sesión</h2>
-      <p class="login-subtitle">Elegí con qué perfil querés ingresar a la demo.</p>
 
       {% if error %}
         <div class="alert alert-danger" role="alert">
@@ -40,14 +39,7 @@
         </div>
       {% endif %}
 
-      <div class="login-tabs nav nav-pills" role="tablist" aria-label="Perfil de ingreso">
-        <button class="login-tab nav-link active" type="button" role="tab" aria-selected="true" data-role="paciente">Paciente</button>
-        <button class="login-tab nav-link" type="button" role="tab" aria-selected="false" data-role="recepcion">Recepción</button>
-        <button class="login-tab nav-link" type="button" role="tab" aria-selected="false" data-role="administracion">Administración</button>
-      </div>
-
       <form class="login-form" action="{{ url_for('auth.iniciar_sesion') }}" method="POST">
-        <input id="login-role" name="role" type="hidden" value="paciente">
         <div class="login-field">
           <label for="email" class="form-label">Correo electrónico</label>
           <input class="form-control" id="email" name="email" type="email" placeholder="maria.gomez@demo.com" autocomplete="email" required>
@@ -56,7 +48,6 @@
           <label for="password" class="form-label">Contraseña</label>
           <input class="form-control" id="password" name="password" type="password" placeholder="demo1234" autocomplete="current-password" required>
         </div>
-        <button class="login-link" type="button">¿Olvidaste tu contraseña?</button>
         <button class="login-submit btn w-100" type="submit">Ingresar</button>
       </form>
 
@@ -67,5 +58,4 @@
 {% endblock %}
 
 {% block page_scripts %}
-  <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {%endblock%}

@@ -7,3 +7,4 @@ from .turno_route import turnos_bp
 from .especialidades_route import especialidades_bp
 from .pacientes_route import pacientes_bp
 from .dashboard_route import dashboard_bp
+from .coberturas_route import coberturas_bp

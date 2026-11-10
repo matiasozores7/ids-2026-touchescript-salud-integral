@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% block backoffice_title %}Backoffice · Salud Integral{% endblock %}
+{% endblock %}
+
+{% block page_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice.css') }}">
+    {% block backoffice_styles %}{% endblock %}
+{% endblock %}
+
+{% block body_class %}backoffice-shell{% endblock %}
+
+{% block content %}
+
+<div class="backoffice-layout">
+
+    <aside class="backoffice-sidebar">
+
+        <a class="backoffice-brand"
+           href="{{ url_for('backoffice.dashboard') }}"
+           aria-label="Salud Integral, inicio">
+
+            <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+                <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
+                <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
+                <path d="M17 11h6v6h-6z" fill="#477f9a"/>
+            </svg>
+
+            <span>
+                <strong>Salud Integral</strong>
+                <small>Centro Médico</small>
+            </span>
+        </a>
+
+        <p class="sidebar-label">Backoffice</p>
+
+        {% set navigation = [
+            ("Dashboard", "bi-grid-1x2-fill", "backoffice.dashboard"),
+            ("Turnos", "bi-calendar-check", "#"),
+            ("Calendario", "bi-calendar3", "#"),
+            ("Sala de espera", "bi-person-lines-fill", "#"),
+            ("Check-in QR", "bi-qr-code", "backoffice.backoffice_checkin"),
+            ("Médicos", "bi-person-badge", "backoffice.backoffice_medicos"),
+            ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_specialties"),
+            ("Consultorios", "bi-building", "backoffice.backoffice_consultorios"),
+            ("Coberturas", "bi-shield-check", "#"),
+            ("Pacientes", "bi-people", "backoffice.backoffice_pacientes"),
+            ("Agendas médicas", "bi-clock-history", "#"),
+            ("Reportes", "bi-bar-chart", "#"),
+            ("Configuración", "bi-gear", "#")
+        ] %}
+
+        <nav class="backoffice-nav" aria-label="Backoffice">
+
+            {% for item, icon, target in navigation %}
+
+                <a
+                    class="{% if request.endpoint == target %}active{% endif %}"
+                    href="{{ url_for(target) if target != '#' else target }}"
+                    {% if request.endpoint == target %}aria-current="page"{% endif %}
+                >
+                    <i class="bi {{ icon }}" aria-hidden="true"></i>
+                    <span>{{ item }}</span>
+                </a>
+
+            {% endfor %}
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('patient.patient_home') }}">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Portal del paciente
+            </a>
+        </div>
+
+    </aside>
+
+    <div class="backoffice-main">
+
+        <header class="backoffice-header">
+
+            <div>
+                <a href="{{ url_for('backoffice.dashboard') }}">Backoffice</a>
+
+                {% block breadcrumb %}{% endblock %}
+
+                <span>domingo 1 de noviembre · 10:30 (hora simulada)</span>
+            </div>
+
+            <div class="backoffice-user">
+
+                <button class="backoffice-notifications"
+                        type="button"
+                        aria-label="Notificaciones, 1 sin leer">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <b>1</b>
+                </button>
+
+                <span class="backoffice-user-avatar">AA</span>
+
+                <span>
+                    <strong>Andrés Villalba</strong>
+                    <small>Administración</small>
+                </span>
+
+            </div>
+
+        </header>
+
+        <div class="backoffice-content">
+            {% block backoffice_content %}{% endblock %}
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block page_scripts %}
+    {% block backoffice_scripts %}{% endblock %}
+{% endblock %}

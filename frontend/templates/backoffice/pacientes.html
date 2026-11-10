@@ -1,30 +1,5 @@
-{% extends "base.html" %}
+{% extends "backoffice/base.html" %}
 
-{% block title %}Pacientes · Salud Integral{% endblock %}
-
-{% block page_styles %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-pacientes.css') }}">
-{% endblock %}
-
-{% block body_class %}backoffice-shell{% endblock %}
-
-{% block content %}
-{% set navigation = [
-  ("Dashboard", "bi-grid-1x2-fill", "backoffice.backoffice"),
-  ("Turnos", "bi-calendar-check", "#"),
-  ("Calendario", "bi-calendar3", "#"),
-  ("Sala de espera", "bi-person-lines-fill", "#"),
-  ("Check-in QR", "bi-qr-code", "backoffice.backoffice_checkin"),
-  ("Médicos", "bi-person-badge", "backoffice.backoffice_medicos"),
-  ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_specialties"),
-  ("Consultorios", "bi-building", "backoffice.backoffice_consultorios"),
-  ("Coberturas", "bi-shield-check", "#"),
-  ("Pacientes", "bi-people", "backoffice.backoffice_pacientes"),
-  ("Agendas médicas", "bi-clock-history", "#"),
-  ("Reportes", "bi-bar-chart", "#"),
-  ("Configuración", "bi-gear", "#")
-] %}
 {% set mock_pacientes = [
   {"id": 1, "nombre": "María", "apellido": "Gómez", "email": "maria.gomez@correo.demo", "dni": "30.100.200", "fecha_nacimiento": "1983-05-14", "telefono": "11 5100-4000", "cobertura": "OSDE", "nro_afiliado": "84729102", "turnos": 5, "avatar_color": "avatar-green"},
   {"id": 2, "nombre": "Juan", "apellido": "Pereyra", "email": "juan.pereyra@correo.demo", "dni": "31.137.253", "fecha_nacimiento": "1984-11-20", "telefono": "11 5113-4211", "cobertura": "Swiss Medical", "nro_afiliado": "51294821", "turnos": 44, "avatar_color": "avatar-teal"},
@@ -48,222 +23,456 @@
   {"id": 20, "nombre": "Nicolás", "apellido": "Giménez", "email": "nicolas.gimenez@correo.demo", "dni": "49.804.207", "fecha_nacimiento": "2007-01-31", "telefono": "11 5347-8009", "cobertura": "OSDE", "nro_afiliado": "41928374", "turnos": 16, "avatar_color": "avatar-green"}
 ] %}
 
-<div class="backoffice-layout">
-  <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('backoffice.backoffice') }}" aria-label="Salud Integral, inicio">
-      <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-        <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
-        <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
-        <path d="M17 11h6v6h-6z" fill="#477f9a"/>
-      </svg>
-      <span><strong>Salud Integral</strong><small>Centro Médico</small></span>
-    </a>
 
-    <p class="sidebar-label">Backoffice</p>
-    <nav class="backoffice-nav" aria-label="Backoffice">
-      {% for item, icon, target in navigation %}
-        <a class="{% if target == 'backoffice.backoffice_pacientes' %}active{% endif %}" href="{{ url_for(target) if target != '#' else target }}">
-          <i class="bi {{ icon }}" aria-hidden="true"></i>
-          <span>{{ item }}</span>
-        </a>
-      {% endfor %}
-    </nav>
-
-    <div class="sidebar-footer">
-      <a href="{{ url_for('patient.patient_home') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
-    </div>
-  </aside>
-
-  <div class="backoffice-main">
-    <header class="backoffice-header">
-      <div>
-        <div class="backoffice-breadcrumb">
-          <a href="{{ url_for('backoffice.backoffice') }}">Backoffice</a>
-          <span>/ Pacientes</span>
-        </div>
-        <span>Lunes 2 De Noviembre · 10:30 (hora simulada)</span>
-      </div>
-      <div class="backoffice-user">
-        <button class="backoffice-notifications" type="button" aria-label="Notificaciones, 1 sin leer">
-          <i class="bi bi-bell" aria-hidden="true"></i><b>1</b>
-        </button>
-        <span class="backoffice-user-avatar">AA</span>
-        <span><strong>Andrés Villalba</strong><small>Administración</small></span>
-      </div>
-    </header>
-
-    <main class="backoffice-content pacientes-content">
-      <div class="pacientes-heading">
-        <div>
-          <h1>Pacientes</h1>
-          <p>Datos personales, contacto y cobertura médica.</p>
-        </div>
-        <button class="button button-primary button-small" type="button" id="btn-nuevo-paciente">
-          <i class="bi bi-plus-lg" aria-hidden="true"></i>
-          Nuevo
-        </button>
-      </div>
-
-      <section class="pacientes-table-card">
-        <div class="pacientes-toolbar">
-          <div class="pacientes-search">
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <label class="visually-hidden" for="buscar-paciente">Buscar paciente</label>
-            <input id="buscar-paciente" type="search" placeholder="Buscar…" autocomplete="off">
-          </div>
-          <span class="pacientes-count"><strong id="pacientes-count-num">{{ (pacientes | default(mock_pacientes))|length }}</strong> registros</span>
-        </div>
-
-        <div class="table-responsive">
-          <table class="pacientes-table">
-            <thead>
-              <tr>
-                <th scope="col">PACIENTE</th>
-                <th scope="col">DNI</th>
-                <th scope="col">TELÉFONO</th>
-                <th scope="col">COBERTURA</th>
-                <th scope="col">TURNOS</th>
-                <th scope="col" class="paciente-actions-col"><span class="visually-hidden">Acciones</span></th>
-              </tr>
-            </thead>
-            <tbody id="pacientes-table-body">
-              {% for p in pacientes | default(mock_pacientes) %}
-                <tr data-id="{{ p.id }}"
-                    data-nombre="{{ p.nombre }}"
-                    data-apellido="{{ p.apellido }}"
-                    data-dni="{{ p.dni }}"
-                    data-fecha="{{ p.fecha_nacimiento }}"
-                    data-email="{{ p.email }}"
-                    data-telefono="{{ p.telefono or '' }}"
-                    data-cobertura="{{ p.cobertura }}"
-                    data-afiliado="{{ p.nro_afiliado or '' }}"
-                    data-search="{{ (p.nombre ~ ' ' ~ p.apellido ~ ' ' ~ p.dni ~ ' ' ~ p.email ~ ' ' ~ p.cobertura)|lower }}">
-                  <td>
-                    <div class="patient-cell">
-                      <span class="patient-avatar {{ p.avatar_color or 'avatar-green' }}">
-                        {{ p.nombre[0]|upper }}{{ p.apellido[0]|upper }}
-                      </span>
-                      <div class="patient-meta">
-                        <span class="patient-name">{{ p.nombre }} {{ p.apellido }}</span>
-                        <span class="patient-email">{{ p.email }}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{{ p.dni }}</td>
-                  <td>{{ p.telefono or '-' }}</td>
-                  <td>{{ p.cobertura }}</td>
-                  <td>{{ p.turnos or 0 }}</td>
-                  <td class="paciente-actions-col">
-                    <div class="patient-actions">
-                      <button type="button" class="action-btn edit-btn" data-edit-patient title="Editar paciente" aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
-                        <i class="bi bi-pencil" aria-hidden="true"></i>
-                      </button>
-                      <button type="button" class="action-btn delete-btn" data-delete-patient title="Dar de baja paciente" aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
-                        <i class="bi bi-trash3" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <p class="pacientes-table-empty" id="pacientes-table-empty" hidden>No se encontraron pacientes que coincidan con la búsqueda.</p>
-      </section>
-    </main>
-  </div>
-</div>
-
-{# Modal de Alta / Edición de Paciente #}
-<div class="patient-modal-backdrop" id="patient-modal" hidden>
-  <div class="patient-modal" role="dialog" aria-modal="true" aria-labelledby="patient-modal-title">
-    <header class="patient-modal-header">
-      <h2 id="patient-modal-title">Nuevo paciente</h2>
-      <button class="patient-modal-close" type="button" id="btn-cerrar-modal" aria-label="Cerrar">
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
-      </button>
-    </header>
-
-    <form id="form-paciente" class="patient-form" action="#" method="post">
-      <input type="hidden" id="paciente-id" name="id">
-
-      <div class="patient-form-grid">
-        <div class="form-group">
-          <label for="campo-nombre">Nombre <span class="required">*</span></label>
-          <input type="text" id="campo-nombre" name="nombre" class="form-control" required placeholder="Ej. María">
-        </div>
-        <div class="form-group">
-          <label for="campo-apellido">Apellido <span class="required">*</span></label>
-          <input type="text" id="campo-apellido" name="apellido" class="form-control" required placeholder="Ej. Gómez">
-        </div>
-
-        <div class="form-group">
-          <label for="campo-dni">DNI <span class="required">*</span></label>
-          <input type="text" id="campo-dni" name="dni" class="form-control" required placeholder="Ej. 30.100.200">
-        </div>
-        <div class="form-group">
-          <label for="campo-fecha-nacimiento">Fecha de nacimiento <span class="required">*</span></label>
-          <input type="date" id="campo-fecha-nacimiento" name="fecha_nacimiento" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label for="campo-email">Email <span class="required">*</span></label>
-          <input type="email" id="campo-email" name="email" class="form-control" required placeholder="Ej. maria@correo.demo">
-        </div>
-        <div class="form-group">
-          <label for="campo-telefono">Teléfono</label>
-          <input type="tel" id="campo-telefono" name="telefono" class="form-control" placeholder="Ej. 11 5100-4000">
-        </div>
-
-        <div class="form-group">
-          <label for="campo-cobertura">Cobertura <span class="required">*</span></label>
-          <select id="campo-cobertura" name="cobertura" class="form-select" required>
-            <option value="" disabled selected>Seleccionar...</option>
-            <option value="OSDE">OSDE</option>
-            <option value="Swiss Medical">Swiss Medical</option>
-            <option value="Galeno">Galeno</option>
-            <option value="PAMI">PAMI</option>
-            <option value="IOMA">IOMA</option>
-            <option value="Particular">Particular</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="campo-nro-afiliado">N° de afiliado</label>
-          <input type="text" id="campo-nro-afiliado" name="nro_afiliado" class="form-control" placeholder="Ej. 984512300">
-        </div>
-      </div>
-
-      <footer class="patient-modal-footer">
-        <button type="button" class="button button-outline button-small" id="btn-cancelar-modal">Cancelar</button>
-        <button type="submit" class="button button-primary button-small" id="btn-guardar-modal">Guardar</button>
-      </footer>
-    </form>
-  </div>
-</div>
-
-{# Popup Modal con Estilos CSS para Confirmar Baja de Paciente #}
-<div class="patient-modal-backdrop" id="delete-modal" hidden>
-  <div class="patient-modal delete-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
-    <div class="delete-modal-content">
-      <div class="delete-modal-icon">
-        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-      </div>
-      <div class="delete-modal-body">
-        <h2 id="delete-modal-title">¿Dar de baja paciente?</h2>
-        <p>¿Estás seguro de que deseas dar de baja a <strong id="delete-patient-name"></strong>? Esta acción quitará al paciente del listado activo.</p>
-      </div>
-      <footer class="delete-modal-footer">
-        <button type="button" class="button button-outline button-small" id="btn-cancelar-eliminar">Cancelar</button>
-        <button type="button" class="button button-danger button-small" id="btn-confirmar-eliminar">
-          <i class="bi bi-trash3" aria-hidden="true"></i> Dar de baja
-        </button>
-      </footer>
-    </div>
-  </div>
-</div>
+{% block backoffice_title %}
+Pacientes · Salud Integral
 {% endblock %}
 
-{% block page_scripts %}
-  <script src="{{ url_for('static', filename='js/backoffice-pacientes.js') }}"></script>
+
+{% block backoffice_styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-pacientes.css') }}">
+{% endblock %}
+
+
+{% block breadcrumb %}
+<span>/ Pacientes</span>
+{% endblock %}
+
+
+{% block backoffice_content %}
+
+<div class="pacientes-content">
+
+    <div class="pacientes-heading">
+
+        <div>
+            <h1>Pacientes</h1>
+            <p>Datos personales, contacto y cobertura médica.</p>
+        </div>
+
+        <button class="button button-primary button-small"
+                type="button"
+                id="btn-nuevo-paciente">
+
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Nuevo
+
+        </button>
+
+    </div>
+
+
+    <section class="pacientes-table-card">
+
+        <div class="pacientes-toolbar">
+
+            <div class="pacientes-search">
+
+                <i class="bi bi-search" aria-hidden="true"></i>
+
+                <label class="visually-hidden" for="buscar-paciente">
+                    Buscar paciente
+                </label>
+
+                <input id="buscar-paciente"
+                       type="search"
+                       placeholder="Buscar…"
+                       autocomplete="off">
+
+            </div>
+
+            <span class="pacientes-count">
+                <strong id="pacientes-count-num">
+                    {{ (pacientes | default(mock_pacientes)) | length }}
+                </strong>
+                registros
+            </span>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="pacientes-table">
+
+                <thead>
+                    <tr>
+                        <th scope="col">PACIENTE</th>
+                        <th scope="col">DNI</th>
+                        <th scope="col">TELÉFONO</th>
+                        <th scope="col">COBERTURA</th>
+                        <th scope="col">TURNOS</th>
+                        <th scope="col" class="paciente-actions-col">
+                            <span class="visually-hidden">Acciones</span>
+                        </th>
+                    </tr>
+                </thead>
+
+
+                <tbody id="pacientes-table-body">
+
+                    {% for p in pacientes | default(mock_pacientes) %}
+
+                        <tr data-id="{{ p.id }}"
+                            data-nombre="{{ p.nombre }}"
+                            data-apellido="{{ p.apellido }}"
+                            data-dni="{{ p.dni }}"
+                            data-fecha="{{ p.fecha_nacimiento }}"
+                            data-email="{{ p.email }}"
+                            data-telefono="{{ p.telefono or '' }}"
+                            data-cobertura="{{ p.cobertura }}"
+                            data-afiliado="{{ p.nro_afiliado or '' }}"
+                            data-search="{{ (p.nombre ~ ' ' ~ p.apellido ~ ' ' ~ p.dni ~ ' ' ~ p.email ~ ' ' ~ p.cobertura) | lower }}">
+
+                            <td>
+
+                                <div class="patient-cell">
+
+                                    <span class="patient-avatar {{ p.avatar_color or 'avatar-green' }}">
+                                        {{ p.nombre[0] | upper }}{{ p.apellido[0] | upper }}
+                                    </span>
+
+                                    <div class="patient-meta">
+
+                                        <span class="patient-name">
+                                            {{ p.nombre }} {{ p.apellido }}
+                                        </span>
+
+                                        <span class="patient-email">
+                                            {{ p.email }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>{{ p.dni }}</td>
+
+                            <td>{{ p.telefono or '-' }}</td>
+
+                            <td>{{ p.cobertura }}</td>
+
+                            <td>{{ p.turnos or 0 }}</td>
+
+                            <td class="paciente-actions-col">
+
+                                <div class="patient-actions">
+
+                                    <button type="button"
+                                            class="action-btn edit-btn"
+                                            data-edit-patient
+                                            title="Editar paciente"
+                                            aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
+
+                                        <i class="bi bi-pencil"
+                                           aria-hidden="true"></i>
+
+                                    </button>
+
+
+                                    <button type="button"
+                                            class="action-btn delete-btn"
+                                            data-delete-patient
+                                            title="Dar de baja paciente"
+                                            aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
+
+                                        <i class="bi bi-trash3"
+                                           aria-hidden="true"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <p class="pacientes-table-empty"
+           id="pacientes-table-empty"
+           hidden>
+            No se encontraron pacientes que coincidan con la búsqueda.
+        </p>
+
+    </section>
+
+
+    {# Modal de Alta / Edición de Paciente #}
+
+    <div class="patient-modal-backdrop" id="patient-modal" hidden>
+
+        <div class="patient-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="patient-modal-title">
+
+            <header class="patient-modal-header">
+
+                <h2 id="patient-modal-title">
+                    Nuevo paciente
+                </h2>
+
+                <button class="patient-modal-close"
+                        type="button"
+                        id="btn-cerrar-modal"
+                        aria-label="Cerrar">
+
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+
+                </button>
+
+            </header>
+
+
+            <form id="form-paciente"
+                  class="patient-form"
+                  action="#"
+                  method="post">
+
+                <input type="hidden"
+                       id="paciente-id"
+                       name="id">
+
+
+                <div class="patient-form-grid">
+
+                    <div class="form-group">
+
+                        <label for="campo-nombre">
+                            Nombre <span class="required">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="campo-nombre"
+                               name="nombre"
+                               class="form-control"
+                               required
+                               placeholder="Ej. María">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-apellido">
+                            Apellido <span class="required">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="campo-apellido"
+                               name="apellido"
+                               class="form-control"
+                               required
+                               placeholder="Ej. Gómez">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-dni">
+                            DNI <span class="required">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="campo-dni"
+                               name="dni"
+                               class="form-control"
+                               required
+                               placeholder="Ej. 30.100.200">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-fecha-nacimiento">
+                            Fecha de nacimiento <span class="required">*</span>
+                        </label>
+
+                        <input type="date"
+                               id="campo-fecha-nacimiento"
+                               name="fecha_nacimiento"
+                               class="form-control"
+                               required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-email">
+                            Email <span class="required">*</span>
+                        </label>
+
+                        <input type="email"
+                               id="campo-email"
+                               name="email"
+                               class="form-control"
+                               required
+                               placeholder="Ej. maria@correo.demo">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-telefono">
+                            Teléfono
+                        </label>
+
+                        <input type="tel"
+                               id="campo-telefono"
+                               name="telefono"
+                               class="form-control"
+                               placeholder="Ej. 11 5100-4000">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-cobertura">
+                            Cobertura <span class="required">*</span>
+                        </label>
+
+                        <select id="campo-cobertura"
+                                name="cobertura"
+                                class="form-select"
+                                required>
+
+                            <option value="" disabled selected>
+                                Seleccionar...
+                            </option>
+
+                            <option value="OSDE">OSDE</option>
+                            <option value="Swiss Medical">Swiss Medical</option>
+                            <option value="Galeno">Galeno</option>
+                            <option value="PAMI">PAMI</option>
+                            <option value="IOMA">IOMA</option>
+                            <option value="Particular">Particular</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="campo-nro-afiliado">
+                            N° de afiliado
+                        </label>
+
+                        <input type="text"
+                               id="campo-nro-afiliado"
+                               name="nro_afiliado"
+                               class="form-control"
+                               placeholder="Ej. 984512300">
+
+                    </div>
+
+                </div>
+
+
+                <footer class="patient-modal-footer">
+
+                    <button type="button"
+                            class="button button-outline button-small"
+                            id="btn-cancelar-modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="button button-primary button-small"
+                            id="btn-guardar-modal">
+                        Guardar
+                    </button>
+
+                </footer>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {# Popup Modal con Estilos CSS para Confirmar Baja de Paciente #}
+
+    <div class="patient-modal-backdrop" id="delete-modal" hidden>
+
+        <div class="patient-modal delete-modal-dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="delete-modal-title">
+
+            <div class="delete-modal-content">
+
+                <div class="delete-modal-icon">
+                    <i class="bi bi-exclamation-triangle"
+                       aria-hidden="true"></i>
+                </div>
+
+
+                <div class="delete-modal-body">
+
+                    <h2 id="delete-modal-title">
+                        ¿Dar de baja paciente?
+                    </h2>
+
+                    <p>
+                        ¿Estás seguro de que deseas dar de baja a
+                        <strong id="delete-patient-name"></strong>?
+                        Esta acción quitará al paciente del listado activo.
+                    </p>
+
+                </div>
+
+
+                <footer class="delete-modal-footer">
+
+                    <button type="button"
+                            class="button button-outline button-small"
+                            id="btn-cancelar-eliminar">
+                        Cancelar
+                    </button>
+
+                    <button type="button"
+                            class="button button-danger button-small"
+                            id="btn-confirmar-eliminar">
+
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                        Dar de baja
+
+                    </button>
+
+                </footer>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block backoffice_scripts %}
+<script src="{{ url_for('static', filename='js/backoffice-pacientes.js') }}"></script>
 {% endblock %}
