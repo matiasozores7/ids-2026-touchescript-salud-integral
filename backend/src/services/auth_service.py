@@ -55,7 +55,14 @@ def _generar_access_token(usuario_id: int, rol: str, perfil_id: int | None) -> s
         }
     )
 
-def registrar_paciente(nombre: str, apellido: str, email: str, password: str, cobertura_id: int | None = None) -> dict:
+def registrar_paciente(
+    nombre: str,
+    apellido: str,
+    email: str,
+    password: str,
+    cobertura_id: int | None = None,
+    telefono: str | None = None
+) -> dict:
     email_clean = _normalizar_email(email)
     password_hash = generate_password_hash(password)
 
@@ -68,7 +75,14 @@ def registrar_paciente(nombre: str, apellido: str, email: str, password: str, co
                 description="Ya existe un usuario registrado con ese correo electrónico."
             )
 
-        usuario_id = usuario_repo.crear_usuario(connection, nombre.strip(), apellido.strip(), email_clean, password_hash)
+        usuario_id = usuario_repo.crear_usuario(
+            connection,
+            nombre.strip(),
+            apellido.strip(),
+            email_clean,
+            password_hash,
+            telefono=telefono.strip() if telefono else None
+        )
         paciente_id = paciente_repo.crear_paciente(connection, usuario_id, cobertura_id)
 
     access_token = _generar_access_token(usuario_id=usuario_id, rol="paciente", perfil_id=paciente_id)

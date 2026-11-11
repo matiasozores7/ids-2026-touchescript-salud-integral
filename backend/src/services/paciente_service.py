@@ -45,7 +45,9 @@ def crear_paciente_service(data: dict) -> int:
             data.get("nombre").strip(),
             data.get("apellido").strip(),
             email_clean,
-            password_hash
+            password_hash,
+            telefono=data.get("telefono").strip()
+            if data.get("telefono") else None
         )
         cobertura_id = data.get("cobertura_id")
         nuevo_id_paciente = insertar_paciente(connection, usuario_id, cobertura_id)
@@ -69,6 +71,7 @@ def actualizar_paciente_service(paciente_id: int, data: dict) -> None:
         nombre = data["nombre"].strip() if "nombre" in data else paciente["nombre"]
         apellido = data["apellido"].strip() if "apellido" in data else paciente["apellido"]
         email = paciente["email"]
+        telefono = data.get("telefono", paciente["telefono"])
         cobertura_id = data.get("cobertura_id", paciente["cobertura_id"])
 
         if "email" in data:
@@ -87,7 +90,8 @@ def actualizar_paciente_service(paciente_id: int, data: dict) -> None:
             {
                 "nombre": nombre,
                 "apellido": apellido,
-                "email": email
+                "email": email,
+                "telefono": telefono.strip() if telefono else None
             }
         )
 

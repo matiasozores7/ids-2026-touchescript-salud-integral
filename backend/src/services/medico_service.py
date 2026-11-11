@@ -4,6 +4,7 @@ from src.database.connection import transaction
 from src.errors.exceptions import BadRequestError, ConflictError, NotFoundError
 from src.repositories import medico_repository as medico_repo
 from src.repositories import usuario_repository as usuario_repo
+from src.repositories import coberturas_repository as coberturas_repo
 
 
 def _a_respuesta(medico: dict) -> dict:
@@ -28,6 +29,11 @@ def listar_medicos(limit: int, offset: int):
     with transaction() as connection:
         total = medico_repo.contar_medicos(connection)
         items = medico_repo.listar_medicos(connection, limit, offset)
+        for medico in items:
+            medico["coberturas"] = medico_repo.listar_coberturas(
+                connection,
+                medico["id"]
+            )
 
     return items, total
 
@@ -35,11 +41,32 @@ def listar_medicos(limit: int, offset: int):
 def obtener_medico(medico_id: int) -> dict:
     with transaction() as connection:
         medico = _obtener_medico_activo(connection, medico_id)
+        medico["coberturas"] = medico_repo.listar_coberturas(
+            connection,
+            medico_id
+        )
 
     return _a_respuesta(medico)
 
 
-def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
+def _validar_coberturas(connection, cobertura_ids):
+    for cobertura_id in cobertura_ids:
+        if coberturas_repo.buscar_cobertura(connection, cobertura_id) is None:
+            raise BadRequestError(
+                description=f"La cobertura {cobertura_id} no existe."
+            )
+
+
+def crear_medico(
+    nombre,
+    apellido,
+    email,
+    password,
+    especialidad_id,
+    matricula,
+    telefono=None,
+    cobertura_ids=None
+) -> int:
     email_clean = email.strip().lower()
     password_hash = generate_password_hash(password)
 
@@ -55,11 +82,28 @@ def crear_medico(nombre, apellido, email, password, especialidad_id) -> dict:
                 description="La especialidad indicada no existe."
             )
 
+        matricula = matricula.strip()
+        if medico_repo.buscar_medico_por_matricula(connection, matricula):
+            raise ConflictError(
+                description="Ya existe un médico con esa matrícula."
+            )
+
+        cobertura_ids = cobertura_ids or []
+        _validar_coberturas(connection, cobertura_ids)
         usuario_id = usuario_repo.crear_usuario(
             connection, nombre.strip(), apellido.strip(),
-            email_clean, password_hash, rol="medico"
+            email_clean,
+            password_hash,
+            rol="medico",
+            telefono=telefono.strip() if telefono else None
         )
-        medico_id = medico_repo.crear_medico(connection, usuario_id, especialidad_id)
+        medico_id = medico_repo.crear_medico(
+            connection,
+            usuario_id,
+            especialidad_id,
+            matricula.strip()
+        )
+        medico_repo.reemplazar_coberturas(connection, medico_id, cobertura_ids)
 
     return medico_id
 
@@ -71,7 +115,9 @@ def modificar_medico(medico_id: int, datos: dict) -> None:
         nombre = datos["nombre"].strip() if "nombre" in datos else medico["nombre"]
         apellido = datos["apellido"].strip() if "apellido" in datos else medico["apellido"]
         email = medico["email"]
+        telefono = datos.get("telefono", medico["telefono"])
         especialidad_id = datos.get("especialidad_id", medico["especialidad_id"])
+        matricula = datos.get("matricula", medico["matricula"])
 
         if "email" in datos:
             email = datos["email"].strip().lower()
@@ -89,10 +135,34 @@ def modificar_medico(medico_id: int, datos: dict) -> None:
                 description="La especialidad indicada no existe."
             )
 
+        if "cobertura_ids" in datos:
+            _validar_coberturas(connection, datos["cobertura_ids"])
+
+        matricula = matricula.strip()
+        if medico_repo.buscar_medico_por_matricula(
+            connection,
+            matricula,
+            excluir_id=medico_id
+        ):
+            raise ConflictError(
+                description="Ya existe otro médico con esa matrícula."
+            )
+
         medico_repo.actualizar_medico(
             connection, medico_id, medico["usuario_id"],
-            nombre, apellido, email, especialidad_id
+            nombre,
+            apellido,
+            email,
+            telefono.strip() if telefono else None,
+            especialidad_id,
+            matricula
         )
+        if "cobertura_ids" in datos:
+            medico_repo.reemplazar_coberturas(
+                connection,
+                medico_id,
+                datos["cobertura_ids"]
+            )
 
 
 def eliminar_medico(medico_id: int) -> None:

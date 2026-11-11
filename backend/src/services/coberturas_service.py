@@ -91,6 +91,14 @@ def eliminar_cobertura(cobertura_id: int) -> None:
                 )
             )
 
+        if coberturas_repo.contar_medicos(connection, cobertura_id) > 0:
+            raise ConflictError(
+                description=(
+                    "No se puede eliminar la cobertura porque está "
+                    "aceptada por uno o más médicos."
+                )
+            )
+
         coberturas_repo.eliminar_cobertura(
             connection,
             cobertura_id

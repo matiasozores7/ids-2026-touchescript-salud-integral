@@ -1,6 +1,6 @@
 def buscar_usuario_por_email(connection, email: str):
     query = """
-        SELECT id, nombre, apellido, email, password_hash, rol, activo
+        SELECT id, nombre, apellido, email, telefono, password_hash, rol, activo
         FROM usuarios
         WHERE email = %s
     """
@@ -10,14 +10,26 @@ def buscar_usuario_por_email(connection, email: str):
         return cursor.fetchone()
 
 
-def crear_usuario(connection, nombre, apellido, email, password_hash, rol="paciente"):
+def crear_usuario(
+    connection,
+    nombre,
+    apellido,
+    email,
+    password_hash,
+    rol="paciente",
+    telefono=None
+):
     query = """
-        INSERT INTO usuarios (nombre, apellido, email, password_hash, rol)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO usuarios
+            (nombre, apellido, email, telefono, password_hash, rol)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """
 
     with connection.cursor() as cursor:
-        cursor.execute(query, (nombre, apellido, email, password_hash, rol))
+        cursor.execute(
+            query,
+            (nombre, apellido, email, telefono, password_hash, rol)
+        )
         return cursor.lastrowid
 
 
@@ -25,12 +37,14 @@ def actualizar_usuario_por_id(connection, usuario_id: int, usuario_data: dict) -
     query = """
         UPDATE usuarios
         SET nombre = %s, apellido = %s, email = %s
+            , telefono = %s
         WHERE id = %s
     """
     values = (
         usuario_data.get("nombre"),
         usuario_data.get("apellido"),
         usuario_data.get("email"),
+        usuario_data.get("telefono"),
         usuario_id
     )
 

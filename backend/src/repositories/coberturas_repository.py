@@ -99,6 +99,20 @@ def contar_pacientes(connection, cobertura_id: int) -> int:
         return cursor.fetchone()["total"]
 
 
+def contar_medicos(connection, cobertura_id: int) -> int:
+    query = """
+        SELECT COUNT(*) AS total
+        FROM medicos_coberturas mc
+        JOIN medicos m ON m.id = mc.medico_id
+        JOIN usuarios u ON u.id = m.usuario_id
+        WHERE mc.cobertura_id = %s AND u.activo = TRUE
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (cobertura_id,))
+        return cursor.fetchone()["total"]
+
+
 def eliminar_cobertura(connection, cobertura_id: int) -> None:
     query = """
         DELETE FROM coberturas

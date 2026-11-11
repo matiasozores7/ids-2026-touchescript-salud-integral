@@ -7,6 +7,7 @@ def validar_registro(data: dict):
     campos_requeridos = ["email", "password", "nombre", "apellido"]
     _validar_campos_requeridos(data, campos_requeridos)
     _validar_email(data["email"])
+    _validar_telefono(data)
     _validar_password(data["password"])
     _validar_cobertura(data.get("cobertura_id")) # Si no se utiliza get y no existe ese campo lanza excepción, por eso lo hago mediante la función get
 
@@ -60,4 +61,18 @@ def _validar_cobertura(cobertura_id : int | None):
     ):
         raise BadRequestError(
             description="El identificador de cobertura no es válido."
+        )
+
+
+def _validar_telefono(data: dict):
+    telefono = data.get("telefono")
+    if telefono is not None and (
+        not isinstance(telefono, str) or not telefono.strip()
+    ):
+        raise BadRequestError(
+            description="El campo 'telefono' debe ser texto no vacío."
+        )
+    if isinstance(telefono, str) and len(telefono.strip()) > 30:
+        raise BadRequestError(
+            description="El teléfono no puede superar los 30 caracteres."
         )
