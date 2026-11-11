@@ -1,133 +1,9 @@
+
 {% extends "backoffice/base.html" %}
-
-{% set especialidades = {
-    1: 'Clínica médica',
-    2: 'Cardiología',
-    3: 'Pediatría',
-    4: 'Dermatología',
-    5: 'Traumatología',
-    6: 'Ginecología',
-    7: 'Oftalmología',
-    8: 'Neurología'
-} %}
-
-{% set consultorios = {
-    1: 'Consultorio 101',
-    2: 'Consultorio 102',
-    3: 'Consultorio 104',
-    4: 'Consultorio 201',
-    5: 'Consultorio 203',
-    6: 'Consultorio 205'
-} %}
-
-{% set coberturas = {
-    1: 'OSDE',
-    2: 'Swiss Medical',
-    3: 'Galeno',
-    4: 'PAMI',
-    5: 'IOMA',
-    6: 'Particular'
-} %}
-
-{% set medicos = [
-    {
-        'id': 1,
-        'titulo': 'Dra.',
-        'nombre': 'Lucía',
-        'apellido': 'Fernández',
-        'especialidad_id': 2,
-        'matricula': 'MN 112.458',
-        'consultorio_id': 2,
-        'email': 'lfernandez@saludintegral.demo',
-        'telefono': '11 4521-3301',
-        'experiencia': 14,
-        'coberturas': [1, 2, 3, 6],
-        'presentacion': 'Especialista en cardiología preventiva y control de hipertensión. Enfoque en hábitos y seguimiento a largo plazo.'
-    },
-    {
-        'id': 2,
-        'titulo': 'Dr.',
-        'nombre': 'Martín',
-        'apellido': 'González',
-        'especialidad_id': 1,
-        'matricula': 'MN 98.774',
-        'consultorio_id': 1,
-        'email': 'mgonzalez@saludintegral.demo',
-        'coberturas': [1, 2, 3, 4, 5, 6]
-    },
-    {
-        'id': 3,
-        'titulo': 'Dra.',
-        'nombre': 'Camila',
-        'apellido': 'Rodríguez',
-        'especialidad_id': 3,
-        'matricula': 'MN 130.215',
-        'consultorio_id': 1,
-        'email': 'crodriguez@saludintegral.demo',
-        'coberturas': [1, 2, 3, 6]
-    },
-    {
-        'id': 4,
-        'titulo': 'Dr.',
-        'nombre': 'Santiago',
-        'apellido': 'López',
-        'especialidad_id': 5,
-        'matricula': 'MN 105.632',
-        'consultorio_id': 3,
-        'email': 'slopez@saludintegral.demo',
-        'coberturas': [1, 2, 3, 6]
-    },
-    {
-        'id': 5,
-        'titulo': 'Dra.',
-        'nombre': 'Valentina',
-        'apellido': 'Pérez',
-        'especialidad_id': 4,
-        'matricula': 'MN 127.904',
-        'consultorio_id': 4,
-        'email': 'vperez@saludintegral.demo',
-        'coberturas': [1, 3, 6]
-    },
-    {
-        'id': 6,
-        'titulo': 'Dr.',
-        'nombre': 'Nicolás',
-        'apellido': 'Romero',
-        'especialidad_id': 8,
-        'matricula': 'MN 101.337',
-        'consultorio_id': 6,
-        'email': 'nromero@saludintegral.demo',
-        'coberturas': [1, 2, 3, 6]
-    },
-    {
-        'id': 7,
-        'titulo': 'Dra.',
-        'nombre': 'Sofía',
-        'apellido': 'Martínez',
-        'especialidad_id': 6,
-        'matricula': 'MN 118.560',
-        'consultorio_id': 5,
-        'email': 'smartinez@saludintegral.demo',
-        'coberturas': [1, 2, 3, 4, 6]
-    },
-    {
-        'id': 8,
-        'titulo': 'Dr.',
-        'nombre': 'Tomás',
-        'apellido': 'Herrera',
-        'especialidad_id': 7,
-        'matricula': 'MN 109.881',
-        'consultorio_id': 6,
-        'email': 'therrera@saludintegral.demo',
-        'coberturas': [1, 2, 3, 6]
-    }
-] %}
-
 
 {% block backoffice_title %}
 Médicos · Salud Integral
 {% endblock %}
-
 
 {% block backoffice_styles %}
 <link rel="stylesheet"
@@ -137,43 +13,33 @@ Médicos · Salud Integral
       href="{{ url_for('static', filename='css/components.css') }}">
 {% endblock %}
 
-
 {% block breadcrumb %}
 <span>/ Médicos</span>
 {% endblock %}
 
-
 {% block backoffice_content %}
 
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
-
     <div class="backoffice-heading">
         <h1>Médicos</h1>
-        <p>Profesionales, matrículas, consultorios y coberturas aceptadas.</p>
+        <p>Profesionales, matrículas y coberturas aceptadas.</p>
     </div>
 
     <button class="button button-primary button-small"
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#medico-modal">
-
         <i class="bi bi-plus-lg" aria-hidden="true"></i>
         Nuevo
-
     </button>
-
 </div>
-
 
 <section class="card rounded-4 shadow-sm overflow-hidden"
          aria-label="Listado de médicos">
 
     <div class="row g-3 align-items-center p-3">
-
         <div class="col-md-4">
-
             <div class="input-group">
-
                 <span class="input-group-text bg-white">
                     <i class="bi bi-search" aria-hidden="true"></i>
                 </span>
@@ -187,214 +53,160 @@ Médicos · Salud Integral
                        type="search"
                        placeholder="Buscar…"
                        autocomplete="off">
-
             </div>
-
         </div>
 
         <div class="col-md-7 text-md-end small text-body-secondary">
-
-            <span id="medicos-contador">
-                {{ medicos | length }}
-            </span>
+            <span id="medicos-contador">{{ medicos | length }}</span>
             registros
-
         </div>
-
     </div>
 
-
     <div class="table-responsive border-top">
-
         <table class="table table-hover align-middle mb-0"
                id="medicos-tabla">
 
             <thead class="table-light">
-
                 <tr>
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
+                    <th class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
                         Profesional
                     </th>
-
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2">
+                    <th class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
+                        Teléfono
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-2">
                         Especialidad
                     </th>
-
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2">
+                    <th class="small text-uppercase text-secondary fw-semibold py-2">
                         Matrícula
                     </th>
-
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2">
-                        Consultorio
-                    </th>
-
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2">
+                    <th class="small text-uppercase text-secondary fw-semibold py-2">
                         Coberturas
                     </th>
-
-                    <th scope="col"
-                        class="small text-uppercase text-secondary fw-semibold py-2">
-                        Estado
-                    </th>
-
-                    <th scope="col" class="py-2">
+                    <th class="py-2">
                         <span class="visually-hidden">Acciones</span>
                     </th>
                 </tr>
-
             </thead>
 
-
             <tbody>
-
                 {% for m in medicos %}
+                    {% set nombre_completo = m.nombre ~ ' ' ~ m.apellido %}
 
-                    {% set nombre_completo = m.titulo ~ ' ' ~ m.nombre ~ ' ' ~ m.apellido %}
-                    {% set datos = dict(m, nombre_completo=nombre_completo) %}
-
-                    <tr data-busqueda="{{ (nombre_completo ~ ' ' ~ m.email ~ ' ' ~ especialidades[m.especialidad_id] ~ ' ' ~ m.matricula ~ ' ' ~ consultorios[m.consultorio_id]) | lower }}">
+                    <tr data-busqueda="{{ (nombre_completo ~ ' ' ~ m.email ~ ' ' ~ m.especialidad ~ ' ' ~ m.matricula) | lower }}">
 
                         <td class="ps-3 py-3">
-
                             <div class="d-flex align-items-center gap-3">
-
                                 <span class="avatar avatar-small avatar-soft"
                                       aria-hidden="true">
                                     {{ m.nombre[0] }}{{ m.apellido[0] }}
                                 </span>
 
                                 <div class="small lh-sm">
-
                                     <div class="fw-medium">
                                         {{ nombre_completo }}
                                     </div>
-
                                     <div class="small text-body-secondary">
                                         {{ m.email }}
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </td>
 
+                        <td class="small">{{ m.telefono or '-' }}</td>
 
-                        <td class="small">
-                            {{ especialidades[m.especialidad_id] }}
-                        </td>
+                        <td class="small">{{ m.especialidad }}</td>
 
-                        <td class="small">
-                            {{ m.matricula }}
-                        </td>
-
-                        <td class="small">
-                            {{ consultorios[m.consultorio_id] }}
-                        </td>
+                        <td class="small">{{ m.matricula }}</td>
 
                         <td class="small">
                             {{ m.coberturas | length }}
                         </td>
 
-                        <td>
-                            <span class="badge rounded-pill fw-medium bg-success-subtle text-success-emphasis">
-                                Activo
-                            </span>
-                        </td>
-
-
                         <td class="text-end pe-3 text-nowrap">
-
                             <button class="btn btn-sm btn-link text-body text-decoration-none"
                                     type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#medico-modal"
-                                    data-medico='{{ datos | tojson }}'
+                                    data-medico='{{ m | tojson }}'
                                     aria-label="Editar a {{ nombre_completo }}">
-
                                 <i class="bi bi-pencil" aria-hidden="true"></i>
-
                             </button>
-
 
                             <button class="btn btn-sm btn-link text-danger text-decoration-none"
                                     type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#medico-baja-modal"
-                                    data-medico='{{ datos | tojson }}'
+                                    data-medico='{{ m | tojson }}'
                                     aria-label="Dar de baja a {{ nombre_completo }}">
-
                                 <i class="bi bi-trash3" aria-hidden="true"></i>
-
                             </button>
-
                         </td>
-
                     </tr>
-
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-body-secondary py-4">
+                            No hay médicos registrados.
+                        </td>
+                    </tr>
                 {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
-
 
     <p class="text-center text-body-secondary py-4 mb-0"
        id="medicos-vacio"
        hidden>
         No se encontraron médicos.
     </p>
-
 </section>
 
-
 {% include "backoffice/_medico_form_modal.html" %}
-
-
-{# Confirmación de baja lógica (DELETE /api/medicos/<id>) #}
 
 <div class="modal fade"
      id="medico-baja-modal"
      tabindex="-1"
      aria-labelledby="medico-baja-titulo"
      aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
-        <form class="modal-content" action="#" method="post">
-            <input type="hidden" name="id">
+        <form class="modal-content"
+              action="#"
+              method="post"
+              id="medico-baja-form">
+
             <div class="modal-header">
                 <h2 class="modal-title fs-5" id="medico-baja-titulo">
                     Dar de baja al médico
                 </h2>
+
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
                         aria-label="Cerrar">
                 </button>
             </div>
+
             <div class="modal-body">
                 <p>
                     ¿Querés dar de baja a
                     <strong data-medico-nombre></strong>?
                     Dejará de aparecer en el listado y no podrá iniciar sesión.
                 </p>
+
                 <p class="text-body-secondary small mb-0">
                     Si tiene turnos reservados o confirmados pendientes,
                     primero hay que cancelarlos.
                 </p>
             </div>
+
             <div class="modal-footer">
                 <button type="button"
                         class="button button-outline button-small"
                         data-bs-dismiss="modal">
                     Cancelar
                 </button>
+
                 <button type="submit"
                         class="button button-danger button-small">
                     Dar de baja
