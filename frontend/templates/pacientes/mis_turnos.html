@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Mis turnos · Salud Integral{% endblock %}
@@ -9,84 +10,135 @@
 
 {% block content %}
 {% from "pacientes/_componentes.html" import estado_pill, icono_qr %}
-{# 
-   Datos de ejemplo
-#}
-{% set proximos = [
-  {'id': 101, 'dia': 'Lunes',   'hora': '11:00', 'iniciales': 'LF', 'medico': 'Dra. Lucía Fernández',  'especialidad': 'Cardiología',    'fecha': 'lunes 2 de noviembre',    'estado': 'reservado'},
-  {'id': 102, 'dia': 'Martes',  'hora': '10:20', 'iniciales': 'VP', 'medico': 'Dra. Valentina Pérez',  'especialidad': 'Dermatología',   'fecha': 'martes 10 de noviembre',  'estado': 'reservado'},
-  {'id': 103, 'dia': 'Viernes', 'hora': '10:20', 'iniciales': 'MG', 'medico': 'Dr. Martín González',   'especialidad': 'Clínica médica', 'fecha': 'viernes 13 de noviembre', 'estado': 'reservado'}
-] %}
-{% set historial = [
-  {'id': 91, 'dia': 'Martes', 'hora': '12:30', 'iniciales': 'SM', 'medico': 'Dra. Sofía Martínez', 'especialidad': 'Ginecología',    'fecha': 'martes 13 de octubre', 'estado': 'cancelado'},
-  {'id': 92, 'dia': 'Martes', 'hora': '08:30', 'iniciales': 'TH', 'medico': 'Dr. Tomás Herrera',   'especialidad': 'Oftalmología',   'fecha': 'martes 6 de octubre',  'estado': 'atendido'},
-  {'id': 93, 'dia': 'Lunes',  'hora': '08:00', 'iniciales': 'MG', 'medico': 'Dr. Martín González', 'especialidad': 'Clínica médica', 'fecha': 'lunes 5 de octubre',   'estado': 'atendido'}
-] %}
 
 {% macro tarjeta_turno(t) %}
   <article class="turno-card card flex-md-row align-items-md-center gap-3 p-3">
+
     <div class="turno-fecha d-flex flex-column align-items-center align-self-start">
       <span class="text-xs fw-medium">{{ t.dia }}</span>
       <strong>{{ t.hora }}</strong>
     </div>
 
     <div class="d-flex align-items-center gap-3 flex-grow-1">
-      <span class="avatar avatar-small" aria-hidden="true">{{ t.iniciales }}</span>
+      <span class="avatar avatar-small" aria-hidden="true">
+        {{ t.iniciales }}
+      </span>
+
       <div>
         <h3 class="text-lg mb-0">{{ t.medico }}</h3>
-        <p class="small text-body-secondary mb-0">{{ t.especialidad }} · {{ t.fecha }}</p>
+        <p class="small text-body-secondary mb-0">
+          {{ t.especialidad }} · {{ t.fecha }}
+        </p>
       </div>
     </div>
 
     <div class="d-flex align-items-center flex-wrap gap-2">
+
       {{ estado_pill(t.estado) }}
-      <a class="button button-outline button-small" href="{{ url_for('patient.detalle_turno', turno_id=t.id) }}">Detalle</a>
+
       {% if t.estado in ['reservado', 'confirmado'] %}
-        <a class="button button-primary button-small" href="{{ url_for('patient.qr_turno', turno_id=t.id) }}">{{ icono_qr() }} QR</a>
+        <a class="button button-primary button-small"
+           href="{{ url_for('patient.qr_turno', turno_id=t.id) }}">
+          {{ icono_qr() }} QR
+        </a>
       {% endif %}
+
+      <a class="button button-outline button-small"
+         href="{{ url_for('patient.detalle_turno', turno_id=t.id) }}">
+        Detalle
+      </a>
+
     </div>
+
   </article>
 {% endmacro %}
 
+
 {# Una pestaña: lista de tarjetas o mensaje si no hay turnos #}
 {% macro panel(id, activo, turnos, vacio) %}
-  <div class="tab-pane fade{{ ' show active' if activo }}" id="panel-{{ id }}" role="tabpanel" aria-labelledby="tab-{{ id }}" tabindex="0">
+  <div class="tab-pane fade{{ ' show active' if activo }}"
+       id="panel-{{ id }}"
+       role="tabpanel"
+       aria-labelledby="tab-{{ id }}"
+       tabindex="0">
+
     {% if turnos %}
-      <div class="d-grid gap-3">{% for t in turnos %}{{ tarjeta_turno(t) }}{% endfor %}</div>
+      <div class="d-grid gap-3">
+        {% for t in turnos %}
+          {{ tarjeta_turno(t) }}
+        {% endfor %}
+      </div>
+
     {% else %}
       <div class="turnos-vacio border bg-white d-flex flex-column align-items-center gap-3 text-center text-body-secondary">
         <p class="mb-0">{{ vacio }}</p>
-        {% if id == 'proximos' %}<a class="button button-primary button-small" href="{{ url_for('patient.reservar_especialidad') }}">Reservar turno</a>{% endif %}
+
+        {% if id == 'proximos' %}
+          <a class="button button-primary button-small"
+             href="{{ url_for('patient.reservar_especialidad') }}">
+            Reservar turno
+          </a>
+        {% endif %}
       </div>
     {% endif %}
+
   </div>
 {% endmacro %}
+
 
 <div class="mis-turnos-page">
 
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
     <h1 class="fw-bold mb-0">Mis turnos</h1>
-    <a class="button button-primary button-large" href="{{ url_for('patient.reservar_especialidad') }}">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 13v4M10 15h4"/></svg>
+
+    <a class="button button-primary button-large"
+       href="{{ url_for('patient.reservar_especialidad') }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="17" rx="2"/>
+        <path d="M16 2v4M8 2v4M3 10h18M12 13v4M10 15h4"/>
+      </svg>
       Nuevo turno
     </a>
   </div>
 
-  <ul class="mis-turnos-tabs nav nav-pills d-flex d-sm-inline-flex flex-nowrap border rounded-3 bg-white mb-4" role="tablist">
-    {% for id, titulo, lista in [('proximos', 'Próximos', proximos), ('historial', 'Historial', historial)] %}
+
+  <ul class="mis-turnos-tabs nav nav-pills d-flex d-sm-inline-flex flex-nowrap border rounded-3 bg-white mb-4"
+      role="tablist">
+
+    {% for id, titulo, lista in [
+      ('proximos', 'Próximos', proximos),
+      ('historial', 'Historial', historial)
+    ] %}
+
       <li class="nav-item flex-fill flex-sm-grow-0" role="presentation">
+
         <button class="nav-link w-100 d-flex align-items-center justify-content-center gap-2{{ ' active' if loop.first }}"
-                id="tab-{{ id }}" type="button" role="tab" data-bs-toggle="pill" data-bs-target="#panel-{{ id }}"
-                aria-controls="panel-{{ id }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
-          {{ titulo }} <span class="text-xs text-secondary">{{ lista|length }}</span>
+                id="tab-{{ id }}"
+                type="button"
+                role="tab"
+                data-bs-toggle="pill"
+                data-bs-target="#panel-{{ id }}"
+                aria-controls="panel-{{ id }}"
+                aria-selected="{{ 'true' if loop.first else 'false' }}">
+
+          {{ titulo }}
+          <span class="text-xs text-secondary">{{ lista|length }}</span>
+
         </button>
+
       </li>
+
     {% endfor %}
+
   </ul>
 
+
   <div class="tab-content">
+
     {{ panel('proximos', true, proximos, 'No tenés turnos próximos.') }}
+
     {{ panel('historial', false, historial, 'Todavía no tenés turnos en tu historial.') }}
+
   </div>
 
 </div>

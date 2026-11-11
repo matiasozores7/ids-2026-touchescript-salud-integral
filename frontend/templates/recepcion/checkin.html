@@ -26,64 +26,94 @@
       <h1>Check-in de pacientes</h1>
       <p>Validá el código QR del turno para registrar la llegada.</p>
     </div>
-    <span class="checkin-status"><i class="bi bi-circle-fill" aria-hidden="true"></i> Recepción abierta</span>
+    <span class="checkin-status">
+      <i class="bi bi-circle-fill" aria-hidden="true"></i>
+      Recepción abierta
+    </span>
   </div>
 
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+      <div class="alert {{ 'alert-success' if categoria == 'success' else 'alert-danger' }}" role="alert">
+        {{ mensaje }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+
   <div class="checkin-grid">
+
     <section class="checkin-card scanner-card" aria-labelledby="scanner-title">
+
       <div class="checkin-card-heading">
         <div>
-          <h2 id="scanner-title">Escanear código QR</h2>
-          <p>Apuntá la cámara al código del comprobante del paciente.</p>
+          <h2 id="scanner-title">Validar código QR</h2>
+          <p>Ingresá el código del comprobante del paciente.</p>
         </div>
-        <span class="checkin-card-icon"><i class="bi bi-qr-code-scan" aria-hidden="true"></i></span>
+        <span class="checkin-card-icon">
+          <i class="bi bi-qr-code-scan" aria-hidden="true"></i>
+        </span>
       </div>
 
-      <div class="qr-placeholder" role="img" aria-label="Área de escaneo de código QR">
+      <div class="qr-placeholder" role="img" aria-label="Código QR">
         <span class="qr-corner qr-corner-top-left"></span>
         <span class="qr-corner qr-corner-top-right"></span>
         <span class="qr-corner qr-corner-bottom-left"></span>
         <span class="qr-corner qr-corner-bottom-right"></span>
         <i class="bi bi-qr-code" aria-hidden="true"></i>
-        <span>Área de escaneo</span>
+        <span>Ingreso manual del código</span>
       </div>
 
-      <div class="checkin-divider"><span>o ingresá el código manualmente</span></div>
+      <div class="checkin-divider">
+        <span>Código del comprobante</span>
+      </div>
 
-      <form class="checkin-code-form" action="#" method="post">
-        <label for="qr-code">Código del turno</label>
+      <form
+        class="checkin-code-form"
+        action="{{ url_for('backoffice.backoffice_checkin') }}"
+        method="POST"
+      >
+        <label for="qr_token">Código QR del turno</label>
+
         <div class="checkin-code-input">
-          <input id="qr-code" name="qr_code" type="text" placeholder="Ej. TURNO-1024" autocomplete="off">
-          <button class="button button-primary button-small" type="submit">Validar</button>
+          <input
+            id="qr_token"
+            name="qr_token"
+            type="text"
+            placeholder="Ej. QR-890283d772df430681fccb2fd7772db8"
+            autocomplete="off"
+            required
+            autofocus
+          >
+
+          <button class="button button-primary button-small" type="submit">
+            Validar
+          </button>
         </div>
       </form>
+
     </section>
 
     <section class="checkin-card recent-checkins" aria-labelledby="recent-checkins-title">
+
       <div class="checkin-card-heading">
         <div>
-          <h2 id="recent-checkins-title">Últimos ingresos</h2>
-          <p>Check-ins registrados hoy</p>
+          <h2 id="recent-checkins-title">Registro de ingresos</h2>
+          <p>Validación de llegada de pacientes</p>
         </div>
-        <span class="recent-count">3</span>
+        <span class="checkin-card-icon">
+          <i class="bi bi-clipboard-check" aria-hidden="true"></i>
+        </span>
       </div>
 
-      <ul class="recent-checkins-list">
-        {% for patient, time, room in [
-          ("María Gómez", "10:18", "Sala 101"),
-          ("Lucas Fernández", "10:06", "Sala 202"),
-          ("Sofía Martínez", "09:54", "Sala 305")
-        ] %}
-          <li>
-            <span class="recent-avatar">{{ patient[0] }}</span>
-            <span class="recent-patient"><strong>{{ patient }}</strong><small>{{ room }}</small></span>
-            <time datetime="2026-11-01T{{ time }}">{{ time }}</time>
-          </li>
-        {% endfor %}
-      </ul>
+      <div class="text-center py-4">
+        <i class="bi bi-info-circle fs-2" aria-hidden="true"></i>
+        <p class="mt-2 mb-0">
+          Ingresá un código QR para registrar la llegada de un paciente.
+        </p>
+      </div>
 
-      <a class="checkin-link" href="#">Ver sala de espera <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
     </section>
+
   </div>
 
 </div>
