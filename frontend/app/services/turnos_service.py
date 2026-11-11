@@ -1,0 +1,74 @@
+from datetime import datetime
+
+from app.clients.api_client import api_request
+
+
+DIAS_SEMANA = {
+    0: "Lunes",
+    1: "Martes",
+    2: "Miércoles",
+    3: "Jueves",
+    4: "Viernes",
+    5: "Sábado",
+    6: "Domingo",
+}
+
+MESES = {
+    1: "enero",
+    2: "febrero",
+    3: "marzo",
+    4: "abril",
+    5: "mayo",
+    6: "junio",
+    7: "julio",
+    8: "agosto",
+    9: "septiembre",
+    10: "octubre",
+    11: "noviembre",
+    12: "diciembre",
+}
+
+
+def _formatear_turno(turno: dict) -> dict:
+    fecha_hora = datetime.fromisoformat(turno["fecha_hora"])
+
+    medico_nombre = turno.get("medico_nombre") or ""
+    medico_apellido = turno.get("medico_apellido") or ""
+
+    medico = (
+        f"Dr. {medico_nombre} {medico_apellido}".strip()
+        if medico_nombre or medico_apellido
+        else "Profesional asignado"
+    )
+
+    iniciales = (
+        f"{medico_nombre[:1]}{medico_apellido[:1]}".upper()
+        if medico_nombre and medico_apellido
+        else "MD"
+    )
+
+    dia = DIAS_SEMANA[fecha_hora.weekday()]
+    mes = MESES[fecha_hora.month]
+
+    return {
+        **turno,
+        "dia": dia,
+        "hora": fecha_hora.strftime("%H:%M"),
+        "fecha": f"{dia.lower()} {fecha_hora.day} de {mes}",
+        "iniciales": iniciales,
+        "medico": medico,
+    }
+
+
+def listar_mis_turnos() -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint="/turnos/mis-turnos",
+        params={"limit": 100, "offset": 0},
+        authenticated=True,
+    )
+
+    data = resultado.get("data") or {}
+    items = data.get("items", [])
+
+    return [_formatear_turno(turno) for turno in items]

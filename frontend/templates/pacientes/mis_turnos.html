@@ -9,19 +9,6 @@
 
 {% block content %}
 {% from "pacientes/_componentes.html" import estado_pill, icono_qr %}
-{# 
-   Datos de ejemplo
-#}
-{% set proximos = [
-  {'id': 101, 'dia': 'Lunes',   'hora': '11:00', 'iniciales': 'LF', 'medico': 'Dra. Lucía Fernández',  'especialidad': 'Cardiología',    'fecha': 'lunes 2 de noviembre',    'estado': 'reservado'},
-  {'id': 102, 'dia': 'Martes',  'hora': '10:20', 'iniciales': 'VP', 'medico': 'Dra. Valentina Pérez',  'especialidad': 'Dermatología',   'fecha': 'martes 10 de noviembre',  'estado': 'reservado'},
-  {'id': 103, 'dia': 'Viernes', 'hora': '10:20', 'iniciales': 'MG', 'medico': 'Dr. Martín González',   'especialidad': 'Clínica médica', 'fecha': 'viernes 13 de noviembre', 'estado': 'reservado'}
-] %}
-{% set historial = [
-  {'id': 91, 'dia': 'Martes', 'hora': '12:30', 'iniciales': 'SM', 'medico': 'Dra. Sofía Martínez', 'especialidad': 'Ginecología',    'fecha': 'martes 13 de octubre', 'estado': 'cancelado'},
-  {'id': 92, 'dia': 'Martes', 'hora': '08:30', 'iniciales': 'TH', 'medico': 'Dr. Tomás Herrera',   'especialidad': 'Oftalmología',   'fecha': 'martes 6 de octubre',  'estado': 'atendido'},
-  {'id': 93, 'dia': 'Lunes',  'hora': '08:00', 'iniciales': 'MG', 'medico': 'Dr. Martín González', 'especialidad': 'Clínica médica', 'fecha': 'lunes 5 de octubre',   'estado': 'atendido'}
-] %}
 
 {% macro tarjeta_turno(t) %}
   <article class="turno-card card flex-md-row align-items-md-center gap-3 p-3">
