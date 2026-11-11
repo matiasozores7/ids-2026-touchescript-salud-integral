@@ -10,16 +10,19 @@ from app.errors.exceptions import AppError
 
 @patient_bp.route("/pacientes", methods=["GET"])
 def patient_home():
+    especialidades = []
+    medicos = []
     proximo_turno = None
 
     try:
+        especialidades = turnos_service.listar_especialidades()
+        medicos = turnos_service.listar_medicos()
         turnos = turnos_service.listar_mis_turnos()
 
         ahora = datetime.now()
 
         proximos = [
-            turno
-            for turno in turnos
+            turno for turno in turnos
             if turno["estado"] in ("reservado", "confirmado")
             and datetime.fromisoformat(turno["fecha_hora"]) > ahora
         ]
@@ -35,5 +38,7 @@ def patient_home():
 
     return render_template(
         "pacientes/home.html",
+        especialidades=especialidades,
+        medicos=medicos,
         proximo_turno=proximo_turno
     )

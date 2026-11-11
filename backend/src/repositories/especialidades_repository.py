@@ -9,17 +9,29 @@ def contar_especialidades(connection) -> int:
         return cursor.fetchone()["total"]
 
 
+
 def listar_especialidades(connection, limit: int, offset: int):
     query = """
-        SELECT id, nombre, descripcion
-        FROM especialidades
-        ORDER BY nombre
+        SELECT
+            e.id,
+            e.nombre,
+            e.descripcion,
+            (
+                SELECT COUNT(*)
+                FROM medicos m
+                JOIN usuarios u ON u.id = m.usuario_id
+                WHERE m.especialidad_id = e.id
+                  AND u.activo = TRUE
+            ) AS cantidad_medicos
+        FROM especialidades e
+        ORDER BY e.nombre
         LIMIT %s OFFSET %s
     """
 
     with connection.cursor() as cursor:
         cursor.execute(query, (limit, offset))
         return cursor.fetchall()
+
 
 
 def existe_nombre(connection, nombre: str) -> bool:

@@ -84,15 +84,19 @@ def listar_especialidades() -> list[dict]:
     return data.get("items", [])
 
 
-def listar_medicos(especialidad_id: int) -> list[dict]:
+def listar_medicos(especialidad_id: int | None = None) -> list[dict]:
+    params = {
+        "limit": 100,
+        "offset": 0,
+    }
+
+    if especialidad_id is not None:
+        params["especialidad_id"] = especialidad_id
+
     resultado = api_request(
         method="GET",
         endpoint="/medicos",
-        params={
-            "limit": 100,
-            "offset": 0,
-            "especialidad_id": especialidad_id,
-        },
+        params=params,
         authenticated=True,
     )
 
