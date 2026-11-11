@@ -129,3 +129,12 @@ def reservar_turno(turno_id: int) -> dict:
     )
 
     return resultado.get("data") or {}
+
+def obtener_detalle_turno(turno_id: int) -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/turnos/mis-turnos/{turno_id}",
+        authenticated=True
+    )
+
+    return resultado.get("data") or {}

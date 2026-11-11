@@ -252,3 +252,37 @@ def listar_turnos_disponibles(medico_id: int):
         data=turnos,
         message="Turnos disponibles obtenidos correctamente."
     )
+
+@turnos_bp.route(
+    "/turnos/mis-turnos/<int(min=1):turno_id>",
+    methods=["GET"]
+)
+@validar_rol("paciente", "admin")
+def obtener_detalle_turno(turno_id: int):
+    claims = obtener_claims_actuales()
+    rol = claims.get("rol")
+
+    if rol == "paciente":
+        paciente_id = claims.get("perfil_id")
+
+        if paciente_id is None:
+            raise ForbiddenError(
+                description="No se pudo identificar el perfil del paciente autenticado."
+            )
+    else:
+        paciente_id = request.args.get("paciente_id", type=int)
+
+        if paciente_id is None:
+            raise BadRequestError(
+                description="Se requiere identificar al paciente."
+            )
+
+    resultado = turno_service.obtener_detalle_turno(
+        turno_id=turno_id,
+        paciente_id=paciente_id
+    )
+
+    return success_response(
+        data=resultado,
+        message="Detalle del turno obtenido correctamente."
+    )

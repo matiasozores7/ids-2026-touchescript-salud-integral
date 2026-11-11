@@ -11,19 +11,6 @@
 {% from "pacientes/_componentes.html" import estado_pill, icono_qr, volver %}
 {% from "pacientes/_modal_cancelar.html" import modal_cancelar %}
 
-{#
-   Datos de ejemplo
-#}
-
-{% set turnos_ejemplo = {
-  101: {'id': 101, 'codigo': 'SI-24684', 'fecha_larga': 'Lunes 2 de noviembre',    'fecha': 'lunes 2 de noviembre',    'hora': '11:00', 'duracion': '30 min', 'iniciales': 'LF', 'medico': 'Dra. Lucía Fernández', 'especialidad': 'Cardiología',    'consultorio': 'Consultorio 102 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  102: {'id': 102, 'codigo': 'SI-24815', 'fecha_larga': 'Martes 10 de noviembre',   'fecha': 'martes 10 de noviembre',  'hora': '10:20', 'duracion': '20 min', 'iniciales': 'VP', 'medico': 'Dra. Valentina Pérez', 'especialidad': 'Dermatología',   'consultorio': 'Consultorio 201 · Piso 2', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  103: {'id': 103, 'codigo': 'SI-24902', 'fecha_larga': 'Viernes 13 de noviembre',  'fecha': 'viernes 13 de noviembre', 'hora': '10:20', 'duracion': '20 min', 'iniciales': 'MG', 'medico': 'Dr. Martín González',  'especialidad': 'Clínica médica', 'consultorio': 'Consultorio 105 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'reservado'},
-  91:  {'id': 91,  'codigo': 'SI-23977', 'fecha_larga': 'Martes 13 de octubre',     'fecha': 'martes 13 de octubre',    'hora': '12:30', 'duracion': '30 min', 'iniciales': 'SM', 'medico': 'Dra. Sofía Martínez',  'especialidad': 'Ginecología',    'consultorio': 'Consultorio 203 · Piso 2', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': None,      'estado': 'cancelado'},
-  92:  {'id': 92,  'codigo': 'SI-23871', 'fecha_larga': 'Martes 6 de octubre',      'fecha': 'martes 6 de octubre',     'hora': '08:30', 'duracion': '30 min', 'iniciales': 'TH', 'medico': 'Dr. Tomás Herrera',    'especialidad': 'Oftalmología',   'consultorio': 'Consultorio 110 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': '08:21 h', 'estado': 'atendido'},
-  93:  {'id': 93,  'codigo': 'SI-23850', 'fecha_larga': 'Lunes 5 de octubre',       'fecha': 'lunes 5 de octubre',      'hora': '08:00', 'duracion': '20 min', 'iniciales': 'MG', 'medico': 'Dr. Martín González',  'especialidad': 'Clínica médica', 'consultorio': 'Consultorio 105 · Piso 1', 'cobertura': 'OSDE', 'indicaciones': 'Llegá 15 min antes con tu DNI', 'llegada': '07:52 h', 'estado': 'atendido'}
-} %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
 {% set activo = turno.estado in ['reservado', 'confirmado'] %}
 
 <div class="mis-turnos-page">
@@ -34,41 +21,107 @@
 
     <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
       <div>
-        <p class="text-sm text-secondary mb-0">Turno {{ turno.codigo }}</p>
-        <h1 class="fw-bold mb-0">{{ turno.fecha_larga }}</h1>
-        <p class="text-lg text-primary mt-1 mb-0">{{ turno.hora }} h · {{ turno.duracion }}</p>
+        <p class="text-sm text-secondary mb-0">
+          Turno #{{ turno.id }}
+        </p>
+
+        <h1 class="fw-bold mb-0">
+          {{ turno.fecha_larga }}
+        </h1>
+
+        <p class="text-lg text-primary mt-1 mb-0">
+          {{ turno.hora }} h
+          {% if turno.duracion %}
+            · {{ turno.duracion }}
+          {% endif %}
+        </p>
       </div>
+
       {{ estado_pill(turno.estado) }}
     </div>
 
     <div class="d-flex align-items-center gap-3 rounded-3 p-3 mb-4 bg-body-tertiary">
-      <span class="avatar avatar-small" aria-hidden="true">{{ turno.iniciales }}</span>
+      <span class="avatar avatar-small" aria-hidden="true">
+        {{ turno.iniciales }}
+      </span>
+
       <div class="flex-grow-1">
-        <h2 class="text-lg mb-0">{{ turno.medico }}</h2>
-        <p class="small text-body-secondary mb-0">{{ turno.especialidad }}</p>
+        <h2 class="text-lg mb-0">
+          {{ turno.medico }}
+        </h2>
+
+        <p class="small text-body-secondary mb-0">
+          {{ turno.especialidad }}
+        </p>
       </div>
-      <a class="small fw-semibold text-primary" href="#">Ver perfil</a>
     </div>
 
     <dl class="row g-3 mb-4">
-      {% for etiqueta, valor in [('Consultorio', turno.consultorio), ('Cobertura', turno.cobertura), ('Llegada', turno.llegada or 'Sin check-in'), ('Indicaciones', turno.indicaciones)] %}
+
+      <div class="col-sm-6">
+        <dt class="text-sm fw-normal text-secondary">Consultorio</dt>
+        <dd class="fw-medium mb-0">
+          {{ turno.consultorio or 'No especificado' }}
+        </dd>
+      </div>
+
+      <div class="col-sm-6">
+        <dt class="text-sm fw-normal text-secondary">Piso</dt>
+        <dd class="fw-medium mb-0">
+          {{ turno.piso or 'No especificado' }}
+        </dd>
+      </div>
+
+      <div class="col-sm-6">
+        <dt class="text-sm fw-normal text-secondary">Estado de llegada</dt>
+        <dd class="fw-medium mb-0">
+          {% if turno.llegada %}
+            Registrada: {{ turno.llegada }}
+          {% else %}
+            Sin check-in
+          {% endif %}
+        </dd>
+      </div>
+
+      {% if turno.cobertura %}
         <div class="col-sm-6">
-          <dt class="text-sm fw-normal text-secondary">{{ etiqueta }}</dt>
-          <dd class="fw-medium mb-0">{{ valor }}</dd>
+          <dt class="text-sm fw-normal text-secondary">Cobertura</dt>
+          <dd class="fw-medium mb-0">{{ turno.cobertura }}</dd>
         </div>
-      {% endfor %}
+      {% endif %}
+
+      {% if turno.indicaciones %}
+        <div class="col-12">
+          <dt class="text-sm fw-normal text-secondary">Recomendaciones</dt>
+          <dd class="fw-medium mb-0">{{ turno.indicaciones }}</dd>
+        </div>
+      {% endif %}
+
     </dl>
 
     {% if activo %}
       <div class="d-flex flex-wrap gap-2 border-top pt-4">
-        <a class="button button-primary button-large px-3" href="{{ url_for('patient.qr_turno', turno_id=turno.id) }}">{{ icono_qr() }} Ver QR de check-in</a>
-        <button class="button button-outline button-large px-3" type="button" data-bs-toggle="modal" data-bs-target="#cancelar-{{ turno.id }}">Cancelar turno</button>
+
+        <a class="button button-primary button-large px-3"
+           href="{{ url_for('patient.qr_turno', turno_id=turno.id) }}">
+          {{ icono_qr() }} Ver QR de check-in
+        </a>
+
+        <button class="button button-outline button-large px-3"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#cancelar-{{ turno.id }}">
+          Cancelar turno
+        </button>
+
       </div>
     {% endif %}
 
   </article>
 
-  {% if activo %}{{ modal_cancelar(turno) }}{% endif %}
+  {% if activo %}
+    {{ modal_cancelar(turno) }}
+  {% endif %}
 
 </div>
 {% endblock %}

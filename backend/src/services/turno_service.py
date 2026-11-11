@@ -348,3 +348,25 @@ def listar_turnos_disponibles(medico_id: int) -> list:
         _serializar_turno(turno)
         for turno in turnos
     ]
+
+def obtener_detalle_turno(turno_id: int, paciente_id: int) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_con_detalles(
+            connection,
+            turno_id
+        )
+
+        if turno is None:
+            raise NotFoundError(
+                description="No se encontró el turno especificado."
+            )
+
+        if turno["paciente_id"] != paciente_id:
+            raise ForbiddenError(
+                description="No tenés permiso para consultar este turno."
+            )
+
+        # El QR se obtiene mediante su endpoint específico.
+        turno.pop("qr_token", None)
+
+    return _serializar_turno(turno)
