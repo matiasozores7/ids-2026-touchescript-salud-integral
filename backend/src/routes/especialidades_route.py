@@ -11,7 +11,7 @@ especialidades_bp = Blueprint("especialidades", __name__)
 
 
 @especialidades_bp.route("/especialidades", methods=["GET"])
-@validar_rol("admin")
+@validar_rol("admin","paciente")
 def listar_especialidades():
     limit, offset = get_pagination_params()
     items, total = especialidades_service.listar_especialidades(limit, offset)

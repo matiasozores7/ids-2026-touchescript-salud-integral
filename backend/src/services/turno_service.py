@@ -336,3 +336,15 @@ def obtener_horarios_disponibles(medico_id, fecha):
             medico_id,
             fecha
         )
+
+def listar_turnos_disponibles(medico_id: int) -> list:
+    with transaction() as connection:
+        turnos = turno_repo.listar_turnos_disponibles(
+            connection,
+            medico_id
+        )
+
+    return [
+        _serializar_turno(turno)
+        for turno in turnos
+    ]

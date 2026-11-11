@@ -238,3 +238,17 @@ def obtener_horarios_disponibles(medico_id: int):
         data=horarios,
         message="Horarios disponibles obtenidos correctamente."
     )
+
+
+@turnos_bp.route(
+    "/medicos/<int(min=1):medico_id>/turnos-disponibles",
+    methods=["GET"]
+)
+@validar_rol("paciente", "admin")
+def listar_turnos_disponibles(medico_id: int):
+    turnos = turno_service.listar_turnos_disponibles(medico_id)
+
+    return success_response(
+        data=turnos,
+        message="Turnos disponibles obtenidos correctamente."
+    )
