@@ -1,28 +1,5 @@
+
 {% extends "backoffice/base.html" %}
-
-{% set mock_pacientes = [
-  {"id": 1, "nombre": "María", "apellido": "Gómez", "email": "maria.gomez@correo.demo", "dni": "30.100.200", "fecha_nacimiento": "1983-05-14", "telefono": "11 5100-4000", "cobertura": "OSDE", "nro_afiliado": "84729102", "turnos": 5, "avatar_color": "avatar-green"},
-  {"id": 2, "nombre": "Juan", "apellido": "Pereyra", "email": "juan.pereyra@correo.demo", "dni": "31.137.253", "fecha_nacimiento": "1984-11-20", "telefono": "11 5113-4211", "cobertura": "Swiss Medical", "nro_afiliado": "51294821", "turnos": 44, "avatar_color": "avatar-teal"},
-  {"id": 3, "nombre": "Ana", "apellido": "Sosa", "email": "ana.sosa@correo.demo", "dni": "32.174.306", "fecha_nacimiento": "1986-03-08", "telefono": "11 5126-4422", "cobertura": "Galeno", "nro_afiliado": "39281744", "turnos": 64, "avatar_color": "avatar-green"},
-  {"id": 4, "nombre": "Carlos", "apellido": "Díaz", "email": "carlos.diaz@correo.demo", "dni": "33.211.359", "fecha_nacimiento": "1987-09-17", "telefono": "11 5139-4633", "cobertura": "PAMI", "nro_afiliado": "19284711", "turnos": 42, "avatar_color": "avatar-teal"},
-  {"id": 5, "nombre": "Laura", "apellido": "Benítez", "email": "laura.benitez@correo.demo", "dni": "34.248.412", "fecha_nacimiento": "1989-01-25", "telefono": "11 5152-4844", "cobertura": "OSDE", "nro_afiliado": "92837192", "turnos": 47, "avatar_color": "avatar-green"},
-  {"id": 6, "nombre": "Diego", "apellido": "Acosta", "email": "diego.acosta@correo.demo", "dni": "35.285.465", "fecha_nacimiento": "1990-07-30", "telefono": "11 5165-5055", "cobertura": "IOMA", "nro_afiliado": "48291039", "turnos": 52, "avatar_color": "avatar-teal"},
-  {"id": 7, "nombre": "Paula", "apellido": "Medina", "email": "paula.medina@correo.demo", "dni": "36.322.518", "fecha_nacimiento": "1991-12-05", "telefono": "11 5178-5266", "cobertura": "Particular", "nro_afiliado": "", "turnos": 35, "avatar_color": "avatar-green"},
-  {"id": 8, "nombre": "Federico", "apellido": "Ruiz", "email": "federico.ruiz@correo.demo", "dni": "37.359.571", "fecha_nacimiento": "1993-04-19", "telefono": "11 5191-5477", "cobertura": "OSDE", "nro_afiliado": "73829103", "turnos": 42, "avatar_color": "avatar-green"},
-  {"id": 9, "nombre": "Julieta", "apellido": "Castro", "email": "julieta.castro@correo.demo", "dni": "38.396.624", "fecha_nacimiento": "1994-10-12", "telefono": "11 5204-5688", "cobertura": "Swiss Medical", "nro_afiliado": "64738291", "turnos": 49, "avatar_color": "avatar-teal"},
-  {"id": 10, "nombre": "Ricardo", "apellido": "Molina", "email": "ricardo.molina@correo.demo", "dni": "39.433.677", "fecha_nacimiento": "1996-02-28", "telefono": "11 5217-5899", "cobertura": "PAMI", "nro_afiliado": "58392019", "turnos": 54, "avatar_color": "avatar-teal"},
-  {"id": 11, "nombre": "Florencia", "apellido": "Ortiz", "email": "florencia.ortiz@correo.demo", "dni": "40.470.730", "fecha_nacimiento": "1997-08-15", "telefono": "11 5230-6110", "cobertura": "Galeno", "nro_afiliado": "49281720", "turnos": 55, "avatar_color": "avatar-teal"},
-  {"id": 12, "nombre": "Martín", "apellido": "Herrera", "email": "martin.herrera@correo.demo", "dni": "41.507.783", "fecha_nacimiento": "1998-11-03", "telefono": "11 5243-6321", "cobertura": "OSDE", "nro_afiliado": "38291029", "turnos": 18, "avatar_color": "avatar-green"},
-  {"id": 13, "nombre": "Camila", "apellido": "Navarro", "email": "camila.navarro@correo.demo", "dni": "42.544.836", "fecha_nacimiento": "2000-04-21", "telefono": "11 5256-6532", "cobertura": "Swiss Medical", "nro_afiliado": "82910293", "turnos": 27, "avatar_color": "avatar-teal"},
-  {"id": 14, "nombre": "Gonzalo", "apellido": "Romero", "email": "gonzalo.romero@correo.demo", "dni": "43.581.889", "fecha_nacimiento": "2001-09-09", "telefono": "11 5269-6743", "cobertura": "IOMA", "nro_afiliado": "28192019", "turnos": 31, "avatar_color": "avatar-teal"},
-  {"id": 15, "nombre": "Valeria", "apellido": "Silva", "email": "valeria.silva@correo.demo", "dni": "44.618.942", "fecha_nacimiento": "2002-12-18", "telefono": "11 5282-6954", "cobertura": "Particular", "nro_afiliado": "", "turnos": 14, "avatar_color": "avatar-green"},
-  {"id": 16, "nombre": "Matías", "apellido": "Torres", "email": "matias.torres@correo.demo", "dni": "45.655.995", "fecha_nacimiento": "2003-06-11", "telefono": "11 5295-7165", "cobertura": "OSDE", "nro_afiliado": "71829102", "turnos": 22, "avatar_color": "avatar-green"},
-  {"id": 17, "nombre": "Luciana", "apellido": "Vega", "email": "luciana.vega@correo.demo", "dni": "46.693.048", "fecha_nacimiento": "2004-10-04", "telefono": "11 5308-7376", "cobertura": "Galeno", "nro_afiliado": "91827364", "turnos": 39, "avatar_color": "avatar-teal"},
-  {"id": 18, "nombre": "Esteban", "apellido": "Paredes", "email": "esteban.paredes@correo.demo", "dni": "47.730.101", "fecha_nacimiento": "2005-03-27", "telefono": "11 5321-7587", "cobertura": "PAMI", "nro_afiliado": "61728394", "turnos": 41, "avatar_color": "avatar-teal"},
-  {"id": 19, "nombre": "Agustina", "apellido": "Morales", "email": "agustina.morales@correo.demo", "dni": "48.767.154", "fecha_nacimiento": "2006-08-19", "telefono": "11 5334-7798", "cobertura": "Swiss Medical", "nro_afiliado": "51829304", "turnos": 29, "avatar_color": "avatar-teal"},
-  {"id": 20, "nombre": "Nicolás", "apellido": "Giménez", "email": "nicolas.gimenez@correo.demo", "dni": "49.804.207", "fecha_nacimiento": "2007-01-31", "telefono": "11 5347-8009", "cobertura": "OSDE", "nro_afiliado": "41928374", "turnos": 16, "avatar_color": "avatar-green"}
-] %}
-
 
 {% block backoffice_title %}
 Pacientes · Salud Integral
@@ -87,7 +64,7 @@ Pacientes · Salud Integral
 
             <span class="pacientes-count">
                 <strong id="pacientes-count-num">
-                    {{ (pacientes | default(mock_pacientes)) | length }}
+                    {{ pacientes | length }}
                 </strong>
                 registros
             </span>
@@ -102,10 +79,9 @@ Pacientes · Salud Integral
                 <thead>
                     <tr>
                         <th scope="col">PACIENTE</th>
-                        <th scope="col">DNI</th>
+                        <th scope="col">EMAIL</th>
                         <th scope="col">TELÉFONO</th>
                         <th scope="col">COBERTURA</th>
-                        <th scope="col">TURNOS</th>
                         <th scope="col" class="paciente-actions-col">
                             <span class="visually-hidden">Acciones</span>
                         </th>
@@ -115,83 +91,72 @@ Pacientes · Salud Integral
 
                 <tbody id="pacientes-table-body">
 
-                    {% for p in pacientes | default(mock_pacientes) %}
+                    {% for p in pacientes %}
 
-                        <tr data-id="{{ p.id }}"
-                            data-nombre="{{ p.nombre }}"
-                            data-apellido="{{ p.apellido }}"
-                            data-dni="{{ p.dni }}"
-                            data-fecha="{{ p.fecha_nacimiento }}"
-                            data-email="{{ p.email }}"
-                            data-telefono="{{ p.telefono or '' }}"
-                            data-cobertura="{{ p.cobertura }}"
-                            data-afiliado="{{ p.nro_afiliado or '' }}"
-                            data-search="{{ (p.nombre ~ ' ' ~ p.apellido ~ ' ' ~ p.dni ~ ' ' ~ p.email ~ ' ' ~ p.cobertura) | lower }}">
+                    <tr
+                        data-id="{{ p.paciente_id }}"
+                        data-nombre="{{ p.nombre }}"
+                        data-apellido="{{ p.apellido }}"
+                        data-email="{{ p.email }}"
+                        data-telefono="{{ p.telefono or '' }}"
+                        data-cobertura-id="{{ p.cobertura_id or '' }}"
+                        data-search="{{ (p.nombre ~ ' ' ~ p.apellido ~ ' ' ~ p.email ~ ' ' ~ (p.telefono or '') ~ ' ' ~ (p.cobertura_medica or '')) | lower }}"
+                    >
 
-                            <td>
+                        <td>
+                            <span class="patient-avatar avatar-teal">
+                                {{ p.nombre[0] | upper }}{{ p.apellido[0] | upper }}
+                            </span>
 
-                                <div class="patient-cell">
+                            <span class="patient-name">
+                                {{ p.nombre }} {{ p.apellido }}
+                            </span>
+                        </td>
 
-                                    <span class="patient-avatar {{ p.avatar_color or 'avatar-green' }}">
-                                        {{ p.nombre[0] | upper }}{{ p.apellido[0] | upper }}
-                                    </span>
+                        <td>
+                            <span class="patient-email">
+                                {{ p.email }}
+                            </span>
+                        </td>
 
-                                    <div class="patient-meta">
+                        <td>
+                            {{ p.telefono or '-' }}
+                        </td>
 
-                                        <span class="patient-name">
-                                            {{ p.nombre }} {{ p.apellido }}
-                                        </span>
+                        <td>
+                            {{ p.cobertura_medica or '-' }}
+                        </td>
 
-                                        <span class="patient-email">
-                                            {{ p.email }}
-                                        </span>
+                        <td>
+                            <div class="patient-actions">
 
-                                    </div>
+                                <button type="button"
+                                        class="action-btn edit-btn"
+                                        data-edit-patient
+                                        title="Editar paciente"
+                                        aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
 
-                                </div>
+                                    <i class="bi bi-pencil"
+                                       aria-hidden="true"></i>
 
-                            </td>
-
-                            <td>{{ p.dni }}</td>
-
-                            <td>{{ p.telefono or '-' }}</td>
-
-                            <td>{{ p.cobertura }}</td>
-
-                            <td>{{ p.turnos or 0 }}</td>
-
-                            <td class="paciente-actions-col">
-
-                                <div class="patient-actions">
-
-                                    <button type="button"
-                                            class="action-btn edit-btn"
-                                            data-edit-patient
-                                            title="Editar paciente"
-                                            aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
-
-                                        <i class="bi bi-pencil"
-                                           aria-hidden="true"></i>
-
-                                    </button>
+                                </button>
 
 
-                                    <button type="button"
-                                            class="action-btn delete-btn"
-                                            data-delete-patient
-                                            title="Dar de baja paciente"
-                                            aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
+                                <button type="button"
+                                        class="action-btn delete-btn"
+                                        data-delete-patient
+                                        title="Dar de baja paciente"
+                                        aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
 
-                                        <i class="bi bi-trash3"
-                                           aria-hidden="true"></i>
+                                    <i class="bi bi-trash3"
+                                       aria-hidden="true"></i>
 
-                                    </button>
+                                </button>
 
-                                </div>
+                            </div>
+                        </td>
 
-                            </td>
-
-                        </tr>
+                    </tr>
 
                     {% endfor %}
 
@@ -204,14 +169,14 @@ Pacientes · Salud Integral
 
         <p class="pacientes-table-empty"
            id="pacientes-table-empty"
-           hidden>
+           {% if pacientes %}hidden{% endif %}>
             No se encontraron pacientes que coincidan con la búsqueda.
         </p>
 
     </section>
 
 
-    {# Modal de Alta / Edición de Paciente #}
+    {# Modal de alta y edición de pacientes #}
 
     <div class="patient-modal-backdrop" id="patient-modal" hidden>
 
@@ -241,12 +206,7 @@ Pacientes · Salud Integral
             <form id="form-paciente"
                   class="patient-form"
                   action="#"
-                  method="post">
-
-                <input type="hidden"
-                       id="paciente-id"
-                       name="id">
-
+                  method="POST">
 
                 <div class="patient-form-grid">
 
@@ -278,37 +238,6 @@ Pacientes · Salud Integral
                                class="form-control"
                                required
                                placeholder="Ej. Gómez">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-dni">
-                            DNI <span class="required">*</span>
-                        </label>
-
-                        <input type="text"
-                               id="campo-dni"
-                               name="dni"
-                               class="form-control"
-                               required
-                               placeholder="Ej. 30.100.200">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-fecha-nacimiento">
-                            Fecha de nacimiento <span class="required">*</span>
-                        </label>
-
-                        <input type="date"
-                               id="campo-fecha-nacimiento"
-                               name="fecha_nacimiento"
-                               class="form-control"
-                               required>
 
                     </div>
 
@@ -351,7 +280,7 @@ Pacientes · Salud Integral
                         </label>
 
                         <select id="campo-cobertura"
-                                name="cobertura"
+                                name="cobertura_id"
                                 class="form-select"
                                 required>
 
@@ -359,12 +288,11 @@ Pacientes · Salud Integral
                                 Seleccionar...
                             </option>
 
-                            <option value="OSDE">OSDE</option>
-                            <option value="Swiss Medical">Swiss Medical</option>
-                            <option value="Galeno">Galeno</option>
-                            <option value="PAMI">PAMI</option>
-                            <option value="IOMA">IOMA</option>
-                            <option value="Particular">Particular</option>
+                            {% for cobertura in coberturas %}
+                                <option value="{{ cobertura.id }}">
+                                    {{ cobertura.nombre }}
+                                </option>
+                            {% endfor %}
 
                         </select>
 
@@ -373,15 +301,17 @@ Pacientes · Salud Integral
 
                     <div class="form-group">
 
-                        <label for="campo-nro-afiliado">
-                            N° de afiliado
+                        <label for="campo-password">
+                            Contraseña <span class="required">*</span>
                         </label>
 
-                        <input type="text"
-                               id="campo-nro-afiliado"
-                               name="nro_afiliado"
+                        <input type="password"
+                               id="campo-password"
+                               name="password"
                                class="form-control"
-                               placeholder="Ej. 984512300">
+                               autocomplete="new-password"
+                               required
+                               placeholder="Contraseña del paciente">
 
                     </div>
 
@@ -411,7 +341,7 @@ Pacientes · Salud Integral
     </div>
 
 
-    {# Popup Modal con Estilos CSS para Confirmar Baja de Paciente #}
+    {# Modal de confirmación de baja #}
 
     <div class="patient-modal-backdrop" id="delete-modal" hidden>
 
