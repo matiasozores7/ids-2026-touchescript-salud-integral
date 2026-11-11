@@ -1,18 +1,9 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+
+from flask import flash, redirect, render_template, request, url_for
 
 from app.errors.exceptions import AppError
-from app.constants.roles import ADMIN
 from app.services import consultorio_service
-from app.utils.access_control import proteger_por_rol
-
-
-backoffice_bp = Blueprint("backoffice", __name__)
-backoffice_bp.before_request(proteger_por_rol(ADMIN))
-
-
-@backoffice_bp.get("/")
-def dashboard():
-    return render_template("backoffice/backoffice.html")
+from app.routes.backoffice import backoffice_bp
 
 
 def _render_consultorios():
@@ -34,13 +25,18 @@ def listar_consultorios():
 
 
 @backoffice_bp.route("/consultorios/nuevo", methods=["GET", "POST"])
-@backoffice_bp.route("/consultorios/<int:consultorio_id>/editar", methods=["GET", "POST"])
+@backoffice_bp.route(
+    "/consultorios/<int:consultorio_id>/editar",
+    methods=["GET", "POST"]
+)
 def formulario_consultorio(consultorio_id: int | None = None):
     consultorio = None
 
     if consultorio_id is not None:
         try:
-            consultorio = consultorio_service.obtener_consultorio(consultorio_id)
+            consultorio = consultorio_service.obtener_consultorio(
+                consultorio_id
+            )
         except AppError as error:
             flash(error.message, "error")
             return redirect(url_for("backoffice.listar_consultorios"))
@@ -58,6 +54,7 @@ def formulario_consultorio(consultorio_id: int | None = None):
                     numero_sala,
                     piso,
                 )
+
         except AppError as error:
             flash(error.message, "error")
         else:

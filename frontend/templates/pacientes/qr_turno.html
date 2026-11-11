@@ -20,12 +20,11 @@
   103: {'id': 103, 'codigo': 'SI-24902', 'paciente': 'María Gómez', 'estado': 'reservado', 'medico': 'Dr. Martín González',  'fecha_larga': 'Viernes 13 de noviembre', 'hora': '10:20', 'consultorio': 'Consultorio 105'}
 } %}
 {% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
-{% set turno = turnos_ejemplo.get(turno_id|default(101)|int, turnos_ejemplo[101]) %}
 
 <div class="mis-turnos-page">
   <div class="qr-contenedor mx-auto">
 
-    {{ volver(url_for('detalle_turno', turno_id=turno.id), 'Detalle del turno') }}
+    {{ volver(url_for('patient.detalle_turno', turno_id=turno.id), 'Detalle del turno') }}
 
     <article class="turno-card card overflow-hidden">
       <header class="qr-encabezado text-center text-white px-4 py-3">
