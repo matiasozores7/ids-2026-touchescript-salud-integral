@@ -39,11 +39,66 @@ INSERT INTO consultorios (numero_sala, piso) VALUES
 INSERT INTO agendas (medico_id, consultorio_id, dia_semana, hora_inicio, hora_fin, duracion_turno) 
 VALUES (1, 1, 'Lunes', '09:00:00', '13:00:00', 30);
 
-INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token) 
-VALUES (1, NULL, 1, '2026-11-02 09:00:00', 'disponible', NULL);
+-- 1 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-01 09:00:00', 'disponible', NULL),
+(1, NULL, 1, '2026-12-01 09:30:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-01 10:00:00', 'reservado', 'qr_test_001'),
+(1, 2, 1, '2026-12-01 10:30:00', 'confirmado', 'qr_test_002');
 
-INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token) 
-VALUES (1, 1, 1, '2026-11-02 09:30:00', 'reservado', 'qr_juan_abc123');
+-- 3 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-03 09:00:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-03 09:30:00', 'reservado', 'qr_test_003'),
+(1, NULL, 1, '2026-12-03 10:00:00', 'disponible', NULL),
+(1, 2, 1, '2026-12-03 10:30:00', 'confirmado', 'qr_test_004');
 
-INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, fecha_hora_llegada, estado, qr_token) 
-VALUES (1, 2, 1, '2026-11-02 10:00:00', '2026-11-02 09:55:00', 'confirmado', 'qr_ana_xyz789');
+-- 7 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-07 08:30:00', 'disponible', NULL),
+(1, 2, 1, '2026-12-07 09:00:00', 'reservado', 'qr_test_005'),
+(1, NULL, 1, '2026-12-07 09:30:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-07 10:00:00', 'confirmado', 'qr_test_006');
+
+-- 10 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-10 09:00:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-10 09:30:00', 'reservado', 'qr_test_007'),
+(1, 2, 1, '2026-12-10 10:00:00', 'confirmado', 'qr_test_008'),
+(1, NULL, 1, '2026-12-10 10:30:00', 'disponible', NULL);
+
+-- 14 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-14 08:30:00', 'disponible', NULL),
+(1, 2, 1, '2026-12-14 09:00:00', 'reservado', 'qr_test_009'),
+(1, NULL, 1, '2026-12-14 09:30:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-14 10:00:00', 'confirmado', 'qr_test_010');
+
+-- 17 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-17 09:00:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-17 09:30:00', 'reservado', 'qr_test_011'),
+(1, 2, 1, '2026-12-17 10:00:00', 'confirmado', 'qr_test_012'),
+(1, NULL, 1, '2026-12-17 10:30:00', 'disponible', NULL);
+
+-- 21 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-21 08:30:00', 'disponible', NULL),
+(1, NULL, 1, '2026-12-21 09:00:00', 'disponible', NULL),
+(1, 2, 1, '2026-12-21 09:30:00', 'reservado', 'qr_test_013'),
+(1, 1, 1, '2026-12-21 10:00:00', 'confirmado', 'qr_test_014');
+
+-- 28 de diciembre
+INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+VALUES
+(1, NULL, 1, '2026-12-28 09:00:00', 'disponible', NULL),
+(1, 1, 1, '2026-12-28 09:30:00', 'reservado', 'qr_test_015'),
+(1, NULL, 1, '2026-12-28 10:00:00', 'disponible', NULL),
+(1, 2, 1, '2026-12-28 10:30:00', 'confirmado', 'qr_test_016');
