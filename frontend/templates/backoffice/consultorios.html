@@ -31,7 +31,7 @@ Consultorios · Salud Integral
         </div>
 
         <a class="button button-primary button-small"
-           href="{{ url_for('backoffice.backoffice_consultorio_form') }}">
+           href="{{ url_for('backoffice.formulario_consultorio') }}"
 
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
             Nuevo consultorio
@@ -62,7 +62,7 @@ Consultorios · Salud Integral
             </div>
 
             <span class="consultorios-count">
-                <strong>4</strong>
+                <strong>{{ consultorios | length }}</strong>
                 consultorios activos
             </span>
 
@@ -92,12 +92,7 @@ Consultorios · Salud Integral
 
                 <tbody>
 
-                    {% for consultorio in consultorios | default([
-                        {"numero_sala": "101", "piso": "Planta baja", "activo": true},
-                        {"numero_sala": "202", "piso": "Primer piso", "activo": true},
-                        {"numero_sala": "305", "piso": "Segundo piso", "activo": true},
-                        {"numero_sala": "402", "piso": "Tercer piso", "activo": true}
-                    ]) %}
+                    {% for consultorio in consultorios %}
 
                         <tr>
 
@@ -127,22 +122,23 @@ Consultorios · Salud Integral
 
                             <td class="consultorio-actions">
 
-                                <a href="{{ url_for('backoffice.backoffice_consultorio_form', consultorio_id=consultorio.id) if consultorio.id is defined else '#' }}"
-                                   aria-label="Editar sala {{ consultorio.numero_sala }}">
+                                <a href="{{ url_for('backoffice.formulario_consultorio', consultorio_id=consultorio.id) }}"
+                                aria-label="Editar sala {{ consultorio.numero_sala }}">
 
-                                    <i class="bi bi-pencil-square"
-                                       aria-hidden="true"></i>
-
+                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
                                 </a>
 
-
-                                <button type="button"
-                                        aria-label="Dar de baja sala {{ consultorio.numero_sala }}">
-
-                                    <i class="bi bi-trash3"
-                                       aria-hidden="true"></i>
-
-                                </button>
+                                <form
+                                    action="{{ url_for('backoffice.eliminar_consultorio', consultorio_id=consultorio.id) }}"
+                                    method="POST"
+                                >
+                                    <button
+                                        type="submit"
+                                        aria-label="Dar de baja sala {{ consultorio.numero_sala }}"
+                                    >
+                                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                                    </button>
+                                </form>
 
                             </td>
 
@@ -160,7 +156,7 @@ Consultorios · Salud Integral
         <div class="consultorios-pagination"
              aria-label="Paginación de consultorios">
 
-            <span>Mostrando 1 a 4 de 4 resultados</span>
+            <span>Mostrando {{ consultorios | length }} resultados</span>
 
             <div>
 

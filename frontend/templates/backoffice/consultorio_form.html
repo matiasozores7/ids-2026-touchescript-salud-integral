@@ -1,7 +1,7 @@
 {% extends "backoffice/base.html" %}
 
 {% block backoffice_title %}
-Nuevo consultorio · Salud Integral
+{{ "Editar consultorio" if consultorio else "Nuevo consultorio" }} · Salud Integral
 {% endblock %}
 
 
@@ -15,7 +15,7 @@ Nuevo consultorio · Salud Integral
 
 
 {% block breadcrumb %}
-<span>/ Consultorios / Nuevo consultorio</span>
+<span>/ Consultorios / {{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}</span>
 {% endblock %}
 
 
@@ -33,14 +33,19 @@ Nuevo consultorio · Salud Integral
             </div>
 
             <div>
-                <h1 id="consultorio-form-title">Nuevo consultorio</h1>
-                <p>Completá los datos de la sala para incorporarla al centro médico.</p>
+                <h1 id="consultorio-form-title">
+                    {{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}
+                </h1>
+                <p>
+                    {{ "Modificá los datos del consultorio seleccionado." if consultorio
+                    else "Completá los datos de la sala para incorporarla al centro médico." }}
+                </p>
             </div>
 
         </div>
 
 
-        <form class="consultorio-form" action="#" method="post">
+        <form class="consultorio-form" method="post">
 
             <div class="consultorio-form-grid">
 
@@ -55,6 +60,7 @@ Nuevo consultorio · Salud Integral
                            type="text"
                            maxlength="20"
                            placeholder="Ej. 101"
+                           value="{{ consultorio.numero_sala if consultorio else '' }}"
                            required>
 
                     <small>
@@ -72,6 +78,7 @@ Nuevo consultorio · Salud Integral
                            name="piso"
                            type="text"
                            maxlength="20"
+                           value="{{ consultorio.piso if consultorio and consultorio.piso else '' }}"
                            placeholder="Ej. Planta baja">
 
                     <small>
@@ -86,7 +93,7 @@ Nuevo consultorio · Salud Integral
             <div class="consultorio-form-footer">
 
                 <a class="button button-outline button-small"
-                   href="{{ url_for('backoffice.backoffice_consultorios') }}">
+                   href="{{ url_for('backoffice.listar_consultorios') }}">
                     Cancelar
                 </a>
 
@@ -94,7 +101,7 @@ Nuevo consultorio · Salud Integral
                         type="submit">
 
                     <i class="bi bi-check-lg" aria-hidden="true"></i>
-                    Guardar consultorio
+                    {{ "Guardar cambios" if consultorio else "Guardar consultorio" }}
 
                 </button>
 
