@@ -56,7 +56,6 @@ def iniciar_sesion():
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "")
 
-    # Si se seleccionó perfil de recepción o administración, ingresa directamente al Backoffice
     if role in {"recepcion", "administracion"}:
         session["role"] = role
         return redirect(url_for("backoffice.backoffice"))
