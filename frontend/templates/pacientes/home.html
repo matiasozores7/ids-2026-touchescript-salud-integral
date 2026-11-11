@@ -66,28 +66,65 @@
       <article class="next-appointment card col-lg-5" id="proximo-turno">
         <div class="card-heading">
           <h2>Próximo turno</h2>
-          <span class="status-badge">Reservado</span>
+
+          {% if proximo_turno %}
+            <span class="status-badge">{{ proximo_turno.estado|capitalize }}</span>
+          {% endif %}
         </div>
-        <div class="appointment-doctor">
-          <span class="avatar avatar-large">LF</span>
-          <div>
-            <p class="doctor-name">Dra. Lucía Fernández</p>
-            <p class="doctor-specialty">Cardiología</p>
+
+        {% if proximo_turno %}
+          <div class="appointment-doctor">
+            <span class="avatar avatar-large">{{ proximo_turno.iniciales }}</span>
+            <div>
+              <p class="doctor-name">{{ proximo_turno.medico }}</p>
+              <p class="doctor-specialty">{{ proximo_turno.especialidad_nombre }}</p>
+            </div>
           </div>
-        </div>
-        <dl class="appointment-facts">
-          <div><dt>Fecha</dt><dd>Viernes 30 de octubre</dd></div>
-          <div><dt>Hora</dt><dd>09:30</dd></div>
-          <div><dt>Lugar</dt><dd>Cons. 102</dd></div>
-        </dl>
-        <div class="card-actions">
-          <a class="button button-outline button-small" href="#proximo-turno">Ver detalle</a>
-          <a class="button button-primary button-small" href="#proximo-turno">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v2M14 20h2M20 19v2"/></svg>
-            Ver QR
-          </a>
-        </div>
+
+          <dl class="appointment-facts">
+            <div>
+              <dt>Fecha</dt>
+              <dd>{{ proximo_turno.fecha }}</dd>
+            </div>
+            <div>
+              <dt>Hora</dt>
+              <dd>{{ proximo_turno.hora }}</dd>
+            </div>
+            <div>
+              <dt>Lugar</dt>
+              <dd>Consultorio {{ proximo_turno.consultorio_sala }}</dd>
+            </div>
+          </dl>
+
+          <div class="card-actions">
+            <a class="button button-outline button-small"
+              href="{{ url_for('patient.detalle_turno', turno_id=proximo_turno.id) }}">
+              Ver detalle
+            </a>
+
+            <a class="button button-primary button-small"
+              href="{{ url_for('patient.qr_turno', turno_id=proximo_turno.id) }}">
+              Ver QR
+            </a>
+          </div>
+
+        {% else %}
+          <div class="appointment-doctor">
+            <div>
+              <p class="doctor-name">No tenés próximos turnos</p>
+              <p class="doctor-specialty">Reservá una consulta para organizar tu atención médica.</p>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <a class="button button-primary button-small"
+              href="{{ url_for('patient.reservar_turno') }}">
+              Reservar turno
+            </a>
+          </div>
+        {% endif %}
       </article>
+
     </div>
   </section>
 
