@@ -1,94 +1,116 @@
-{% extends "base.html" %}
+{% extends "backoffice/base.html" %}
 
-{% block title %}Nuevo consultorio · Salud Integral{% endblock %}
-
-{% block page_styles %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-consultorios.css') }}">
+{% block backoffice_title %}
+{{ "Editar consultorio" if consultorio else "Nuevo consultorio" }} · Salud Integral
 {% endblock %}
 
-{% block content %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}" role="alert">{{ message }}</div>
-  {% endfor %}
-{% endwith %}
-<div class="backoffice-layout">
-  <aside class="backoffice-sidebar">
-    <a class="backoffice-brand" href="{{ url_for('auth.mostrar_login') }}" aria-label="Salud Integral, inicio">
-      <svg class="backoffice-brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-        <circle cx="20" cy="20" r="18" fill="#eaf3f7" stroke="#477f9a" stroke-width="2"/>
-        <path d="M17 11h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#4ca7a1"/>
-        <path d="M17 11h6v6h-6z" fill="#477f9a"/>
-      </svg>
-      <span><strong>Salud Integral</strong><small>Centro Médico</small></span>
-    </a>
-    <p class="sidebar-label">Backoffice</p>
-    <nav class="backoffice-nav" aria-label="Backoffice">
-      <a href="{{ url_for('backoffice.dashboard') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Inicio</span></a>
-      <a href="#"><i class="bi bi-qr-code" aria-hidden="true"></i><span>Check-in QR</span></a>
-      <a class="active" href="{{ url_for('backoffice.listar_consultorios') }}"><i class="bi bi-building" aria-hidden="true"></i><span>Consultorios</span></a>
-      <a href="#"><i class="bi bi-heart-pulse" aria-hidden="true"></i><span>Especialidades</span></a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="{{ url_for('auth.mostrar_login') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Portal del paciente</a>
-    </div>
-  </aside>
 
-  <div class="backoffice-main">
-    <header class="backoffice-header">
-      <div>
-        <a href="{{ url_for('backoffice.listar_consultorios') }}">Consultorios</a>
-        <span>Alta y modificación de salas</span>
-      </div>
-      <div class="backoffice-user">
-        <span class="backoffice-user-avatar">AA</span>
-        <span><strong>Andrés Villalba</strong><small>Administración</small></span>
-      </div>
-    </header>
+{% block backoffice_styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
 
-    <main class="backoffice-content consultorios-content">
-      <div class="backoffice-breadcrumb" aria-label="Migas de pan">
-        <a href="{{ url_for('backoffice.dashboard') }}">Inicio</a>
-        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-        <a href="{{ url_for('backoffice.listar_consultorios') }}">Consultorios</a>
-        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-        <span>{{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}</span>
-      </div>
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-consultorios.css') }}">
+{% endblock %}
 
-      <section class="consultorio-form-card" aria-labelledby="consultorio-form-title">
+
+{% block breadcrumb %}
+<span>/ Consultorios / {{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}</span>
+{% endblock %}
+
+
+{% block backoffice_content %}
+
+<div class="consultorios-content">
+
+    <section class="consultorio-form-card"
+             aria-labelledby="consultorio-form-title">
+
         <div class="consultorio-form-heading">
-          <div class="consultorio-form-icon"><i class="bi bi-building-add" aria-hidden="true"></i></div>
-          <div>
-            <h1 id="consultorio-form-title">{{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}</h1>
-            <p>Completá los datos de la sala para incorporarla al centro médico.</p>
-          </div>
+
+            <div class="consultorio-form-icon">
+                <i class="bi bi-building-add" aria-hidden="true"></i>
+            </div>
+
+            <div>
+                <h1 id="consultorio-form-title">
+                    {{ "Editar consultorio" if consultorio else "Nuevo consultorio" }}
+                </h1>
+                <p>
+                    {{ "Modificá los datos del consultorio seleccionado." if consultorio
+                    else "Completá los datos de la sala para incorporarla al centro médico." }}
+                </p>
+            </div>
+
         </div>
 
-        <form class="consultorio-form" method="post">
-          <div class="consultorio-form-grid">
-            <div class="consultorio-field">
-              <label for="numero_sala">Número de sala <span aria-hidden="true">*</span></label>
-              <input id="numero_sala" name="numero_sala" type="text" maxlength="20" placeholder="Ej. 101" value="{{ consultorio.numero_sala if consultorio else '' }}" required>
-              <small>Usá el número visible en la puerta del consultorio.</small>
-            </div>
-            <div class="consultorio-field">
-              <label for="piso">Piso</label>
-              <input id="piso" name="piso" type="text" maxlength="20" placeholder="Ej. Planta baja" value="{{ consultorio.piso if consultorio else '' }}">
-              <small>Podés dejarlo vacío si no corresponde.</small>
-            </div>
-          </div>
 
-          <div class="consultorio-form-footer">
-            <a class="button button-outline button-small" href="{{ url_for('backoffice.listar_consultorios') }}">Cancelar</a>
-            <button class="button button-primary button-small" type="submit">
-              <i class="bi bi-check-lg" aria-hidden="true"></i>
-              Guardar consultorio
-            </button>
-          </div>
+        <form class="consultorio-form" method="post">
+
+            <div class="consultorio-form-grid">
+
+                <div class="consultorio-field">
+
+                    <label for="numero_sala">
+                        Número de sala <span aria-hidden="true">*</span>
+                    </label>
+
+                    <input id="numero_sala"
+                           name="numero_sala"
+                           type="text"
+                           maxlength="20"
+                           placeholder="Ej. 101"
+                           value="{{ consultorio.numero_sala if consultorio else '' }}"
+                           required>
+
+                    <small>
+                        Usá el número visible en la puerta del consultorio.
+                    </small>
+
+                </div>
+
+
+                <div class="consultorio-field">
+
+                    <label for="piso">Piso</label>
+
+                    <input id="piso"
+                           name="piso"
+                           type="text"
+                           maxlength="20"
+                           value="{{ consultorio.piso if consultorio and consultorio.piso else '' }}"
+                           placeholder="Ej. Planta baja">
+
+                    <small>
+                        Podés dejarlo vacío si no corresponde.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="consultorio-form-footer">
+
+                <a class="button button-outline button-small"
+                   href="{{ url_for('backoffice.listar_consultorios') }}">
+                    Cancelar
+                </a>
+
+                <button class="button button-primary button-small"
+                        type="submit">
+
+                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                    {{ "Guardar cambios" if consultorio else "Guardar consultorio" }}
+
+                </button>
+
+            </div>
+
         </form>
-      </section>
-    </main>
-  </div>
+
+    </section>
+
 </div>
+
 {% endblock %}
