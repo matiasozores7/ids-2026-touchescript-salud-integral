@@ -27,7 +27,7 @@
 
     <div class="d-flex align-items-center flex-wrap gap-2">
       {{ estado_pill(t.estado) }}
-      <a class="button button-outline button-small" href="{{ url_for('patient.detalle_turno', turno_id=t.id) }}">Detalle</a>
+      
       {% if t.estado in ['reservado', 'confirmado'] %}
         <a class="button button-primary button-small" href="{{ url_for('patient.qr_turno', turno_id=t.id) }}">{{ icono_qr() }} QR</a>
       {% endif %}

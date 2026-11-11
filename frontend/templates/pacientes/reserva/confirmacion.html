@@ -8,13 +8,6 @@
 
 {% block paso %}
 
-{% set reserva = {
-  'id': 101, 'codigo': 'SI-30002', 'medico_id': 1,
-  'medico': 'Dra. Camila Rodríguez', 'especialidad': 'Pediatría',
-  'fecha_larga': 'Sábado 21 de noviembre', 'hora': '12:20',
-  'consultorio': 'Consultorio 101', 'paciente': 'María Gómez', 'cobertura': 'OSDE'
-} %}
-
 {% if resultado %}
   <div class="reserva-card card p-4 mx-auto text-center" style="max-width: 32rem">
     <div class="d-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success-emphasis fs-4 lh-1 p-3 mx-auto mb-3">
@@ -36,27 +29,54 @@
     </div>
   </div>
 {% else %}
-  <form class="reserva-card card p-4" style="max-width: 36rem" action="{{ url_for('patient.reservar_resultado') }}" method="post">
+  <form
+    class="reserva-card card p-4"
+    style="max-width: 36rem"
+    action="{{ url_for('patient.reservar_resultado') }}"
+    method="post"
+  >
+    <input type="hidden" name="turno_id" value="{{ turno_id }}">
+    <input type="hidden" name="medico_id" value="{{ medico_id }}">
+
     <h2 class="fs-5 fw-semibold mb-3">Revisá tu turno</h2>
 
     <dl class="row g-3 mb-4">
-      {% for etiqueta, valor in [
-        ('Profesional', reserva.medico), ('Especialidad', reserva.especialidad),
-        ('Fecha', reserva.fecha_larga), ('Hora', reserva.hora ~ ' h'),
-        ('Consultorio', reserva.consultorio), ('Paciente', reserva.paciente),
-        ('Cobertura', reserva.cobertura)
-      ] %}
-        <div class="col-6">
-          <dt class="text-sm text-body-secondary fw-normal">{{ etiqueta }}</dt>
-          <dd class="fw-medium mb-0">{{ valor }}</dd>
-        </div>
-      {% endfor %}
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Profesional</dt>
+        <dd class="fw-medium mb-0">
+          {{ medico.nombre }} {{ medico.apellido }}
+        </dd>
+      </div>
+
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Especialidad</dt>
+        <dd class="fw-medium mb-0">{{ medico.especialidad }}</dd>
+      </div>
+
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Fecha</dt>
+        <dd class="fw-medium mb-0">{{ fecha_formateada }}</dd>
+      </div>
+
+      <div class="col-6">
+        <dt class="text-sm text-body-secondary fw-normal">Hora</dt>
+        <dd class="fw-medium mb-0">{{ hora }} h</dd>
+      </div>
     </dl>
 
     <div class="d-flex justify-content-between">
-      <a class="button button-outline button-large" href="{{ url_for('patient.reservar_fecha_hora', medico_id=reserva.medico_id) }}">Volver</a>
-      <button class="button button-primary button-large" type="submit">Confirmar reserva</button>
+      <a
+        class="button button-outline button-large"
+        href="{{ url_for('patient.reservar_fecha_hora', medico_id=medico_id) }}"
+      >
+        Volver
+      </a>
+
+      <button class="button button-primary button-large" type="submit">
+        Confirmar reserva
+      </button>
     </div>
   </form>
+
 {% endif %}
 {% endblock %}

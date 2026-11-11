@@ -2,7 +2,6 @@ from datetime import datetime
 
 from app.clients.api_client import api_request
 
-
 DIAS_SEMANA = {
     0: "Lunes",
     1: "Martes",
@@ -72,3 +71,61 @@ def listar_mis_turnos() -> list[dict]:
     items = data.get("items", [])
 
     return [_formatear_turno(turno) for turno in items]
+
+def listar_especialidades() -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint="/especialidades",
+        params={"limit": 100, "offset": 0},
+        authenticated=True,
+    )
+
+    data = resultado.get("data") or {}
+    return data.get("items", [])
+
+
+def listar_medicos(especialidad_id: int) -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint="/medicos",
+        params={
+            "limit": 100,
+            "offset": 0,
+            "especialidad_id": especialidad_id,
+        },
+        authenticated=True,
+    )
+
+    data = resultado.get("data") or {}
+    return data.get("items", [])
+
+
+def obtener_medico(medico_id: int) -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/medicos/{medico_id}",
+        authenticated=True,
+    )
+
+    return resultado.get("data") or {}
+
+
+def listar_turnos_disponibles(medico_id: int) -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/medicos/{medico_id}/turnos-disponibles",
+        authenticated=True,
+    )
+
+    return resultado.get("data") or []
+
+
+def reservar_turno(turno_id: int) -> dict:
+    resultado = api_request(
+        method="POST",
+        endpoint="/turnos",
+        json={"turno_id": turno_id},
+        authenticated=True,
+    )
+
+    return resultado.get("data") or {}
