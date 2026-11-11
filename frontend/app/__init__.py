@@ -2,7 +2,7 @@ from flask import Flask
 
 from config import Config
 from app.routes.auth_route import auth_bp
-from app.routes.patient_route import patient_bp
+from app.routes.patient import patient_bp
 from app.routes.backoffice import backoffice_bp
 
 def create_app():
