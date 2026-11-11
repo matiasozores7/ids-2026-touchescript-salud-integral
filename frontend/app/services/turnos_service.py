@@ -138,3 +138,10 @@ def obtener_detalle_turno(turno_id: int) -> dict:
     )
 
     return resultado.get("data") or {}
+
+def cancelar_turno(turno_id: int) -> None:
+    api_request(
+        method="PATCH",
+        endpoint=f"/turnos/{turno_id}/cancelar",
+        authenticated=True
+    )

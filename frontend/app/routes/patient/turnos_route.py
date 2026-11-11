@@ -88,3 +88,16 @@ def detalle_turno(turno_id):
         "pacientes/detalle_turno.html",
         turno=turno
     )
+
+@patient_bp.route("/mis-turnos/<int:turno_id>/cancelar", methods=["POST"])
+def cancelar_turno(turno_id):
+    try:
+        turnos_service.cancelar_turno(turno_id)
+        flash("El turno fue cancelado exitosamente.", "success")
+
+    except AppError as error:
+        flash(error.message, "error")
+
+    return redirect(
+        url_for("patient.detalle_turno", turno_id=turno_id)
+    )
