@@ -42,13 +42,6 @@ def mis_turnos():
         historial=historial,
     )
 
-@patient_bp.route("/qr/<int:turno_id>", methods=["GET"])
-def qr_turno(turno_id):
-    return render_template(
-        "pacientes/qr_turno.html",
-        turno_id=turno_id
-    )
-
 @patient_bp.route("/mis-turnos/<int:turno_id>", methods=["GET"])
 def detalle_turno(turno_id):
     try:
@@ -101,3 +94,51 @@ def cancelar_turno(turno_id):
     return redirect(
         url_for("patient.detalle_turno", turno_id=turno_id)
     )
+
+@patient_bp.route("/qr/<int:turno_id>", methods=["GET"])
+def qr_turno(turno_id):
+    try:
+        turno = turnos_service.obtener_detalle_turno(turno_id)
+        qr_token = turnos_service.obtener_qr_turno(turno_id)
+
+        fecha_hora = datetime.fromisoformat(turno["fecha_hora"])
+
+        turno["fecha_larga"] = (
+            f"{DIAS[fecha_hora.weekday()]} "
+            f"{fecha_hora.day} de {MESES[fecha_hora.month]}"
+        )
+
+        turno["hora"] = fecha_hora.strftime("%H:%M")
+
+        turno["medico"] = (
+            f"{turno['medico_nombre']} {turno['medico_apellido']}"
+        )
+
+        turno["paciente"] = (
+            f"{turno['paciente_nombre']} {turno['paciente_apellido']}"
+        )
+
+        turno["consultorio"] = (
+            f"Consultorio {turno['consultorio_sala']}"
+        )
+
+        return render_template(
+            "pacientes/qr_turno.html",
+            turno=turno,
+            qr_token=qr_token,
+        )
+
+    except AppError as error:
+        flash(error.message, "error")
+        return redirect(
+            url_for("patient.detalle_turno", turno_id=turno_id)
+        )
+
+    except (KeyError, ValueError, TypeError):
+        flash(
+            "No se pudo obtener la información del comprobante.",
+            "error",
+        )
+        return redirect(
+            url_for("patient.detalle_turno", turno_id=turno_id)
+        )

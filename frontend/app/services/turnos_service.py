@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.clients.api_client import api_request
+from app.errors.exceptions import ExternalServiceError
 
 DIAS_SEMANA = {
     0: "Lunes",
@@ -149,3 +150,20 @@ def cancelar_turno(turno_id: int) -> None:
         endpoint=f"/turnos/{turno_id}/cancelar",
         authenticated=True
     )
+
+def obtener_qr_turno(turno_id: int) -> str:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/turnos/{turno_id}/qr",
+        authenticated=True,
+    )
+
+    data = resultado.get("data") or {}
+    qr_token = data.get("qr_token")
+
+    if not qr_token:
+        raise ExternalServiceError(
+            "No se pudo obtener el código QR del turno."
+        )
+
+    return qr_token
