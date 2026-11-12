@@ -503,3 +503,37 @@
     min-height: 68px;
   }
 }
+
+.backoffice-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    padding: 0;
+}
+
+.backoffice-user-menu > span:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+}
+
+.backoffice-user-menu strong {
+    font-size: 13px;
+}
+
+.backoffice-user-menu small {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.backoffice-user-menu > i {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.backoffice-user-menu::after {
+    display: none;
+}
