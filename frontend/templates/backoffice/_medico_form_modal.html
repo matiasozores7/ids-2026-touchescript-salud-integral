@@ -1,106 +1,180 @@
-<div class="modal fade" id="medico-modal" tabindex="-1" aria-labelledby="medico-modal-titulo" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <form class="modal-content" action="#" method="post">
-      <input type="hidden" name="id">
 
-      <div class="modal-header">
-        <h2 class="modal-title fs-5" id="medico-modal-titulo">Nuevo médico</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
+<div class="modal fade"
+     id="medico-modal"
+     tabindex="-1"
+     aria-labelledby="medico-modal-titulo"
+     aria-hidden="true">
 
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-titulo">Título *</label>
-            <select class="form-select" id="medico-titulo" name="titulo" required>
-              <option value="Dr.">Dr.</option>
-              <option value="Dra.">Dra.</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-matricula">Matrícula *</label>
-            <input class="form-control" id="medico-matricula" name="matricula" type="text" required>
-          </div>
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-nombre">Nombre *</label>
-            <input class="form-control" id="medico-nombre" name="nombre" type="text" maxlength="100" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-apellido">Apellido *</label>
-            <input class="form-control" id="medico-apellido" name="apellido" type="text" maxlength="100" required>
-          </div>
+        <form class="modal-content"
+              action="{{ url_for('backoffice.crear_medico') }}"
+              method="post"
+              id="medico-form">
 
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-especialidad">Especialidad *</label>
-            <select class="form-select" id="medico-especialidad" name="especialidad_id" required>
-              <option value="">Seleccionar…</option>
-              {% for id, nombre in especialidades.items() %}
-                <option value="{{ id }}">{{ nombre }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-consultorio">Consultorio *</label>
-            <select class="form-select" id="medico-consultorio" name="consultorio_id" required>
-              <option value="">Seleccionar…</option>
-              {% for id, nombre in consultorios.items() %}
-                <option value="{{ id }}">{{ nombre }}</option>
-              {% endfor %}
-            </select>
-          </div>
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="medico-modal-titulo">
+                    Nuevo médico
+                </h2>
 
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-email">Email</label>
-            <input class="form-control" id="medico-email" name="email" type="email" maxlength="100">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-telefono">Teléfono</label>
-            <input class="form-control" id="medico-telefono" name="telefono" type="tel">
-          </div>
-
-          {# Solo en el alta: el backend pide contraseña al crear el usuario (POST /api/medicos). #}
-          <div class="col-md-6" data-solo-alta>
-            <label class="form-label small fw-medium" for="medico-password">Contraseña inicial *</label>
-            <input class="form-control" id="medico-password" name="password" type="password"
-                   minlength="8" maxlength="128" autocomplete="new-password" required>
-            <div class="form-text">Entre 8 y 128 caracteres.</div>
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label small fw-medium" for="medico-experiencia">Años de experiencia</label>
-            <input class="form-control" id="medico-experiencia" name="experiencia" type="number" min="0" value="0">
-          </div>
-          <div class="col-md-6 d-flex align-items-end">
-            <div class="border rounded-3 px-3 py-2 w-100 d-flex align-items-center justify-content-between">
-              <label class="form-check-label fw-medium" for="medico-activo">Activo</label>
-              <div class="form-check form-switch m-0">
-                <input class="form-check-input" id="medico-activo" name="activo" type="checkbox" role="switch" checked>
-              </div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                </button>
             </div>
-          </div>
 
-          <div class="col-12">
-            <span class="form-label small fw-medium d-block">Coberturas aceptadas</span>
-            {% for id, nombre in coberturas.items() %}
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" id="medico-cobertura-{{ id }}" name="coberturas" type="checkbox" value="{{ id }}">
-                <label class="form-check-label" for="medico-cobertura-{{ id }}">{{ nombre }}</label>
-              </div>
-            {% endfor %}
-          </div>
+            <div class="modal-body">
+                <div class="row g-3">
 
-          <div class="col-12">
-            <label class="form-label small fw-medium" for="medico-presentacion">Presentación</label>
-            <textarea class="form-control" id="medico-presentacion" name="presentacion" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-matricula">
+                            Matrícula *
+                        </label>
 
-      <div class="modal-footer">
-        <button type="button" class="button button-outline button-small" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="button button-primary button-small">Guardar</button>
-      </div>
-    </form>
-  </div>
+                        <input class="form-control"
+                               id="medico-matricula"
+                               name="matricula"
+                               type="text"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-especialidad">
+                            Especialidad *
+                        </label>
+
+                        <select class="form-select"
+                                id="medico-especialidad"
+                                name="especialidad_id"
+                                required>
+                            <option value="">Seleccionar…</option>
+
+                            {% for especialidad in especialidades %}
+                                <option value="{{ especialidad.id }}">
+                                    {{ especialidad.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-nombre">
+                            Nombre *
+                        </label>
+
+                        <input class="form-control"
+                               id="medico-nombre"
+                               name="nombre"
+                               type="text"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-apellido">
+                            Apellido *
+                        </label>
+
+                        <input class="form-control"
+                               id="medico-apellido"
+                               name="apellido"
+                               type="text"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-email">
+                            Email *
+                        </label>
+
+                        <input class="form-control"
+                               id="medico-email"
+                               name="email"
+                               type="email"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-medium"
+                               for="medico-telefono">
+                            Teléfono
+                        </label>
+
+                        <input class="form-control"
+                               id="medico-telefono"
+                               name="telefono"
+                               type="tel">
+                    </div>
+
+                    <div class="col-md-6" data-solo-alta>
+                        <label class="form-label small fw-medium"
+                               for="medico-password">
+                            Contraseña inicial *
+                        </label>
+
+                        <input class="form-control"
+                               id="medico-password"
+                               name="password"
+                               type="password"
+                               minlength="8"
+                               maxlength="128"
+                               autocomplete="new-password"
+                               required>
+
+                        <div class="form-text">
+                            Entre 8 y 128 caracteres.
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="form-label small fw-medium d-block">
+                            Coberturas aceptadas
+                        </span>
+
+                        {% for cobertura in coberturas %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       id="medico-cobertura-{{ cobertura.id }}"
+                                       name="coberturas"
+                                       type="checkbox"
+                                       value="{{ cobertura.id }}">
+
+                                <label class="form-check-label"
+                                       for="medico-cobertura-{{ cobertura.id }}">
+                                    {{ cobertura.nombre }}
+                                </label>
+                            </div>
+                        {% else %}
+                            <p class="text-body-secondary small">
+                                No hay coberturas disponibles.
+                            </p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="button button-outline button-small"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="button button-primary button-small">
+                    Guardar
+                </button>
+            </div>
+
+        </form>
+    </div>
 </div>

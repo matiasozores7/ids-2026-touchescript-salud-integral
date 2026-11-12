@@ -17,23 +17,6 @@ Especialidades · Salud Integral
 
 <div class="specialties-admin-content">
 
-    {% with mensajes = get_flashed_messages(with_categories=true) %}
-
-        {% for categoria, mensaje in mensajes %}
-
-            <div class="alert alert-{{ 'success' if categoria == 'success' else 'danger' }}"
-                 {% if categoria == 'success' %}
-                     role="status"
-                 {% else %}
-                     role="alert"
-                 {% endif %}>
-                {{ mensaje }}
-            </div>
-
-        {% endfor %}
-
-    {% endwith %}
-
     <div class="specialties-admin-heading">
 
         <div>
