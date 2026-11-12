@@ -8,7 +8,7 @@ from flask import (
 )
 
 from app.services import especialidades_service
-from app.errors.exceptions import ExternalServiceError
+from app.errors.exceptions import AppError
 
 from . import backoffice_bp
 
@@ -19,7 +19,7 @@ def _render_especialidades():
         especialidades = resultado["items"]
         total = resultado.get("total", len(especialidades))
 
-    except ExternalServiceError as exception:
+    except AppError as exception:
         especialidades = []
         total = 0
         flash(str(exception), "error")
@@ -43,7 +43,7 @@ def backoffice_specialties():
         )
         flash("Especialidad creada correctamente.", "success")
 
-    except ExternalServiceError as exception:
+    except AppError as exception:
         flash(str(exception), "error")
 
     return redirect(url_for("backoffice.backoffice_specialties"))
@@ -59,7 +59,7 @@ def actualizar_especialidad(especialidad_id):
         )
         flash("Especialidad actualizada correctamente.", "success")
 
-    except ExternalServiceError as exception:
+    except AppError as exception:
         flash(str(exception), "error")
 
     return redirect(url_for("backoffice.backoffice_specialties"))
@@ -71,7 +71,7 @@ def eliminar_especialidad(especialidad_id):
         especialidades_service.eliminar_especialidad(especialidad_id)
         flash("Especialidad eliminada correctamente.", "success")
 
-    except ExternalServiceError as exception:
+    except AppError as exception:
         flash(str(exception), "error")
 
     return redirect(url_for("backoffice.backoffice_specialties"))
