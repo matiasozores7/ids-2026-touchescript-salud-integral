@@ -215,6 +215,21 @@ body.modal-open {
   box-shadow: 0 18px 55px rgb(34 56 68 / 22%);
 }
 
+.specialty-modal-confirmation {
+  width: min(100%, 520px);
+}
+
+.specialty-modal-confirmation-content {
+  padding: 26px 30px;
+  color: #354052;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.specialty-modal-confirmation-content p {
+  margin: 0;
+}
+
 .specialty-modal-header,
 .specialty-modal-footer {
   display: flex;
@@ -375,6 +390,10 @@ body.modal-open {
 
   .specialty-modal-header,
   .specialty-modal-footer {
+    padding-inline: 20px;
+  }
+
+  .specialty-modal-confirmation-content {
     padding-inline: 20px;
   }
 
