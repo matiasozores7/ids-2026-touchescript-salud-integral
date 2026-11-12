@@ -7,4 +7,4 @@ patient_bp = Blueprint("patient", __name__)
 
 patient_bp.before_request(proteger_por_rol(PACIENTE))
 
-from app.routes.patient import home_route, turnos_route, reserva_route
+from app.routes.patient import home_route, turnos_route, reserva_route,especialidades_route,profesionales_route

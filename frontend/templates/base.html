@@ -37,12 +37,12 @@
             <div class="collapse navbar-collapse main-nav" id="main-navigation">
               <div class="navbar-nav">
                 <a class="nav-link" href="{{ url_for('patient.patient_home') }}">Inicio</a>
-                <a class="nav-link" href="#especialidades">Especialidades</a>
-                <a class="nav-link" href="#profesionales">Profesionales</a>
+                <a class="nav-link" href="{{ url_for('patient.listar_especialidades') }}">Especialidades</a>
+                <a class="nav-link" href="{{ url_for('patient.listar_profesionales') }}">Profesionales</a>
                 <a class="nav-link" href="{{ url_for('patient.mis_turnos') }}">Mis turnos</a>
               </div>
               <div class="header-actions ms-auto">
-                <a class="button button-primary button-small search-doctors" href="#profesionales">
+                <a class="button button-primary button-small search-doctors" href="{{ url_for('patient.listar_profesionales') }}">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
                   Buscar médicos
                 </a>

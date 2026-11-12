@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Profesionales médicos · Salud Integral{% endblock %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="catalog-page">
+
+    <header class="catalog-header">
+        <span class="catalog-eyebrow">CENTRO MÉDICO SALUD INTEGRAL</span>
+        <h1>Nuestros profesionales</h1>
+        <p>Encontrá un profesional y reservá tu próxima consulta.</p>
+    </header>
+
+    <form class="catalog-filters" method="GET" action="{{ url_for('patient.listar_profesionales') }}">
+
+        <div class="filter-search">
+            <label for="q">Buscar profesional</label>
+            <input
+                type="search"
+                id="q"
+                name="q"
+                value="{{ busqueda }}"
+                placeholder="Nombre o apellido..."
+            >
+        </div>
+
+        <div class="filter-specialty">
+            <label for="especialidad_id">Especialidad</label>
+            <select id="especialidad_id" name="especialidad_id">
+                <option value="">Todas las especialidades</option>
+
+                {% for especialidad in especialidades %}
+                <option
+                    value="{{ especialidad.id }}"
+                    {% if especialidad_id == especialidad.id %}selected{% endif %}
+                >
+                    {{ especialidad.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button class="button button-primary button-small" type="submit">
+            <i class="bi bi-search"></i>
+            Buscar
+        </button>
+
+        {% if busqueda or especialidad_id %}
+        <a class="button button-outline button-small"
+           href="{{ url_for('patient.listar_profesionales') }}">
+            Limpiar
+        </a>
+        {% endif %}
+
+    </form>
+
+    <section class="catalog-grid row g-3">
+
+        {% for medico in medicos %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <article class="catalog-card doctor-catalog-card">
+
+                <div class="doctor-catalog-heading">
+                    <span class="avatar avatar-large">
+                        {{ medico.nombre[0] }}{{ medico.apellido[0] }}
+                    </span>
+
+                    <div>
+                        <h2>{{ medico.nombre }} {{ medico.apellido }}</h2>
+                        <p>{{ medico.especialidad }}</p>
+                    </div>
+                </div>
+
+                <div class="doctor-catalog-details">
+                    <p>
+                        <i class="bi bi-person-badge"></i>
+                        Matrícula {{ medico.matricula }}
+                    </p>
+
+                    <div class="coverage-list">
+                        <span class="coverage-label">Coberturas</span>
+
+                        {% for cobertura in medico.coberturas %}
+                            <span class="coverage-tag">{{ cobertura.nombre }}</span>
+                        {% else %}
+                            <span class="coverage-tag">Sin coberturas informadas</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <a
+                    class="button button-primary button-small doctor-reserve-button"
+                    href="/reservar-turno/medicos/{{ medico.id }}/fecha-hora"
+                >
+                    Reservar turno
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            </article>
+        </div>
+
+        {% else %}
+        <div class="col-12">
+            <div class="catalog-empty">
+                <i class="bi bi-person-x"></i>
+                <h2>No encontramos profesionales</h2>
+                <p>Probá modificando los filtros de búsqueda.</p>
+                <a
+                    class="button button-outline button-small"
+                    href="{{ url_for('patient.listar_profesionales') }}"
+                >
+                    Ver todos
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+    </section>
+
+</div>
+{% endblock %}

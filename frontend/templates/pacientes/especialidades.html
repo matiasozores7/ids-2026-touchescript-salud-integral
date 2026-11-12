@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Especialidades médicas · Salud Integral{% endblock %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="catalog-page">
+
+    <header class="catalog-header">
+        <span class="catalog-eyebrow">CENTRO MÉDICO SALUD INTEGRAL</span>
+        <h1>Especialidades médicas</h1>
+        <p>Conocé nuestras áreas de atención y encontrá el profesional adecuado para vos.</p>
+    </header>
+
+    <section class="catalog-grid row g-3">
+        {% for especialidad in especialidades %}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <article class="catalog-card specialty-catalog-card">
+                <div class="catalog-icon">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+
+                <h2>{{ especialidad.nombre }}</h2>
+
+                <p class="catalog-description">
+                    {{ especialidad.descripcion or "Atención médica especializada para el cuidado de tu salud." }}
+                </p>
+
+                <a
+                    class="button button-primary button-small"
+                    href="{{ url_for('patient.listar_profesionales', especialidad_id=especialidad.id) }}"
+                >
+                    Ver profesionales
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </article>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="catalog-empty">
+                <i class="bi bi-clipboard2-pulse"></i>
+                <h2>No hay especialidades disponibles</h2>
+                <p>En este momento no encontramos especialidades para mostrar.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+</div>
+{% endblock %}
