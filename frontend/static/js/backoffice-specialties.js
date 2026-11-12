@@ -8,6 +8,12 @@
   const modalTitle = document.querySelector("#specialty-modal-title");
   const modalName = document.querySelector("#specialty-name");
   const modalDescription = document.querySelector("#specialty-description");
+  const deleteModal = document.querySelector("#specialty-delete-modal");
+  const deleteModalName = document.querySelector("#specialty-delete-name");
+  const deleteModalConfirm = document.querySelector(
+    "[data-specialty-delete-confirm]"
+  );
+  let specialtyFormToDelete = null;
 
   const toggleModal = (isOpen) => {
     if (!specialtyModal) return;
@@ -15,6 +21,19 @@
     specialtyModal.hidden = !isOpen;
     document.body.classList.toggle("modal-open", isOpen);
     if (isOpen) modalName?.focus();
+  };
+
+  const toggleDeleteModal = (isOpen) => {
+    if (!deleteModal) return;
+
+    deleteModal.hidden = !isOpen;
+    document.body.classList.toggle("modal-open", isOpen);
+    if (isOpen) deleteModalConfirm?.focus();
+  };
+
+  const closeDeleteModal = () => {
+    toggleDeleteModal(false);
+    specialtyFormToDelete = null;
   };
 
   document.querySelector("[data-specialty-modal-open]")?.addEventListener("click", () => {
@@ -47,9 +66,18 @@
     if (event.target === specialtyModal) toggleModal(false);
   });
 
+  document.querySelectorAll("[data-specialty-delete-modal-close]").forEach((button) => {
+    button.addEventListener("click", closeDeleteModal);
+  });
+
+  deleteModal?.addEventListener("click", (event) => {
+    if (event.target === deleteModal) closeDeleteModal();
+  });
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && specialtyModal && !specialtyModal.hidden) {
-      toggleModal(false);
+    if (event.key === "Escape") {
+      if (specialtyModal && !specialtyModal.hidden) toggleModal(false);
+      if (deleteModal && !deleteModal.hidden) closeDeleteModal();
     }
   });
 
@@ -68,10 +96,20 @@
   });
 
   document.querySelectorAll("[data-specialty-delete-form]").forEach((form) => {
-    form.addEventListener("submit", (event) => {
-      if (!window.confirm("¿Querés eliminar esta especialidad?")) {
-        event.preventDefault();
+    const deleteButton = form.querySelector("[data-specialty-delete-open]");
+
+    deleteButton?.addEventListener("click", () => {
+      specialtyFormToDelete = form;
+      if (deleteModalName) {
+        deleteModalName.textContent = deleteButton.dataset.specialtyName ?? "";
       }
+      toggleDeleteModal(true);
     });
+  });
+
+  deleteModalConfirm?.addEventListener("click", () => {
+    const formToDelete = specialtyFormToDelete;
+    closeDeleteModal();
+    formToDelete?.requestSubmit();
   });
 })();

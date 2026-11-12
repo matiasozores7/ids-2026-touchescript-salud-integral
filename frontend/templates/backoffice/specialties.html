@@ -114,8 +114,10 @@ Especialidades · Salud Integral
                                       method="post"
                                       data-specialty-delete-form>
 
-                                    <button type="submit"
-                                            aria-label="Eliminar {{ especialidad.nombre }}">
+                                    <button type="button"
+                                            aria-label="Eliminar {{ especialidad.nombre }}"
+                                            data-specialty-delete-open
+                                            data-specialty-name="{{ especialidad.nombre }}">
 
                                         <i class="bi bi-trash3"
                                            aria-hidden="true"></i>
@@ -222,6 +224,49 @@ Especialidades · Salud Integral
             </footer>
 
         </form>
+
+    </section>
+
+</div>
+
+<div class="specialty-modal-backdrop" id="specialty-delete-modal" hidden>
+
+    <section class="specialty-modal specialty-modal-confirmation"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="specialty-delete-modal-title"
+             aria-describedby="specialty-delete-modal-description">
+
+        <header class="specialty-modal-header">
+
+            <h2 id="specialty-delete-modal-title">
+                Eliminar especialidad
+            </h2>
+
+        </header>
+
+        <div class="specialty-modal-confirmation-content">
+            <p id="specialty-delete-modal-description">
+                ¿Querés eliminar la especialidad
+                <strong id="specialty-delete-name"></strong>?
+            </p>
+        </div>
+
+        <footer class="specialty-modal-footer">
+
+            <button class="button button-outline button-small"
+                    type="button"
+                    data-specialty-delete-modal-close>
+                Cancelar
+            </button>
+
+            <button class="button button-primary button-small"
+                    type="button"
+                    data-specialty-delete-confirm>
+                Aceptar
+            </button>
+
+        </footer>
 
     </section>
 
