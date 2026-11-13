@@ -78,7 +78,7 @@ def get_turnos_por_hora():
 @dashboard_bp.route("/dashboard/proximos-turnos", methods=["GET"])
 @validar_rol("admin")
 def get_proximos_turnos():
-    limite = request.args.get("limite", default=5, type=int)
+    limite = request.args.get("limite", default=3, type=int)
 
     if limite < 1 or limite > 20:
         return success_response(

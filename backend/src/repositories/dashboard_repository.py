@@ -200,7 +200,7 @@ def obtener_turnos_por_hora(connection):
         cursor.execute(query)
         return cursor.fetchall()
 
-def obtener_proximos_turnos(connection, limite: int = 5):
+def obtener_proximos_turnos(connection, limite: int = 3):
     query = """
         SELECT
             turnos.id AS turno_id,

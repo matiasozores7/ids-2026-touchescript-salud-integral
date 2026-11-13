@@ -135,7 +135,7 @@ def obtener_turnos_por_hora_service() -> list[dict]:
         for hora in range(8, 19)
     ]
 
-def obtener_proximos_turnos_service(limite: int = 5) -> list[dict]:
+def obtener_proximos_turnos_service(limite: int = 3) -> list[dict]:
     with transaction() as connection:
         return obtener_proximos_turnos(connection, limite)
 
