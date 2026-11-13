@@ -70,3 +70,10 @@ def registrar_paciente(
         )
 
     return data
+
+def logout_usuario() -> None:
+    api_request(
+        method="POST",
+        endpoint="/auth/logout",
+        authenticated=True
+    )
