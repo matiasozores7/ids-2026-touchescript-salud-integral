@@ -27,3 +27,12 @@ def obtener_ausentismo() -> dict:
     )
 
     return resultado.get("data") or {}
+
+def obtener_turnos_por_hora() -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint="/dashboard/turnos-por-hora",
+        authenticated=True
+    )
+
+    return resultado.get("data") or []

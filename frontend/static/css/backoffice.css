@@ -326,6 +326,7 @@
 .chart-area {
   position: relative;
   flex: 1;
+  min-width: 0;
 }
 
 .chart-grid-lines {
@@ -336,6 +337,7 @@
   justify-content: space-between;
 }
 
+
 .chart-grid-lines span {
   border-top: 1px dashed #e6eaed;
 }
@@ -344,7 +346,6 @@
   position: absolute;
   inset: 0 0 0;
   display: flex;
-  align-items: end;
   justify-content: space-around;
   gap: 5px;
 }
@@ -361,7 +362,8 @@
 
 .chart-bars .bar {
   width: min(25px, 70%);
-  min-height: 4px;
+  min-height: 0;
+  flex-shrink: 0;
   border-radius: 4px 4px 2px 2px;
   background: #9ed5d0;
 }

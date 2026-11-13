@@ -182,3 +182,20 @@ def obtener_estadisticas_turnos_hoy(connection) -> dict:
         "total": resultado["total"],
         "atendidos": resultado["atendidos"] or 0
     }
+
+def obtener_turnos_por_hora(connection):
+    query = """
+        SELECT
+            HOUR(fecha_hora) AS hora,
+            COUNT(*) AS total
+        FROM turnos
+        WHERE fecha_hora >= CURDATE() + INTERVAL 8 HOUR
+          AND fecha_hora < CURDATE() + INTERVAL 19 HOUR
+          AND estado IN ('reservado', 'confirmado', 'atendido', 'ausente')
+        GROUP BY HOUR(fecha_hora)
+        ORDER BY hora ASC;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchall()

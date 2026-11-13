@@ -83,44 +83,35 @@ Dashboard operativo · Salud Integral
         </div>
 
         <div class="fake-chart" aria-label="Gráfico de turnos por hora">
+            {% set max_turnos = turnos_por_hora | map(attribute='total') | max %}
+            {% set escala = [max_turnos, 4] | max %}
 
             <div class="chart-y-axis">
-                <span>4</span>
-                <span>3</span>
-                <span>2</span>
-                <span>1</span>
-                <span>0</span>
+                {% for valor in range(escala, -1, -1) %}
+                    <span>{{ valor }}</span>
+                {% endfor %}
             </div>
 
             <div class="chart-area">
 
                 <div class="chart-grid-lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    {% for valor in range(escala, -1, -1) %}
+                        <span></span>
+                    {% endfor %}
                 </div>
 
                 <div class="chart-bars">
 
-                    {% for hour, height in [
-                        ("8:00", 18),
-                        ("9:00", 31),
-                        ("10:00", 46),
-                        ("11:00", 25),
-                        ("12:00", 58),
-                        ("13:00", 35),
-                        ("14:00", 47),
-                        ("15:00", 28),
-                        ("16:00", 40),
-                        ("17:00", 21),
-                        ("18:00", 33)
-                    ] %}
+                    {% for item in turnos_por_hora %}
 
                         <div>
-                            <span class="bar" style="height: {{ height }}%"></span>
-                            <small>{{ hour }}</small>
+                            <span
+                                class="bar"
+                                style="height: {{ (item.total / escala * 100) }}%"
+                                title="{{ item.total }} turnos"
+                            ></span>
+
+                            <small>{{ item.hora }}</small>
                         </div>
 
                     {% endfor %}
@@ -130,6 +121,7 @@ Dashboard operativo · Salud Integral
             </div>
 
         </div>
+        
 
     </article>
 

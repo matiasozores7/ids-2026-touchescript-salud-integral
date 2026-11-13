@@ -5,7 +5,8 @@ from src.repositories.dashboard_repository import (
     obtener_ocupacion_consultorios,
     obtener_estadisticas_ausentismo,
     obtener_estadisticas_tiempo_espera,
-    obtener_estadisticas_turnos_hoy
+    obtener_estadisticas_turnos_hoy,
+    obtener_turnos_por_hora
 )
 
 
@@ -114,3 +115,20 @@ def obtener_tiempo_espera_service(fecha: str | None = None) -> dict:
 def obtener_turnos_hoy_service() -> dict:
     with transaction() as connection:
         return obtener_estadisticas_turnos_hoy(connection)
+
+def obtener_turnos_por_hora_service() -> list[dict]:
+    with transaction() as connection:
+        resultados = obtener_turnos_por_hora(connection)
+
+    turnos_por_hora = {
+        resultado["hora"]: resultado["total"]
+        for resultado in resultados
+    }
+
+    return [
+        {
+            "hora": f"{hora:02d}:00",
+            "total": turnos_por_hora.get(hora, 0)
+        }
+        for hora in range(8, 19)
+    ]
