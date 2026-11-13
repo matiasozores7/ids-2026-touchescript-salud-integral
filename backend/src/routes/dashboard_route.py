@@ -8,7 +8,8 @@ from src.services.dashboard_service import (
     obtener_ausentismo_service,
     obtener_tiempo_espera_service,
     obtener_turnos_hoy_service,
-    obtener_turnos_por_hora_service
+    obtener_turnos_por_hora_service,
+    obtener_proximos_turnos_service
 )
 
 dashboard_bp = Blueprint("dashboard_bp", __name__)
@@ -71,4 +72,21 @@ def get_turnos_por_hora():
     return success_response(
         data=reporte,
         message="Turnos por hora obtenidos correctamente."
+    )
+
+@dashboard_bp.route("/dashboard/proximos-turnos", methods=["GET"])
+@validar_rol("admin")
+def get_proximos_turnos():
+    limite = request.args.get("limite", default=5, type=int)
+
+    if limite < 1 or limite > 20:
+        return success_response(
+            message="El límite debe estar entre 1 y 20."
+        ), 400
+
+    turnos = obtener_proximos_turnos_service(limite)
+
+    return success_response(
+        data=turnos,
+        message="Próximos turnos obtenidos correctamente."
     )

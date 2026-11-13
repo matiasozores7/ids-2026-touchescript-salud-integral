@@ -1,3 +1,4 @@
+
 {% extends "backoffice/base.html" %}
 
 {% block backoffice_title %}
@@ -19,7 +20,6 @@ Dashboard operativo · Salud Integral
         "Con check-in registrado",
         "bi-person-check"
     ),
-    ("Espera promedio", "18 min", "Últimos 30 días", "bi-hourglass-split"),
     (
         "Ausentismo",
         estadisticas_ausentismo.get("resumen_general", {}).get("porcentaje_ausentismo", 0) ~ "%",
@@ -83,6 +83,7 @@ Dashboard operativo · Salud Integral
         </div>
 
         <div class="fake-chart" aria-label="Gráfico de turnos por hora">
+
             {% set max_turnos = turnos_por_hora | map(attribute='total') | max %}
             {% set escala = [max_turnos, 4] | max %}
 
@@ -121,7 +122,6 @@ Dashboard operativo · Salud Integral
             </div>
 
         </div>
-        
 
     </article>
 
@@ -138,10 +138,57 @@ Dashboard operativo · Salud Integral
 
         </div>
 
-        <div class="empty-state">
-            <i class="bi bi-calendar2-check" aria-hidden="true"></i>
-            <p>No quedan turnos por llegar.</p>
-        </div>
+        {% if proximos_turnos %}
+
+            <div class="upcoming-list">
+
+                {% for turno in proximos_turnos %}
+
+                    <div class="upcoming-item">
+
+                        <div class="upcoming-time">
+                            <strong>{{ turno.hora }}</strong>
+                            <small>{{ turno.fecha }}</small>
+                        </div>
+
+                        <div class="upcoming-info">
+
+                            <strong>
+                                {{ turno.paciente_nombre }}
+                                {{ turno.paciente_apellido }}
+                            </strong>
+
+                            <small>
+                                {{ turno.especialidad }} ·
+                                Dr./Dra. {{ turno.medico_nombre }}
+                                {{ turno.medico_apellido }}
+                            </small>
+
+                            <small>
+                                Consultorio {{ turno.consultorio_sala }}
+                                · Piso {{ turno.consultorio_piso }}
+                            </small>
+
+                        </div>
+
+                        <span class="upcoming-status status-{{ turno.estado }}">
+                            {{ turno.estado | capitalize }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <i class="bi bi-calendar2-check" aria-hidden="true"></i>
+                <p>No hay próximos turnos pendientes de llegada.</p>
+            </div>
+
+        {% endif %}
 
     </article>
 

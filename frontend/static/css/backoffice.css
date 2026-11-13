@@ -225,7 +225,7 @@
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-top: 28px;
 }
@@ -504,4 +504,390 @@
   .quick-stat {
     min-height: 68px;
   }
+}
+
+
+
+/* =========================================
+   DASHBOARD — REFINAMIENTO VISUAL
+========================================= */
+
+/* Encabezado */
+
+.backoffice-heading {
+  margin-bottom: 4px;
+}
+
+.backoffice-heading h1 {
+  font-size: 28px;
+  letter-spacing: -1px;
+  color: #263747;
+}
+
+.backoffice-heading p {
+  color: #82909d;
+  font-size: 13px;
+}
+
+.backoffice-heading .button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all .2s ease;
+}
+
+.backoffice-heading .button:hover {
+  transform: translateY(-1px);
+}
+
+/* Métricas */
+
+.metrics-grid {
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.metric-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 130px;
+  padding: 20px;
+  border: 1px solid #e9eef1;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(35, 55, 70, .035);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(35, 55, 70, .07);
+}
+
+.metric-label {
+  color: #7c8996;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.metric-label i {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 9px;
+  background: #edf7f6;
+  color: #398b83;
+  font-size: 17px;
+}
+
+.metric-card > strong {
+  margin-top: 13px;
+  color: #293b4b;
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -.8px;
+}
+
+.metric-card > small {
+  margin-top: 5px;
+  color: #98a4ae;
+  font-size: 10px;
+}
+
+/* Paneles principales */
+
+.dashboard-grid {
+  gap: 18px;
+  margin-top: 22px;
+  align-items: stretch;
+}
+
+.dashboard-card {
+  min-width: 0;
+  min-height: 320px;
+  padding: 23px;
+  border: 1px solid #e9eef1;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(35, 55, 70, .035);
+}
+
+.dashboard-card-heading {
+  align-items: center;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #f0f3f5;
+}
+
+.dashboard-card h2 {
+  color: #304252;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+
+.dashboard-card-heading p {
+  margin-top: 5px;
+  color: #96a1ab;
+  font-size: 11px;
+}
+
+.dashboard-card-heading a {
+  color: #388b85;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.dashboard-card-heading a:hover {
+  color: #246c67;
+  text-decoration: underline;
+}
+
+/* Gráfico */
+
+.fake-chart {
+  height: 220px;
+  margin-top: 24px;
+  gap: 13px;
+}
+
+.chart-y-axis {
+  color: #a1acb5;
+  font-size: 9px;
+}
+
+.chart-grid-lines {
+  inset: 0 0 23px;
+}
+
+.chart-grid-lines span {
+  border-color: #edf1f3;
+  border-style: solid;
+}
+
+.chart-bars {
+  bottom: 0;
+  gap: 9px;
+}
+
+.chart-bars > div {
+  gap: 9px;
+}
+
+.chart-bars .bar {
+  width: min(26px, 65%);
+  border-radius: 5px 5px 2px 2px;
+  background: linear-gradient(180deg, #79c8bf 0%, #4b9f98 100%);
+  transition: height .35s ease, filter .2s ease;
+}
+
+.chart-bars .bar:hover {
+  filter: brightness(.9);
+}
+
+.chart-bars small {
+  color: #87949f;
+  font-size: 9px;
+}
+
+/* Próximos turnos */
+
+.upcoming-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.upcoming-list {
+  display: grid;
+  margin-top: 5px;
+}
+
+.upcoming-item {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f3f5;
+}
+
+.upcoming-item:last-child {
+  border-bottom: 0;
+}
+
+.upcoming-time {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  min-height: 49px;
+  border-radius: 8px;
+  background: #eff7f6;
+}
+
+.upcoming-time strong {
+  color: #337f79;
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -.4px;
+}
+
+.upcoming-time small {
+  color: #819a99;
+  font-size: 9px;
+}
+
+.upcoming-info {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.upcoming-info strong {
+  overflow: hidden;
+  color: #354656;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upcoming-info small {
+  overflow: hidden;
+  color: #929eaa;
+  font-size: 9px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upcoming-status {
+  justify-self: end;
+  padding: 5px 9px;
+  border: 1px solid #dcefe9;
+  border-radius: 20px;
+  background: #edf8f3;
+  color: #38866b;
+  font-size: 9px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* Estado vacío */
+
+.empty-state {
+  flex: 1;
+  min-height: 210px;
+  height: auto;
+  border-radius: 9px;
+  color: #94a1ac;
+}
+
+.empty-state i {
+  color: #8bc7bf;
+  font-size: 34px;
+}
+
+.empty-state p {
+  color: #87949f;
+  font-size: 11px;
+}
+
+/* Estadísticas inferiores */
+
+.quick-stats {
+  --bs-gutter-x: 18px;
+  margin-top: 22px;
+}
+
+.quick-stat {
+  min-height: 82px;
+  padding: 18px 21px;
+  border: 1px solid #e9eef1;
+  border-radius: 11px;
+  box-shadow: 0 3px 12px rgba(35, 55, 70, .035);
+  transition: transform .2s ease;
+}
+
+.quick-stat:hover {
+  transform: translateY(-2px);
+}
+
+.quick-stat span {
+  color: #788895;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.quick-stat i {
+  color: #4b9f98;
+  font-size: 17px;
+}
+
+.quick-stat strong {
+  color: #304252;
+  font-size: 23px;
+  font-weight: 750;
+}
+
+/* Responsive */
+
+@media (max-width: 991.98px) {
+  .dashboard-card {
+    min-height: auto;
+  }
+
+  .upcoming-item {
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .backoffice-heading h1 {
+    font-size: 23px;
+  }
+
+  .dashboard-card {
+    padding: 17px;
+  }
+
+  .upcoming-item {
+    grid-template-columns: 53px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .upcoming-status {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .upcoming-info strong {
+    font-size: 10px;
+  }
+
+  .upcoming-info small {
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  .quick-stat {
+    padding: 15px;
+  }
+}
+
+.upcoming-status.status-reservado {
+  background: #eff5ff;
+  border-color: #dce7fa;
+  color: #5479b4;
+}
+
+.upcoming-status.status-confirmado {
+  background: #edf8f3;
+  border-color: #dcefe9;
+  color: #38866b;
 }

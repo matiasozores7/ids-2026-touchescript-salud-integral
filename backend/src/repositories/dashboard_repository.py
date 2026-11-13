@@ -199,3 +199,51 @@ def obtener_turnos_por_hora(connection):
     with connection.cursor() as cursor:
         cursor.execute(query)
         return cursor.fetchall()
+
+def obtener_proximos_turnos(connection, limite: int = 5):
+    query = """
+        SELECT
+            turnos.id AS turno_id,
+            turnos.fecha_hora AS fecha_hora_turno,
+            turnos.estado,
+
+            paciente_usuario.nombre AS paciente_nombre,
+            paciente_usuario.apellido AS paciente_apellido,
+
+            medico_usuario.nombre AS medico_nombre,
+            medico_usuario.apellido AS medico_apellido,
+
+            especialidades.nombre AS especialidad,
+
+            consultorios.numero_sala AS consultorio_sala,
+            consultorios.piso AS consultorio_piso
+
+        FROM turnos
+        INNER JOIN pacientes
+            ON turnos.paciente_id = pacientes.id
+        INNER JOIN usuarios AS paciente_usuario
+            ON pacientes.usuario_id = paciente_usuario.id
+        INNER JOIN medicos
+            ON turnos.medico_id = medicos.id
+        INNER JOIN usuarios AS medico_usuario
+            ON medicos.usuario_id = medico_usuario.id
+        INNER JOIN especialidades
+            ON medicos.especialidad_id = especialidades.id
+        INNER JOIN consultorios
+            ON turnos.consultorio_id = consultorios.id
+
+        WHERE turnos.fecha_hora >= NOW()
+          AND turnos.estado IN ('reservado', 'confirmado')
+          AND turnos.fecha_hora_llegada IS NULL
+          AND paciente_usuario.rol = 'paciente'
+          AND paciente_usuario.activo = 1
+          AND medico_usuario.rol = 'medico'
+          AND medico_usuario.activo = 1
+
+        ORDER BY turnos.fecha_hora ASC
+        LIMIT %s;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (limite,))
+        return cursor.fetchall()
