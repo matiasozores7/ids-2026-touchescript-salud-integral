@@ -7,7 +7,12 @@ Dashboard operativo · Salud Integral
 {% block backoffice_content %}
 
 {% set metrics = [
-    ("Turnos de hoy", "0", "0 atendidos", "bi-calendar-check"),
+    (
+        "Turnos de hoy",
+        turnos_hoy.total,
+        turnos_hoy.atendidos ~ " atendidos",
+        "bi-calendar-check"
+    ),
     ("En sala de espera", "0", "Con check-in registrado", "bi-person-check"),
     ("Espera promedio", "18 min", "Últimos 30 días", "bi-hourglass-split"),
     ("Ausentismo", "12%", "Últimos 30 días", "bi-graph-down-arrow")

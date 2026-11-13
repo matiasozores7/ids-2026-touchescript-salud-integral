@@ -4,7 +4,8 @@ from src.repositories.dashboard_repository import (
     obtener_turnos_por_medico_y_especialidad,
     obtener_ocupacion_consultorios,
     obtener_estadisticas_ausentismo,
-    obtener_estadisticas_tiempo_espera
+    obtener_estadisticas_tiempo_espera,
+    obtener_estadisticas_turnos_hoy
 )
 
 
@@ -109,3 +110,7 @@ def obtener_tiempo_espera_service(fecha: str | None = None) -> dict:
         "promedio_general_minutos": promedio_general,
         "por_medico": medicos_data
     }
+
+def obtener_turnos_hoy_service() -> dict:
+    with transaction() as connection:
+        return obtener_estadisticas_turnos_hoy(connection)

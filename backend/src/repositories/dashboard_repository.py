@@ -159,3 +159,26 @@ def obtener_estadisticas_tiempo_espera(connection, fecha: str | None = None):
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         return cursor.fetchall()
+
+def obtener_estadisticas_turnos_hoy(connection) -> dict:
+    query = """
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE
+                WHEN estado = 'atendido' THEN 1
+                ELSE 0
+            END) AS atendidos
+        FROM turnos
+        WHERE fecha_hora >= CURDATE()
+          AND fecha_hora < CURDATE() + INTERVAL 1 DAY
+          AND estado IN ('reservado', 'confirmado', 'atendido', 'ausente')
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        resultado = cursor.fetchone()
+
+    return {
+        "total": resultado["total"],
+        "atendidos": resultado["atendidos"] or 0
+    }

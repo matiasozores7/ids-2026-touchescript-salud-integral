@@ -6,7 +6,8 @@ from src.services.dashboard_service import (
     obtener_turnos_por_medico_especialidad_service,
     obtener_ocupacion_consultorios_service,
     obtener_ausentismo_service,
-    obtener_tiempo_espera_service
+    obtener_tiempo_espera_service,
+    obtener_turnos_hoy_service
 )
 
 dashboard_bp = Blueprint("dashboard_bp", __name__)
@@ -50,3 +51,13 @@ def get_tiempo_espera():
     fecha = request.args.get("fecha")
     reporte = obtener_tiempo_espera_service(fecha)
     return success_response(data=reporte, message="Tiempo de espera obtenido correctamente.")
+
+@dashboard_bp.route("/dashboard/turnos-hoy", methods=["GET"])
+@validar_rol("admin")
+def get_turnos_hoy():
+    estadisticas = obtener_turnos_hoy_service()
+
+    return success_response(
+        data=estadisticas,
+        message="Estadísticas de turnos de hoy obtenidas correctamente."
+    )
