@@ -7,7 +7,8 @@ from src.repositories.dashboard_repository import (
     obtener_estadisticas_tiempo_espera,
     obtener_estadisticas_turnos_hoy,
     obtener_turnos_por_hora,
-    obtener_proximos_turnos
+    obtener_proximos_turnos,
+    obtener_estadisticas_generales
 )
 
 
@@ -137,3 +138,7 @@ def obtener_turnos_por_hora_service() -> list[dict]:
 def obtener_proximos_turnos_service(limite: int = 5) -> list[dict]:
     with transaction() as connection:
         return obtener_proximos_turnos(connection, limite)
+
+def obtener_estadisticas_generales_service() -> dict:
+    with transaction() as connection:
+        return obtener_estadisticas_generales(connection)

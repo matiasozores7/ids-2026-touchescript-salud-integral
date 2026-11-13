@@ -201,7 +201,7 @@ Dashboard operativo · Salud Integral
             <i class="bi bi-people" aria-hidden="true"></i>
             Pacientes registrados
         </span>
-        <strong>20</strong>
+        <strong>{{ estadisticas_generales.get("pacientes_registrados", 0) }}</strong>
     </article>
 
     <article class="quick-stat col-md-4">
@@ -209,7 +209,7 @@ Dashboard operativo · Salud Integral
             <i class="bi bi-person-badge" aria-hidden="true"></i>
             Profesionales activos
         </span>
-        <strong>8</strong>
+        <strong>{{ estadisticas_generales.get("profesionales_activos", 0) }}</strong>
     </article>
 
     <article class="quick-stat col-md-4">
@@ -217,7 +217,7 @@ Dashboard operativo · Salud Integral
             <i class="bi bi-calendar-event" aria-hidden="true"></i>
             Turnos futuros reservados
         </span>
-        <strong>210</strong>
+        <strong>{{ estadisticas_generales.get("turnos_futuros_reservados", 0) }}</strong>
     </article>
 
 </section>

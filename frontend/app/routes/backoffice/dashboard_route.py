@@ -6,7 +6,8 @@ from app.services.dashboard_service import (
     obtener_sala_espera,
     obtener_ausentismo,
     obtener_turnos_por_hora,
-    obtener_proximos_turnos
+    obtener_proximos_turnos,
+    obtener_estadisticas_generales
 )
 
 
@@ -17,6 +18,7 @@ def dashboard():
     estadisticas_ausentismo = obtener_ausentismo()
     turnos_por_hora = obtener_turnos_por_hora()
     proximos_turnos = obtener_proximos_turnos()
+    estadisticas_generales = obtener_estadisticas_generales()
 
     return render_template(
         "backoffice/backoffice.html",
@@ -24,5 +26,6 @@ def dashboard():
         pacientes_sala_espera=pacientes_sala_espera,
         estadisticas_ausentismo=estadisticas_ausentismo,
         turnos_por_hora=turnos_por_hora,
-        proximos_turnos=proximos_turnos
+        proximos_turnos=proximos_turnos,
+        estadisticas_generales=estadisticas_generales
     )

@@ -9,7 +9,8 @@ from src.services.dashboard_service import (
     obtener_tiempo_espera_service,
     obtener_turnos_hoy_service,
     obtener_turnos_por_hora_service,
-    obtener_proximos_turnos_service
+    obtener_proximos_turnos_service,
+    obtener_estadisticas_generales_service,
 )
 
 dashboard_bp = Blueprint("dashboard_bp", __name__)
@@ -89,4 +90,14 @@ def get_proximos_turnos():
     return success_response(
         data=turnos,
         message="Próximos turnos obtenidos correctamente."
+    )
+
+@dashboard_bp.route("/dashboard/estadisticas-generales", methods=["GET"])
+@validar_rol("admin")
+def get_estadisticas_generales():
+    estadisticas = obtener_estadisticas_generales_service()
+
+    return success_response(
+        data=estadisticas,
+        message="Estadísticas generales obtenidas correctamente."
     )

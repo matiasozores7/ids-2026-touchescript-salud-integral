@@ -247,3 +247,36 @@ def obtener_proximos_turnos(connection, limite: int = 5):
     with connection.cursor() as cursor:
         cursor.execute(query, (limite,))
         return cursor.fetchall()
+
+def obtener_estadisticas_generales(connection) -> dict:
+    query = """
+        SELECT
+            (
+                SELECT COUNT(*)
+                FROM pacientes
+                INNER JOIN usuarios
+                    ON pacientes.usuario_id = usuarios.id
+                WHERE usuarios.rol = 'paciente'
+                  AND usuarios.activo = 1
+            ) AS pacientes_registrados,
+
+            (
+                SELECT COUNT(*)
+                FROM medicos
+                INNER JOIN usuarios
+                    ON medicos.usuario_id = usuarios.id
+                WHERE usuarios.rol = 'medico'
+                  AND usuarios.activo = 1
+            ) AS profesionales_activos,
+
+            (
+                SELECT COUNT(*)
+                FROM turnos
+                WHERE fecha_hora >= NOW()
+                  AND estado = 'reservado'
+            ) AS turnos_futuros_reservados;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchone()

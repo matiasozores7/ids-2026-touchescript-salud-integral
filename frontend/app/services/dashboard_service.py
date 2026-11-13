@@ -56,3 +56,12 @@ def obtener_proximos_turnos() -> list[dict]:
         turno["fecha"] = fecha_local.strftime("%d/%m")
 
     return turnos
+
+def obtener_estadisticas_generales() -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint="/dashboard/estadisticas-generales",
+        authenticated=True
+    )
+
+    return resultado.get("data") or {}
