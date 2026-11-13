@@ -13,7 +13,12 @@ Dashboard operativo · Salud Integral
         turnos_hoy.atendidos ~ " atendidos",
         "bi-calendar-check"
     ),
-    ("En sala de espera", "0", "Con check-in registrado", "bi-person-check"),
+    (
+        "En sala de espera",
+        pacientes_sala_espera | length,
+        "Con check-in registrado",
+        "bi-person-check"
+    ),
     ("Espera promedio", "18 min", "Últimos 30 días", "bi-hourglass-split"),
     ("Ausentismo", "12%", "Últimos 30 días", "bi-graph-down-arrow")
 ] %}

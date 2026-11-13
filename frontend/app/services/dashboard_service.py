@@ -9,3 +9,12 @@ def obtener_turnos_hoy() -> dict:
     )
 
     return resultado.get("data") or {}
+
+def obtener_sala_espera() -> list[dict]:
+    resultado = api_request(
+        method="GET",
+        endpoint="/dashboard/sala-espera",
+        authenticated=True
+    )
+
+    return resultado.get("data") or []
