@@ -18,3 +18,12 @@ def obtener_sala_espera() -> list[dict]:
     )
 
     return resultado.get("data") or []
+
+def obtener_ausentismo() -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint="/dashboard/ausentismo",
+        authenticated=True
+    )
+
+    return resultado.get("data") or {}

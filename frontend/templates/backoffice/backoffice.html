@@ -20,7 +20,12 @@ Dashboard operativo · Salud Integral
         "bi-person-check"
     ),
     ("Espera promedio", "18 min", "Últimos 30 días", "bi-hourglass-split"),
-    ("Ausentismo", "12%", "Últimos 30 días", "bi-graph-down-arrow")
+    (
+        "Ausentismo",
+        estadisticas_ausentismo.get("resumen_general", {}).get("porcentaje_ausentismo", 0) ~ "%",
+        "Según turnos registrados",
+        "bi-graph-down-arrow"
+    )
 ] %}
 
 <div class="backoffice-heading d-flex flex-wrap justify-content-between align-items-end gap-3">
