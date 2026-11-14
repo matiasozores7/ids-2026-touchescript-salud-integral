@@ -78,7 +78,8 @@ def mostrar_registro():
     mensajes = get_flashed_messages(category_filter=["error"])
 
     try:
-        coberturas = coberturas_service.listar_coberturas()
+        resultado = coberturas_service.listar_coberturas()
+        coberturas = resultado["items"]
 
     except AppError:
         coberturas = []

@@ -1,0 +1,281 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Coberturas · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/components.css') }}">
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Coberturas</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+{% set offset = request.args.get("_offset", 0, type=int) %}
+
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div class="backoffice-heading">
+        <h1>Coberturas</h1>
+        <p>Administración de obras sociales y empresas de medicina prepaga.</p>
+    </div>
+
+    <button class="button button-primary button-small"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#cobertura-modal">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Nueva
+    </button>
+</div>
+
+<section class="card rounded-4 shadow-sm overflow-hidden"
+         aria-label="Listado de coberturas">
+
+    <div class="row g-3 align-items-center p-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </span>
+
+                <label class="visually-hidden" for="coberturas-buscar">
+                    Buscar cobertura
+                </label>
+
+                <input id="coberturas-buscar"
+                       class="form-control border-start-0 py-2"
+                       type="search"
+                       placeholder="Buscar…"
+                       autocomplete="off">
+            </div>
+        </div>
+
+        <div class="col-md-7 text-md-end small text-body-secondary">
+            <span id="coberturas-contador">{{ total }}</span>
+            registros
+        </div>
+    </div>
+
+    <div class="table-responsive border-top">
+        <table class="table table-hover align-middle mb-0"
+               id="coberturas-tabla">
+
+            <thead class="table-light">
+                <tr>
+                    <th class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
+                        Nombre de cobertura
+                    </th>
+                    <th class="py-2 text-end pe-3">
+                        <span class="visually-hidden">Acciones</span>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for cobertura in coberturas %}
+                    <tr data-id="{{ cobertura.id }}"
+                        data-nombre="{{ cobertura.nombre }}"
+                        data-busqueda="{{ cobertura.nombre | lower }}">
+                        <td class="ps-3 py-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="avatar avatar-small avatar-soft"
+                                      aria-hidden="true">
+                                    <i class="bi bi-shield-check"></i>
+                                </span>
+
+                                <span class="small fw-medium">
+                                    {{ cobertura.nombre }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td class="text-end pe-3 text-nowrap">
+                            <button class="btn btn-sm btn-link text-body text-decoration-none"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#cobertura-modal"
+                                    data-accion="editar"
+                                    aria-label="Editar {{ cobertura.nombre }}">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-link text-danger text-decoration-none"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#eliminar-cobertura-modal"
+                                    data-url-eliminar="{{ url_for('backoffice.eliminar_cobertura_frontend', cobertura_id=cobertura.id) }}"
+                                    data-nombre="{{ cobertura.nombre }}"
+                                    aria-label="Eliminar {{ cobertura.nombre }}">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2"
+                            class="text-center text-body-secondary py-4">
+                            No hay coberturas registradas.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-center text-body-secondary py-4 mb-0"
+       id="coberturas-vacio"
+       hidden>
+        No se encontraron coberturas.
+    </p>
+
+    {% if total > 0 %}
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 p-3 border-top">
+
+            <small class="text-body-secondary">
+                Mostrando
+                {{ offset + 1 }}
+                -
+                {{ offset + coberturas | length }}
+                de {{ total }} coberturas
+            </small>
+
+            <div class="d-flex gap-2">
+
+                {% if links.get("_prev") %}
+                    <a href="{{ url_for(
+                        'backoffice.backoffice_coberturas',
+                        _limit=request.args.get('_limit', 10),
+                        _offset=offset - request.args.get('_limit', 10) | int
+                    ) }}"
+                       class="button button-outline button-small">
+                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                        Anterior
+                    </a>
+                {% endif %}
+
+                {% if links.get("_next") %}
+                    <a href="{{ url_for(
+                        'backoffice.backoffice_coberturas',
+                        _limit=request.args.get('_limit', 10),
+                        _offset=offset + request.args.get('_limit', 10) | int
+                    ) }}"
+                       class="button button-outline button-small">
+                        Siguiente
+                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+    {% endif %}
+
+</section>
+
+
+<div class="modal fade"
+     id="cobertura-modal"
+     tabindex="-1"
+     aria-labelledby="cobertura-modal-titulo"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+
+            <form id="cobertura-form"
+                method="POST"
+                action="{{ url_for('backoffice.crear_cobertura_frontend') }}"
+                data-url-editar="{{ url_for('backoffice.editar_cobertura_frontend', cobertura_id=0) }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cobertura-modal-titulo">
+                        Nueva cobertura
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <label for="cobertura-nombre" class="form-label">
+                        Nombre de la cobertura
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           id="cobertura-nombre"
+                           name="nombre"
+                           maxlength="100"
+                           placeholder="Ej. OSDE"
+                           required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="button button-outline button-small"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="button button-primary button-small"
+                            id="cobertura-guardar">
+                        Guardar cobertura
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="eliminar-cobertura-modal" tabindex="-1"
+     aria-labelledby="eliminar-cobertura-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="eliminar-cobertura-form" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminar-cobertura-titulo">
+                        Eliminar cobertura
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    ¿Estás seguro de que querés eliminar la cobertura
+                    <strong id="eliminar-cobertura-nombre"></strong>?
+                    Esta acción no se puede deshacer.
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        Eliminar cobertura
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block backoffice_scripts %}
+<script src="{{ url_for('static', filename='js/backoffice-coberturas.js') }}"
+        defer></script>
+{% endblock %}
