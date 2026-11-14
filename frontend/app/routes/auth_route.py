@@ -23,6 +23,9 @@ RUTAS_POR_ROL = {
 
 @auth_bp.before_request
 def verificar_sesion():
+    if request.endpoint == "auth.cerrar_sesion":
+        return
+
     if not session.get("access_token"):
         return
 
@@ -116,3 +119,22 @@ def registrar_paciente():
     except AppError as error:
         flash(error.message, "error")
         return redirect(url_for("auth.mostrar_registro"))
+
+@auth_bp.route("/logout", methods=["POST"])
+def cerrar_sesion():
+    try:
+        if session.get("access_token"):
+            auth_service.logout_usuario()
+
+        session.clear()
+        flash("Sesión cerrada exitosamente.", "success")
+
+    except AppError:
+        session.clear()
+        flash(
+            "La sesión se cerró localmente, pero no se pudo confirmar "
+            "la revocación del token.",
+            "warning"
+        )
+
+    return redirect(url_for("auth.mostrar_login"))
