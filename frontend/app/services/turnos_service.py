@@ -167,3 +167,51 @@ def obtener_qr_turno(turno_id: int) -> str:
         )
 
     return qr_token
+
+def listar_turnos_administrativos(
+    limit: int = 10,
+    offset: int = 0,
+    fecha: str | None = None,
+    estado: str | None = None,
+    especialidad_id: int | None = None,
+    medico_id: int | None = None,
+    busqueda: str | None = None
+) -> dict:
+
+    params = {
+        "_limit": limit,
+        "_offset": offset
+    }
+
+    filtros = {
+        "fecha": fecha,
+        "estado": estado,
+        "especialidad_id": especialidad_id,
+        "medico_id": medico_id,
+        "busqueda": busqueda
+    }
+
+    params.update({
+        clave: valor
+        for clave, valor in filtros.items()
+        if valor is not None and valor != ""
+    })
+
+    resultado = api_request(
+        method="GET",
+        endpoint="/turnos/administracion",
+        params=params,
+        authenticated=True
+    )
+
+    data = resultado.get("data")
+
+    if (
+        not isinstance(data, dict)
+        or not isinstance(data.get("items"), list)
+    ):
+        raise ExternalServiceError(
+            "La respuesta de turnos administrativos tiene un formato inválido."
+        )
+
+    return data

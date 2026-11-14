@@ -1,0 +1,321 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Turnos · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/components.css') }}">
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Turnos</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div class="backoffice-heading">
+        <h1>Turnos</h1>
+        <p>Administración y seguimiento de turnos médicos.</p>
+    </div>
+
+    <button class="button button-primary button-small"
+            type="button"
+            disabled
+            title="Funcionalidad pendiente">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Nuevo turno
+    </button>
+</div>
+
+<section class="card rounded-4 shadow-sm overflow-hidden"
+         aria-label="Listado de turnos">
+
+    <form method="GET"
+          action="{{ url_for('backoffice.backoffice_turnos') }}"
+          class="p-3">
+
+        <div class="row g-3 align-items-end">
+
+            <div class="col-lg-4 col-md-6">
+                <label for="turnos-buscar" class="form-label small fw-medium">
+                    Buscar turno o paciente
+                </label>
+
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </span>
+
+                    <input id="turnos-buscar"
+                           class="form-control border-start-0"
+                           type="search"
+                           name="busqueda"
+                           placeholder="Nombre o ID del turno"
+                           value="{{ request.args.get('busqueda', '') }}">
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <label for="turnos-fecha" class="form-label small fw-medium">
+                    Fecha
+                </label>
+
+                <input id="turnos-fecha"
+                       class="form-control"
+                       type="date"
+                       name="fecha"
+                       value="{{ request.args.get('fecha', '') }}">
+            </div>
+
+            <div class="col-lg-2 col-md-4">
+                <label for="turnos-estado" class="form-label small fw-medium">
+                    Estado
+                </label>
+
+                <select id="turnos-estado"
+                        class="form-select"
+                        name="estado">
+                    <option value="">Todos</option>
+
+                    {% for estado in ['disponible', 'reservado', 'confirmado', 'atendido', 'cancelado', 'ausente'] %}
+                        <option value="{{ estado }}"
+                            {% if request.args.get('estado') == estado %}selected{% endif %}>
+                            {{ estado | capitalize }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-lg-2 col-md-4">
+                <label for="turnos-especialidad" class="form-label small fw-medium">
+                    Especialidad
+                </label>
+
+                <select id="turnos-especialidad"
+                        class="form-select"
+                        name="especialidad_id">
+                    <option value="">Todas</option>
+
+                    {% for especialidad in especialidades %}
+                        <option value="{{ especialidad.id }}"
+                            {% if request.args.get('especialidad_id') == especialidad.id|string %}selected{% endif %}>
+                            {{ especialidad.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-lg-2 col-md-4">
+                <label for="turnos-medico" class="form-label small fw-medium">
+                    Médico
+                </label>
+
+                <select id="turnos-medico"
+                        class="form-select"
+                        name="medico_id">
+                    <option value="">Todos</option>
+
+                    {% for medico in medicos %}
+                        <option value="{{ medico.id }}"
+                            {% if request.args.get('medico_id') == medico.id|string %}selected{% endif %}>
+                            {{ medico.nombre }} {{ medico.apellido }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a href="{{ url_for('backoffice.backoffice_turnos') }}"
+                   class="button button-outline button-small">
+                    Limpiar
+                </a>
+
+                <button type="submit"
+                        class="button button-primary button-small">
+                    Filtrar
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="border-top d-flex flex-wrap justify-content-between align-items-center gap-2 p-3">
+        <span class="small text-body-secondary">
+            {{ total }} turnos registrados
+        </span>
+
+        <span class="small text-body-secondary">
+            Mostrando <span id="turnos-contador">{{ turnos | length }}</span> resultados
+        </span>
+    </div>
+
+    <div class="table-responsive border-top">
+        <table class="table table-hover align-middle mb-0"
+               id="turnos-tabla">
+
+            <thead class="table-light">
+                <tr>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3 ps-3">
+                        Turno
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Paciente
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Profesional
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Especialidad
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Consultorio
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Fecha y hora
+                    </th>
+                    <th class="small text-uppercase text-secondary fw-semibold py-3">
+                        Estado
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for t in turnos %}
+                    {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
+                    {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
+
+                    {% set estados = {
+                        'disponible': 'secondary',
+                        'reservado': 'info',
+                        'confirmado': 'primary',
+                        'atendido': 'success',
+                        'cancelado': 'danger',
+                        'ausente': 'warning'
+                    } %}
+
+                    {% set fecha = t.fecha_hora | replace('T', ' ') %}
+
+                    <tr data-busqueda="{{ (
+                        t.turno_id|string ~ ' ' ~
+                        paciente ~ ' ' ~
+                        medico ~ ' ' ~
+                        t.especialidad ~ ' ' ~
+                        t.estado
+                    ) | lower }}">
+
+                        <td class="ps-3">
+                            <span class="fw-medium small">#{{ t.turno_id }}</span>
+                        </td>
+
+                        <td>
+                            <div class="small fw-medium">
+                                {{ paciente.strip() or 'Sin paciente asignado' }}
+                            </div>
+
+                            {% if t.paciente_id %}
+                                <div class="small text-body-secondary">
+                                    ID {{ t.paciente_id }}
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="small fw-medium">
+                                {{ medico.strip() or 'Sin profesional asignado' }}
+                            </div>
+
+                            <div class="small text-body-secondary">
+                                ID {{ t.medico_id }}
+                            </div>
+                        </td>
+
+                        <td class="small">
+                            {{ t.especialidad }}
+                        </td>
+
+                        <td>
+                            <div class="small fw-medium">
+                                Sala {{ t.consultorio_sala }}
+                            </div>
+
+                            <div class="small text-body-secondary">
+                                Piso {{ t.consultorio_piso }}
+                            </div>
+                        </td>
+
+                        <td class="small text-nowrap">
+                            {{ fecha }}
+                        </td>
+
+                        <td>
+                            <span class="badge text-bg-{{ estados.get(t.estado, 'secondary') }}">
+                                {{ t.estado | capitalize }}
+                            </span>
+                        </td>
+                    </tr>
+
+                {% else %}
+                    <tr id="turnos-sin-datos">
+                        <td colspan="7"
+                            class="text-center text-body-secondary py-5">
+                            No se encontraron turnos.
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                <tr id="turnos-vacio" hidden>
+                    <td colspan="7"
+                        class="text-center text-body-secondary py-5">
+                        No hay turnos que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center p-3 border-top">
+        <div class="small text-body-secondary">
+            Página {{ (offset // limit) + 1 }}
+        </div>
+
+        <nav aria-label="Paginación de turnos">
+            <ul class="pagination pagination-sm mb-0">
+
+                <li class="page-item {% if not paginacion.anterior %}disabled{% endif %}">
+                    {% if paginacion.anterior %}
+                        <a class="page-link" href="{{ paginacion.anterior }}">
+                            Anterior
+                        </a>
+                    {% else %}
+                        <span class="page-link">Anterior</span>
+                    {% endif %}
+                </li>
+
+                <li class="page-item {% if not paginacion.siguiente %}disabled{% endif %}">
+                    {% if paginacion.siguiente %}
+                        <a class="page-link" href="{{ paginacion.siguiente }}">
+                            Siguiente
+                        </a>
+                    {% else %}
+                        <span class="page-link">Siguiente</span>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block backoffice_scripts %}
+<script src="{{ url_for('static', filename='js/backoffice-turnos.js') }}"
+        defer></script>
+{% endblock %}
