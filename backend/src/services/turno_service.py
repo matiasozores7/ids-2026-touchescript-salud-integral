@@ -198,6 +198,46 @@ def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | N
     return items_serializados, total
 
 
+def listar_turnos_administrativos(
+    limit: int,
+    offset: int,
+    fecha: str | None = None,
+    estado: str | None = None,
+    especialidad_id: int | None = None,
+    medico_id: int | None = None,
+    busqueda: str | None = None
+) -> tuple[list, int]:
+
+    with transaction() as connection:
+        total = turno_repo.contar_turnos_administrativos(
+            connection,
+            fecha=fecha,
+            estado=estado,
+            especialidad_id=especialidad_id,
+            medico_id=medico_id,
+            busqueda=busqueda
+        )
+
+        items = turno_repo.listar_turnos_administrativos(
+            connection,
+            limit=limit,
+            offset=offset,
+            fecha=fecha,
+            estado=estado,
+            especialidad_id=especialidad_id,
+            medico_id=medico_id,
+            busqueda=busqueda
+        )
+
+    items_serializados = [
+        _serializar_turno(item)
+        for item in items
+    ]
+
+    return items_serializados, total
+
+
+
 def obtener_qr_turno(turno_id: int) -> dict:
     with transaction() as connection:
         turno = turno_repo.obtener_turno_por_id(connection, turno_id)

@@ -127,6 +127,98 @@ def listar_mis_turnos():
         message="Turnos del paciente obtenidos correctamente."
     )
 
+@turnos_bp.route("/turnos/administracion", methods=["GET"])
+@validar_rol("admin")
+def listar_turnos_administrativos():
+
+    limit, offset = get_pagination_params()
+
+    # Filtro por fecha
+    fecha = request.args.get("fecha")
+
+    if fecha:
+        try:
+            date.fromisoformat(fecha)
+        except ValueError:
+            raise BadRequestError(
+                description="La fecha debe tener el formato YYYY-MM-DD."
+            )
+
+    # Filtro por estado
+    estado = request.args.get("estado")
+
+    estados_validos = {
+        "disponible",
+        "reservado",
+        "confirmado",
+        "atendido",
+        "cancelado",
+        "ausente"
+    }
+
+    if estado:
+        estado = estado.strip().lower()
+
+        if estado not in estados_validos:
+            raise BadRequestError(
+                description="El estado especificado no es válido."
+            )
+
+    # Filtros por especialidad y médico
+    especialidad_id = request.args.get("especialidad_id")
+    medico_id = request.args.get("medico_id")
+
+    try:
+        especialidad_id = int(especialidad_id) if especialidad_id else None
+        medico_id = int(medico_id) if medico_id else None
+    except ValueError:
+        raise BadRequestError(
+            description="Los identificadores deben ser números enteros."
+        )
+
+    if especialidad_id is not None and especialidad_id < 1:
+        raise BadRequestError(
+            description="El identificador de especialidad debe ser positivo."
+        )
+
+    if medico_id is not None and medico_id < 1:
+        raise BadRequestError(
+            description="El identificador del médico debe ser positivo."
+        )
+
+    # Búsqueda por ID o nombre del paciente
+    busqueda = request.args.get("busqueda")
+
+    if busqueda:
+        busqueda = busqueda.strip() or None
+
+    items, total = turno_service.listar_turnos_administrativos(
+        limit=limit,
+        offset=offset,
+        fecha=fecha,
+        estado=estado,
+        especialidad_id=especialidad_id,
+        medico_id=medico_id,
+        busqueda=busqueda
+    )
+
+    links = generate_hateoas_links(
+        request.base_url,
+        limit,
+        offset,
+        total,
+        request.args
+    )
+
+    return success_response(
+        data={
+            "items": items,
+            "total": total,
+            "_links": links
+        },
+        message="Turnos administrativos obtenidos correctamente."
+    )
+
 
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
 @validar_rol("paciente", "admin")
