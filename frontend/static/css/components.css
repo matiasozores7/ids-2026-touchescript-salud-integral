@@ -1,5 +1,30 @@
 /* Piezas reutilizables de las pantallas */
 
+.estado-reservado {
+  --bg: #e1f0f7;
+  --fg: #2b6a8a;
+}
+
+.estado-confirmado {
+  --bg: #e2f1f0;
+  --fg: #276b67;
+}
+
+.estado-atendido {
+  --bg: #0f5c4a;
+  --fg: #fff;
+}
+
+.estado-cancelado {
+  --bg: #fdecef;
+  --fg: #cf3a57;
+}
+
+.estado-ausente {
+  --bg: #fdf2e0;
+  --fg: #8f5a0e;
+}
+
 .estado {
   --bg: #e1f0f7;
   --fg: #2b6a8a;

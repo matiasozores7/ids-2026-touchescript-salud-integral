@@ -5,7 +5,7 @@ from app.services.coberturas_service import listar_coberturas, crear_cobertura, 
 from app.routes.backoffice import backoffice_bp
 
 
-@backoffice_bp.route("/coberturas")
+@backoffice_bp.route("/backoffice/coberturas")
 def backoffice_coberturas():
     limit = request.args.get("_limit", 10, type=int)
     offset = request.args.get("_offset", 0, type=int)
@@ -20,7 +20,7 @@ def backoffice_coberturas():
     )
 
 
-@backoffice_bp.post("/coberturas/nueva")
+@backoffice_bp.post("/backoffice/coberturas/nueva")
 def crear_cobertura_frontend():
     nombre = request.form.get("nombre", "").strip()
 
@@ -38,7 +38,7 @@ def crear_cobertura_frontend():
     return redirect(url_for("backoffice.backoffice_coberturas"))
 
 
-@backoffice_bp.post("/coberturas/<int:cobertura_id>/editar")
+@backoffice_bp.post("/backoffice/coberturas/<int:cobertura_id>/editar")
 def editar_cobertura_frontend(cobertura_id: int):
     nombre = request.form.get("nombre", "").strip()
 
@@ -55,7 +55,7 @@ def editar_cobertura_frontend(cobertura_id: int):
 
     return redirect(url_for("backoffice.backoffice_coberturas"))
 
-@backoffice_bp.post("/coberturas/<int:cobertura_id>/eliminar")
+@backoffice_bp.post("/backoffice/coberturas/<int:cobertura_id>/eliminar")
 def eliminar_cobertura_frontend(cobertura_id: int):
     try:
         eliminar_cobertura(cobertura_id)

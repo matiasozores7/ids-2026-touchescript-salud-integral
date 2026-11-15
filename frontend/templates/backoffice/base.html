@@ -37,12 +37,12 @@
 
         {% set navigation = [
             ("Dashboard", "bi-grid-1x2-fill", "backoffice.dashboard"),
-            ("Turnos", "bi-calendar-check", "#"),
+            ("Turnos", "bi-calendar-check", "backoffice.backoffice_turnos"),
             ("Calendario", "bi-calendar3", "#"),
             ("Sala de espera", "bi-person-lines-fill", "#"),
             ("Check-in QR", "bi-qr-code", "backoffice.backoffice_checkin"),
             ("Médicos", "bi-person-badge", "backoffice.backoffice_medicos"),
-            ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_specialties"),
+            ("Especialidades", "bi-heart-pulse", "backoffice.backoffice_especialidades"),
             ("Consultorios", "bi-building", "backoffice.listar_consultorios"),
             ("Coberturas", "bi-shield-check", "backoffice.backoffice_coberturas"),
             ("Pacientes", "bi-people", "backoffice.backoffice_pacientes"),
@@ -67,14 +67,6 @@
             {% endfor %}
 
         </nav>
-
-        <div class="sidebar-footer">
-            <a href="{{ url_for('patient.patient_home') }}">
-                <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                Portal del paciente
-            </a>
-        </div>
-
     </aside>
 
     <div class="backoffice-main">
@@ -86,17 +78,12 @@
 
                 {% block breadcrumb %}{% endblock %}
 
-                <span>domingo 1 de noviembre · 10:30 (hora simulada)</span>
+                <span class="backoffice-date">
+                    {{ fecha_actual }}
+                </span>
             </div>
 
             <div class="backoffice-user">
-
-                <button class="backoffice-notifications"
-                        type="button"
-                        aria-label="Notificaciones, 1 sin leer">
-                    <i class="bi bi-bell" aria-hidden="true"></i>
-                    <b>1</b>
-                </button>
 
                 <div class="dropdown">
                     <button
@@ -104,30 +91,31 @@
                         type="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
-                        aria-label="Abrir menú de usuario"
+                        aria-label="Opciones de administración"
                     >
-                        <span class="backoffice-user-avatar">AA</span>
-
-                        <span>
-                            <strong>Andrés Villalba</strong>
-                            <small>Administración</small>
+                        <span class="backoffice-user-avatar">
+                            <i class="bi bi-person-fill" aria-hidden="true"></i>
                         </span>
 
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="backoffice-user-info">
+                            <strong>Administración</strong>
+                            <small>Panel de gestión</small>
+                        </span>
+
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
                     </button>
 
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <form method="POST" action="{{ url_for('auth.cerrar_sesion') }}">
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2"></i>
-                                    Cerrar sesión
+                                <button type="submit" class="dropdown-item logout-item">
+                                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                                    <span>Cerrar sesión</span>
                                 </button>
                             </form>
                         </li>
                     </ul>
                 </div>
-
             </div>
 
         </header>

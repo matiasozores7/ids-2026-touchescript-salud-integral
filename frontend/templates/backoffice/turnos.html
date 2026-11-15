@@ -1,0 +1,260 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Turnos · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-turnos.css') }}">
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Turnos</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+{% from "pacientes/_componentes.html" import estado_pill %}
+
+<div class="abm-header">
+    <div class="abm-heading">
+        <h1>Turnos</h1>
+        <p>Administración y seguimiento de turnos médicos.</p>
+    </div>
+</div>
+
+<section class="abm-card turnos-card" aria-label="Listado de turnos">
+
+    <form method="GET"
+          action="{{ url_for('backoffice.backoffice_turnos') }}"
+          class="turnos-filters">
+
+        <div class="turnos-filter-grid">
+
+            <div class="turnos-filter turnos-filter-search">
+                <label for="turnos-buscar">Buscar turno</label>
+
+                <div class="turnos-search-input">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input id="turnos-buscar"
+                           type="search"
+                           name="busqueda"
+                           placeholder="Paciente, profesional o ID"
+                           value="{{ request.args.get('busqueda', '') }}">
+                </div>
+            </div>
+
+            <div class="turnos-filter">
+                <label for="turnos-fecha">Fecha</label>
+                <input id="turnos-fecha"
+                       class="form-control"
+                       type="date"
+                       name="fecha"
+                       value="{{ request.args.get('fecha', '') }}">
+            </div>
+
+            <div class="turnos-filter">
+                <label for="turnos-estado">Estado</label>
+                <select id="turnos-estado"
+                        class="form-select"
+                        name="estado">
+                    <option value="">Todos</option>
+
+                    {% for estado in ['disponible', 'reservado', 'confirmado', 'atendido', 'cancelado', 'ausente'] %}
+                        <option value="{{ estado }}"
+                            {% if request.args.get('estado') == estado %}selected{% endif %}>
+                            {{ estado | capitalize }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="turnos-filter">
+                <label for="turnos-especialidad">Especialidad</label>
+                <select id="turnos-especialidad"
+                        class="form-select"
+                        name="especialidad_id">
+                    <option value="">Todas</option>
+
+                    {% for especialidad in especialidades %}
+                        <option value="{{ especialidad.id }}"
+                            {% if request.args.get('especialidad_id') == especialidad.id|string %}selected{% endif %}>
+                            {{ especialidad.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="turnos-filter">
+                <label for="turnos-medico">Médico</label>
+                <select id="turnos-medico"
+                        class="form-select"
+                        name="medico_id">
+                    <option value="">Todos</option>
+
+                    {% for medico in medicos %}
+                        <option value="{{ medico.id }}"
+                            {% if request.args.get('medico_id') == medico.id|string %}selected{% endif %}>
+                            {{ medico.nombre }} {{ medico.apellido }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="turnos-filter-actions">
+            <a href="{{ url_for('backoffice.backoffice_turnos') }}"
+               class="button button-outline button-small">
+                Limpiar filtros
+            </a>
+
+            <button type="submit"
+                    class="button button-primary button-small">
+                <i class="bi bi-funnel" aria-hidden="true"></i>
+                Filtrar
+            </button>
+        </div>
+
+    </form>
+
+    <div class="turnos-summary">
+        <span class="abm-count">
+            <strong>{{ total }}</strong> turnos registrados
+        </span>
+
+        <span class="abm-count">
+            <strong id="turnos-contador">{{ turnos | length }}</strong>
+            de {{ turnos | length }} en esta página
+        </span>
+    </div>
+
+    <div class="abm-table-wrap">
+        <table class="abm-table" id="turnos-tabla">
+            <thead>
+                <tr>
+                    <th>Turno</th>
+                    <th>Paciente</th>
+                    <th>Profesional</th>
+                    <th>Especialidad</th>
+                    <th>Consultorio</th>
+                    <th>Fecha y hora</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for t in turnos %}
+                    {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
+                    {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
+                    {% set fecha = t.fecha_hora | replace('T', ' ') %}
+
+                    <tr data-busqueda="{{ (
+                        t.turno_id|string ~ ' ' ~
+                        paciente ~ ' ' ~
+                        medico ~ ' ' ~
+                        t.especialidad ~ ' ' ~
+                        t.estado
+                    ) | lower }}">
+
+                        <td>
+                            <span class="fw-semibold">{{ t.turno_id }}</span>
+                        </td>
+
+                        <td>
+                            <span class="fw-medium">
+                                {{ paciente.strip() or 'Sin paciente asignado' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="fw-medium">
+                                {{ medico.strip() or 'Sin profesional asignado' }}
+                            </span>
+                        </td>
+
+                        <td>{{ t.especialidad }}</td>
+
+                        <td>
+                            <div class="fw-medium">
+                                Sala {{ t.consultorio_sala }}
+                            </div>
+                            <div class="turnos-secondary-text">
+                                Piso {{ t.consultorio_piso }}
+                            </div>
+                        </td>
+
+                        <td class="text-nowrap">
+                            {{ fecha }}
+                        </td>
+
+                        <td>
+                            {{ estado_pill(t.estado) }}
+                        </td>
+                    </tr>
+
+                {% else %}
+                    <tr id="turnos-sin-datos">
+                        <td colspan="7" class="abm-empty">
+                            No se encontraron turnos.
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                <tr id="turnos-vacio" hidden>
+                    <td colspan="7" class="abm-empty">
+                        No hay turnos que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="abm-footer">
+        <span class="abm-count">
+            Página {{ (offset // limit) + 1 }}
+        </span>
+
+        <nav class="abm-pagination" aria-label="Paginación de turnos">
+
+            {% if paginacion.anterior %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.anterior }}">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% if paginacion.siguiente %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.siguiente }}">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </span>
+            {% endif %}
+
+        </nav>
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block backoffice_scripts %}
+<script src="{{ url_for('static', filename='js/backoffice-turnos.js') }}" defer></script>
+{% endblock %}

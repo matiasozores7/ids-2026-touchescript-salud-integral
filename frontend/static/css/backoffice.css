@@ -4,6 +4,13 @@
   background: #f5f7f8;
 }
 
+.estado {
+  --bg: #e1f0f7;
+  --fg: #2b6a8a;
+  color: var(--fg);
+  /* conservar el resto de las propiedades */
+}
+
 .backoffice-shell .site-header,
 .backoffice-shell .site-footer {
   display: none;
@@ -16,20 +23,27 @@
 }
 
 .backoffice-layout {
-  display: flex;
   min-height: 100vh;
   color: #354052;
 }
 
 .backoffice-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 1000;
+
   display: flex;
   width: 244px;
-  flex: 0 0 244px;
+  height: 100vh;
   flex-direction: column;
+
+  overflow-y: auto;
   padding: 26px 15px 18px;
+
   background: #fff;
   border-right: 1px solid var(--border);
 }
+
 
 .backoffice-brand {
   display: flex;
@@ -121,7 +135,8 @@
 
 .backoffice-main {
   min-width: 0;
-  flex: 1;
+  min-height: 100vh;
+  margin-left: 244px;
 }
 
 .backoffice-header {
@@ -191,17 +206,6 @@
   font-size: 8px;
 }
 
-.backoffice-user-avatar {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 50%;
-  background: #e2f1f0;
-  color: #327f7b;
-  font-size: 11px;
-  font-weight: 700;
-}
 
 .backoffice-content {
   width: min(100% - 84px, 1180px);
@@ -425,7 +429,10 @@
 @media (max-width: 991.98px) {
   .backoffice-sidebar {
     width: 205px;
-    flex-basis: 205px;
+  }
+
+  .backoffice-main {
+    margin-left: 205px;
   }
 
   .backoffice-header {
@@ -505,13 +512,6 @@
     min-height: 68px;
   }
 }
-
-
-
-/* =========================================
-   DASHBOARD — REFINAMIENTO VISUAL
-
-/* Encabezado */
 
 .backoffice-heading {
   margin-bottom: 4px;
@@ -767,13 +767,6 @@
 
 .upcoming-status {
   justify-self: end;
-  padding: 5px 9px;
-  border: 1px solid #dcefe9;
-  border-radius: 20px;
-  background: #edf8f3;
-  color: #38866b;
-  font-size: 9px;
-  font-weight: 650;
   white-space: nowrap;
 }
 
@@ -879,25 +872,54 @@
   }
 }
 
-.upcoming-status.status-reservado {
-  background: #eff5ff;
-  border-color: #dce7fa;
-  color: #5479b4;
-}
-
-.upcoming-status.status-confirmado {
-  background: #edf8f3;
-  border-color: #dcefe9;
-  color: #38866b;
 .backoffice-user-menu {
     display: flex;
     align-items: center;
-    gap: 12px;
-    border: none;
-    background: transparent;
-    color: inherit;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 7px 12px;
+    background: #fff;
+    color: var(--petrol);
     text-align: left;
-    padding: 0;
+}
+
+.backoffice-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+
+.backoffice-user-menu strong {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.backoffice-user-menu small {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.backoffice-user-menu > i {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.backoffice-user-menu::after {
+    display: none;
+}
+
+.backoffice-user-avatar {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: #e2f1f0;
+    color: #327f7b;
+    font-size: 15px;
 }
 
 .backoffice-user-menu > span:nth-child(2) {
@@ -912,13 +934,4 @@
 .backoffice-user-menu small {
     font-size: 11px;
     color: var(--muted);
-}
-
-.backoffice-user-menu > i {
-    font-size: 11px;
-    color: var(--muted);
-}
-
-.backoffice-user-menu::after {
-    display: none;
 }

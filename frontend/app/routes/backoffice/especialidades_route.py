@@ -25,14 +25,14 @@ def _render_especialidades():
         flash(str(exception), "error")
 
     return render_template(
-        "backoffice/specialties.html",
+        "backoffice/especialidades.html",
         especialidades=especialidades,
         total=total
     )
 
 
 @backoffice_bp.route("/backoffice/especialidades", methods=["GET", "POST"])
-def backoffice_specialties():
+def backoffice_especialidades():
     if request.method == "GET":
         return _render_especialidades()
 
@@ -46,7 +46,7 @@ def backoffice_specialties():
     except AppError as exception:
         flash(str(exception), "error")
 
-    return redirect(url_for("backoffice.backoffice_specialties"))
+    return redirect(url_for("backoffice.backoffice_especialidades"))
 
 
 @backoffice_bp.post("/backoffice/especialidades/<int:especialidad_id>/editar")

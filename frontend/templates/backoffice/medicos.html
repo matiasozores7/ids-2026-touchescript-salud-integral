@@ -6,11 +6,9 @@ Médicos · Salud Integral
 {% endblock %}
 
 {% block backoffice_styles %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-modals.css') }}">
 {% endblock %}
 
 {% block breadcrumb %}
@@ -19,8 +17,8 @@ Médicos · Salud Integral
 
 {% block backoffice_content %}
 
-<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
-    <div class="backoffice-heading">
+<div class="abm-header">
+    <div class="abm-heading">
         <h1>Médicos</h1>
         <p>Profesionales, matrículas y coberturas aceptadas.</p>
     </div>
@@ -30,60 +28,42 @@ Médicos · Salud Integral
             data-bs-toggle="modal"
             data-bs-target="#medico-modal">
         <i class="bi bi-plus-lg" aria-hidden="true"></i>
-        Nuevo
+        Nuevo médico
     </button>
 </div>
 
-<section class="card rounded-4 shadow-sm overflow-hidden"
-         aria-label="Listado de médicos">
+<section class="abm-card" aria-label="Listado de médicos">
 
-    <div class="row g-3 align-items-center p-3">
-        <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search" aria-hidden="true"></i>
-                </span>
+    <div class="abm-toolbar">
+        <div class="abm-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
 
-                <label class="visually-hidden" for="medicos-buscar">
-                    Buscar médico
-                </label>
+            <label class="visually-hidden" for="medicos-buscar">
+                Buscar médico
+            </label>
 
-                <input id="medicos-buscar"
-                       class="form-control border-start-0 py-2"
-                       type="search"
-                       placeholder="Buscar…"
-                       autocomplete="off">
-            </div>
+            <input id="medicos-buscar"
+                   type="search"
+                   placeholder="Buscar médico..."
+                   autocomplete="off">
         </div>
 
-        <div class="col-md-7 text-md-end small text-body-secondary">
-            <span id="medicos-contador">{{ medicos | length }}</span>
+        <div class="abm-count">
+            <strong id="medicos-contador">{{ medicos | length }}</strong>
             registros
         </div>
     </div>
 
-    <div class="table-responsive border-top">
-        <table class="table table-hover align-middle mb-0"
-               id="medicos-tabla">
-
-            <thead class="table-light">
+    <div class="abm-table-wrap">
+        <table class="abm-table" id="medicos-tabla">
+            <thead>
                 <tr>
-                    <th class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
-                        Profesional
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-2 ps-3">
-                        Teléfono
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-2">
-                        Especialidad
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-2">
-                        Matrícula
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-2">
-                        Coberturas
-                    </th>
-                    <th class="py-2">
+                    <th>Profesional</th>
+                    <th>Teléfono</th>
+                    <th>Especialidad</th>
+                    <th>Matrícula</th>
+                    <th>Coberturas</th>
+                    <th class="abm-actions">
                         <span class="visually-hidden">Acciones</span>
                     </th>
                 </tr>
@@ -95,36 +75,31 @@ Médicos · Salud Integral
 
                     <tr data-busqueda="{{ (nombre_completo ~ ' ' ~ m.email ~ ' ' ~ m.especialidad ~ ' ' ~ m.matricula) | lower }}">
 
-                        <td class="ps-3 py-3">
+                        <td>
                             <div class="d-flex align-items-center gap-3">
                                 <span class="avatar avatar-small avatar-soft"
                                       aria-hidden="true">
                                     {{ m.nombre[0] }}{{ m.apellido[0] }}
                                 </span>
 
-                                <div class="small lh-sm">
+                                <div class="lh-sm">
                                     <div class="fw-medium">
                                         {{ nombre_completo }}
                                     </div>
-                                    <div class="small text-body-secondary">
+                                    <div class="text-body-secondary">
                                         {{ m.email }}
                                     </div>
                                 </div>
                             </div>
                         </td>
 
-                        <td class="small">{{ m.telefono or '-' }}</td>
+                        <td>{{ m.telefono or '-' }}</td>
+                        <td>{{ m.especialidad }}</td>
+                        <td>{{ m.matricula }}</td>
+                        <td>{{ m.coberturas | length }}</td>
 
-                        <td class="small">{{ m.especialidad }}</td>
-
-                        <td class="small">{{ m.matricula }}</td>
-
-                        <td class="small">
-                            {{ m.coberturas | length }}
-                        </td>
-
-                        <td class="text-end pe-3 text-nowrap">
-                            <button class="btn btn-sm btn-link text-body text-decoration-none"
+                        <td class="abm-actions">
+                            <button class="abm-action"
                                     type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#medico-modal"
@@ -133,7 +108,7 @@ Médicos · Salud Integral
                                 <i class="bi bi-pencil" aria-hidden="true"></i>
                             </button>
 
-                            <button class="btn btn-sm btn-link text-danger text-decoration-none"
+                            <button class="abm-action abm-action-danger"
                                     type="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#medico-baja-modal"
@@ -145,7 +120,7 @@ Médicos · Salud Integral
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5" class="text-center text-body-secondary py-4">
+                        <td colspan="6" class="abm-empty">
                             No hay médicos registrados.
                         </td>
                     </tr>
@@ -154,16 +129,17 @@ Médicos · Salud Integral
         </table>
     </div>
 
-    <p class="text-center text-body-secondary py-4 mb-0"
+    <p class="abm-empty"
        id="medicos-vacio"
        hidden>
         No se encontraron médicos.
     </p>
+
 </section>
 
 {% include "backoffice/_medico_form_modal.html" %}
 
-<div class="modal fade"
+<div class="modal fade abm-modal"
      id="medico-baja-modal"
      tabindex="-1"
      aria-labelledby="medico-baja-titulo"
@@ -176,7 +152,7 @@ Médicos · Salud Integral
               id="medico-baja-form">
 
             <div class="modal-header">
-                <h2 class="modal-title fs-5" id="medico-baja-titulo">
+                <h2 class="modal-title" id="medico-baja-titulo">
                     Dar de baja al médico
                 </h2>
 
@@ -188,13 +164,13 @@ Médicos · Salud Integral
             </div>
 
             <div class="modal-body">
-                <p>
+                <p class="modal-description">
                     ¿Querés dar de baja a
-                    <strong data-medico-nombre></strong>?
+                    <strong class="modal-highlight" data-medico-nombre></strong>?
                     Dejará de aparecer en el listado y no podrá iniciar sesión.
                 </p>
 
-                <p class="text-body-secondary small mb-0">
+                <p class="modal-description mb-0">
                     Si tiene turnos reservados o confirmados pendientes,
                     primero hay que cancelarlos.
                 </p>
@@ -212,6 +188,7 @@ Médicos · Salud Integral
                     Dar de baja
                 </button>
             </div>
+
         </form>
     </div>
 </div>

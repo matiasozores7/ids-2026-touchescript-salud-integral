@@ -3,11 +3,19 @@ from app.clients.api_client import api_request
 from app.errors.exceptions import ExternalServiceError
 
 
-def listar_medicos() -> dict:
+def listar_medicos(especialidad_id: int | None = None) -> dict:
+    params = {
+        "_limit": 100,
+        "_offset": 0
+    }
+
+    if especialidad_id is not None:
+        params["especialidad_id"] = especialidad_id
+
     resultado = api_request(
         method="GET",
         endpoint="/medicos",
-        params={"_limit": 100, "_offset": 0},
+        params=params,
         authenticated=True
     )
 

@@ -61,47 +61,67 @@ svg {
 }
 
 .header-inner {
-  min-height: 64px;
+    min-height: 76px;
 }
 
 .brand {
-  gap: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
 }
 
 .brand-mark {
-  width: 36px;
-  height: 36px;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
 }
 
 .brand-copy {
-  display: grid;
-  gap: 4px;
-  line-height: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    line-height: 1.1;
 }
 
 .brand-name {
-  color: var(--petrol);
-  font-size: 15px;
-  font-weight: 700;
+    color: var(--petrol);
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .brand-subtitle {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.1px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+}
+
+.main-nav {
+    flex: 1;
+    align-items: center;
 }
 
 .main-nav .navbar-nav {
-  gap: 4px;
+    align-items: center;
 }
 
 .main-nav .nav-link {
-  border-radius: 8px;
-  padding: 9px 12px;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-doctors {
+    margin-right: 4px;
 }
 
 .main-nav .nav-link:hover,
@@ -235,69 +255,129 @@ svg {
 }
 
 .site-footer {
-  border-top: 1px solid var(--border);
-  background: #fff;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    background: #fff;
 }
 
 .footer-inner {
-  min-height: 88px;
-  color: var(--muted);
-  font-size: 12px;
+    padding-top: 30px;
+    padding-bottom: 20px;
+}
+
+.footer-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    padding-bottom: 26px;
 }
 
 .footer-brand {
-  display: grid;
-  gap: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 340px;
+}
+
+.footer-brand-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .footer-brand-name {
-  color: var(--petrol);
-  font-size: 14px;
-  font-weight: 700;
+    color: var(--petrol);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.footer-brand-subtitle {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+}
+
+.footer-brand p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
 }
 
 .footer-nav {
-  display: flex;
-  gap: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding-top: 5px;
 }
 
 .footer-nav a {
-  color: var(--muted);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    transition: color .15s;
 }
 
 .footer-nav a:hover {
-  color: var(--primary);
+    color: var(--primary);
 }
 
-.footer-meta {
-  display: flex;
-  gap: 16px;
-  white-space: nowrap;
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
 }
 
-.footer-meta a {
-  color: var(--primary);
-  font-weight: 700;
+@media (min-width: 992px) {
+    .navbar {
+        min-height: 76px;
+        align-items: center;
+    }
+
+    .main-nav {
+        align-self: stretch;
+    }
 }
 
 @media (max-width: 991.98px) {
-  .main-nav {
-    padding-top: 10px;
-  }
+    .header-inner {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
 
-  .main-nav .navbar-nav {
-    gap: 2px;
-  }
+    .navbar {
+        flex-wrap: wrap;
+    }
 
-  .main-nav .nav-link {
-    padding: 11px 12px;
-    font-size: 14px;
-  }
+    .main-nav {
+        flex-basis: 100%;
+        width: 100%;
+        padding-top: 12px;
+    }
 
-  .header-actions {
-    align-items: center;
-    padding: 10px 12px 12px;
-  }
+    .main-nav .navbar-nav {
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .main-nav .nav-link {
+        padding: 11px 12px;
+        font-size: 14px;
+    }
+
+    .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 12px 8px;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -332,15 +412,89 @@ svg {
   }
 
   .footer-inner {
-    padding-top: 18px;
-    padding-bottom: 18px;
-    text-align: center;
+        padding-top: 24px;
+        padding-bottom: 18px;
+    }
+
+  .footer-main {
+      flex-direction: column;
+      gap: 22px;
+      padding-bottom: 20px;
   }
 
-  .footer-nav,
-  .footer-meta {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px 14px;
+  .footer-nav {
+      gap: 12px 18px;
   }
+
+  .footer-bottom {
+      flex-direction: column;
+      gap: 8px;
+  }
+}
+
+.profile-menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.profile-menu-button::after {
+    margin-left: 0.25rem;
+}
+
+.profile-menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--petrol);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+
+.profile-menu-button:hover {
+    background: var(--soft);
+    border-color: #cbdce4;
+}
+
+.profile-icon {
+    font-size: 17px;
+    color: var(--primary);
+}
+
+.profile-menu-button::after {
+    margin-left: 3px;
+    color: var(--muted);
+}
+
+.logout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: #c04d58;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background .15s, color .15s;
+}
+
+.logout-item:hover {
+    background: #fff1f2;
+    color: #a93642;
+}
+
+.logout-item i {
+    font-size: 16px;
 }

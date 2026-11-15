@@ -94,7 +94,7 @@
 
                 <a
                     class="button button-primary button-small doctor-reserve-button"
-                    href="/reservar-turno/medicos/{{ medico.id }}/fecha-hora"
+                    href="{{ url_for('patient.reservar_fecha_hora', medico_id=medico.id) }}"
                 >
                     Reservar turno
                     <i class="bi bi-arrow-right"></i>

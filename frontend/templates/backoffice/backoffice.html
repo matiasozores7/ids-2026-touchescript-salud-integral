@@ -6,7 +6,7 @@ Dashboard operativo · Salud Integral
 {% endblock %}
 
 {% block backoffice_content %}
-
+{% from "pacientes/_componentes.html" import estado_pill %}
 {% set metrics = [
     (
         "Turnos de hoy",
@@ -31,8 +31,8 @@ Dashboard operativo · Salud Integral
 <div class="backoffice-heading d-flex flex-wrap justify-content-between align-items-end gap-3">
 
     <div>
-        <h1>Buen día, Andrés</h1>
-        <p>Resumen operativo de la jornada.</p>
+        <h1>Dashboard operativo</h1>
+        <p>Resumen general de la jornada.</p>
     </div>
 
     <div class="d-flex gap-2">
@@ -43,7 +43,7 @@ Dashboard operativo · Salud Integral
             Check-in
         </a>
 
-        <a class="button button-outline button-small" href="#">
+        <a class="button button-outline button-small" href="{{ url_for('backoffice.backoffice_turnos') }}">
             Ver turnos
         </a>
 
@@ -171,9 +171,9 @@ Dashboard operativo · Salud Integral
 
                         </div>
 
-                        <span class="upcoming-status status-{{ turno.estado }}">
-                            {{ turno.estado | capitalize }}
-                        </span>
+                        <div class="upcoming-status">
+                            {{ estado_pill(turno.estado) }}
+                        </div>
 
                     </div>
 

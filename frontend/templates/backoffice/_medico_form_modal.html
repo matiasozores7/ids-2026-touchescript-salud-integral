@@ -1,5 +1,5 @@
 
-<div class="modal fade"
+<div class="modal fade abm-modal"
      id="medico-modal"
      tabindex="-1"
      aria-labelledby="medico-modal-titulo"
@@ -13,7 +13,7 @@
               id="medico-form">
 
             <div class="modal-header">
-                <h2 class="modal-title fs-5" id="medico-modal-titulo">
+                <h2 class="modal-title" id="medico-modal-titulo">
                     Nuevo médico
                 </h2>
 
@@ -25,11 +25,10 @@
             </div>
 
             <div class="modal-body">
-                <div class="row g-3">
+                <div class="row g-4">
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-matricula">
+                        <label class="form-label" for="medico-matricula">
                             Matrícula *
                         </label>
 
@@ -41,8 +40,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-especialidad">
+                        <label class="form-label" for="medico-especialidad">
                             Especialidad *
                         </label>
 
@@ -61,8 +59,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-nombre">
+                        <label class="form-label" for="medico-nombre">
                             Nombre *
                         </label>
 
@@ -75,8 +72,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-apellido">
+                        <label class="form-label" for="medico-apellido">
                             Apellido *
                         </label>
 
@@ -89,8 +85,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-email">
+                        <label class="form-label" for="medico-email">
                             Email *
                         </label>
 
@@ -103,8 +98,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-medium"
-                               for="medico-telefono">
+                        <label class="form-label" for="medico-telefono">
                             Teléfono
                         </label>
 
@@ -115,8 +109,7 @@
                     </div>
 
                     <div class="col-md-6" data-solo-alta>
-                        <label class="form-label small fw-medium"
-                               for="medico-password">
+                        <label class="form-label" for="medico-password">
                             Contraseña inicial *
                         </label>
 
@@ -135,28 +128,30 @@
                     </div>
 
                     <div class="col-12">
-                        <span class="form-label small fw-medium d-block">
+                        <span class="form-label d-block">
                             Coberturas aceptadas
                         </span>
 
-                        {% for cobertura in coberturas %}
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                       id="medico-cobertura-{{ cobertura.id }}"
-                                       name="coberturas"
-                                       type="checkbox"
-                                       value="{{ cobertura.id }}">
+                        <div class="d-flex flex-wrap gap-3">
+                            {% for cobertura in coberturas %}
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           id="medico-cobertura-{{ cobertura.id }}"
+                                           name="coberturas"
+                                           type="checkbox"
+                                           value="{{ cobertura.id }}">
 
-                                <label class="form-check-label"
-                                       for="medico-cobertura-{{ cobertura.id }}">
-                                    {{ cobertura.nombre }}
-                                </label>
-                            </div>
-                        {% else %}
-                            <p class="text-body-secondary small">
-                                No hay coberturas disponibles.
-                            </p>
-                        {% endfor %}
+                                    <label class="form-check-label small"
+                                           for="medico-cobertura-{{ cobertura.id }}">
+                                        {{ cobertura.nombre }}
+                                    </label>
+                                </div>
+                            {% else %}
+                                <p class="text-body-secondary small mb-0">
+                                    No hay coberturas disponibles.
+                                </p>
+                            {% endfor %}
+                        </div>
                     </div>
 
                 </div>

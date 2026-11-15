@@ -333,3 +333,128 @@ def listar_turnos_disponibles(connection, medico_id: int) -> list:
     with connection.cursor() as cursor:
         cursor.execute(query, (medico_id,))
         return cursor.fetchall()
+
+def _construir_filtros_turnos(
+    fecha: str | None = None,
+    estado: str | None = None,
+    especialidad_id: int | None = None,
+    medico_id: int | None = None,
+    busqueda: str | None = None
+) -> tuple[str, list]:
+
+    filtros = []
+    params = []
+
+    if fecha:
+        filtros.append("DATE(t.fecha_hora) = %s")
+        params.append(fecha)
+
+    if estado:
+        filtros.append("t.estado = %s")
+        params.append(estado)
+
+    if especialidad_id is not None:
+        filtros.append("m.especialidad_id = %s")
+        params.append(especialidad_id)
+
+    if medico_id is not None:
+        filtros.append("t.medico_id = %s")
+        params.append(medico_id)
+
+    if busqueda:
+        filtros.append("""
+            (
+                CAST(t.id AS CHAR) LIKE %s
+                OR u_pac.nombre LIKE %s
+                OR u_pac.apellido LIKE %s
+                OR CONCAT(u_pac.nombre, ' ', u_pac.apellido) LIKE %s
+            )
+        """)
+
+        termino = f"%{busqueda}%"
+        params.extend([termino] * 4)
+
+    where = " WHERE " + " AND ".join(filtros) if filtros else ""
+
+    return where, params
+
+def contar_turnos_administrativos(
+    connection,
+    fecha=None,
+    estado=None,
+    especialidad_id=None,
+    medico_id=None,
+    busqueda=None
+) -> int:
+
+    where, params = _construir_filtros_turnos(
+        fecha, estado, especialidad_id, medico_id, busqueda
+    )
+
+    query = """
+        SELECT COUNT(*) AS total
+        FROM turnos t
+        INNER JOIN medicos m ON t.medico_id = m.id
+        INNER JOIN usuarios u_med ON m.usuario_id = u_med.id
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+    """ + where
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, tuple(params))
+        return cursor.fetchone()["total"]
+
+def listar_turnos_administrativos(
+    connection,
+    limit: int,
+    offset: int,
+    fecha=None,
+    estado=None,
+    especialidad_id=None,
+    medico_id=None,
+    busqueda=None
+) -> list:
+
+    where, params = _construir_filtros_turnos(
+        fecha, estado, especialidad_id, medico_id, busqueda
+    )
+
+    query = """
+        SELECT
+            t.id AS turno_id,
+            t.fecha_hora,
+            t.fecha_hora_llegada,
+            t.estado,
+
+            p.id AS paciente_id,
+            u_pac.nombre AS paciente_nombre,
+            u_pac.apellido AS paciente_apellido,
+
+            m.id AS medico_id,
+            u_med.nombre AS medico_nombre,
+            u_med.apellido AS medico_apellido,
+
+            e.id AS especialidad_id,
+            e.nombre AS especialidad,
+
+            c.id AS consultorio_id,
+            c.numero_sala AS consultorio_sala,
+            c.piso AS consultorio_piso
+
+        FROM turnos t
+        INNER JOIN medicos m ON t.medico_id = m.id
+        INNER JOIN usuarios u_med ON m.usuario_id = u_med.id
+        INNER JOIN especialidades e ON m.especialidad_id = e.id
+        INNER JOIN consultorios c ON t.consultorio_id = c.id
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+    """ + where + """
+        ORDER BY t.fecha_hora ASC, t.id ASC
+        LIMIT %s OFFSET %s
+    """
+
+    params.extend([limit, offset])
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, tuple(params))
+        return cursor.fetchall()

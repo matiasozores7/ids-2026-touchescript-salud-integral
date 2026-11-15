@@ -1,0 +1,255 @@
+
+/* ========================================
+   BACKOFFICE - ABM
+   Listados, encabezados y paginación
+======================================== */
+
+/* Encabezado */
+
+.abm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.abm-heading h1 {
+  margin: 0;
+  color: #2f3e4e;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.8px;
+}
+
+.abm-heading p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Contenedor del listado */
+
+.abm-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+/* Barra superior */
+
+.abm-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.abm-search {
+  display: flex;
+  width: min(100%, 340px);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fff;
+  color: #8995a1;
+}
+
+.abm-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgb(0 0 0 / 5%);
+}
+
+.abm-search i {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.abm-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  padding: 10px 0;
+  background: transparent;
+  color: #354052;
+  font-size: 12px;
+}
+
+.abm-search input::placeholder {
+  color: #9aa4ae;
+}
+
+.abm-count {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.abm-count strong {
+  color: #354052;
+  font-weight: 700;
+}
+
+/* Tabla */
+
+.abm-table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--border);
+}
+
+.abm-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.abm-table thead th {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  background: #f8fafb;
+  color: #84909c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.abm-table tbody td {
+  border: 0;
+  border-bottom: 1px solid #eef1f3;
+  padding: 14px 20px;
+  color: #354052;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.abm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.abm-table tbody tr:hover {
+  background: #fafcfd;
+}
+
+.abm-table .abm-actions {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Acciones */
+
+.abm-action {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #778491;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+
+.abm-action:hover {
+  background: #edf3f6;
+  color: var(--petrol);
+}
+
+.abm-action-danger:hover {
+  background: #fdecef;
+  color: #cf3a57;
+}
+
+/* Estados vacíos */
+
+.abm-empty {
+  padding: 34px 20px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.abm-empty[hidden] {
+  display: none !important;
+}
+
+/* Pie y paginación */
+
+.abm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 14px 20px;
+}
+
+.abm-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.abm-pagination .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+/* Responsive */
+
+@media (max-width: 767.98px) {
+  .abm-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .abm-header > .button {
+    align-self: flex-start;
+  }
+
+  .abm-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .abm-search {
+    width: 100%;
+  }
+
+  .abm-count {
+    text-align: right;
+  }
+
+  .abm-table thead th,
+  .abm-table tbody td {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .abm-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .abm-pagination {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

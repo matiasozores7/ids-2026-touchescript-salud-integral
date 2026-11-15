@@ -1,195 +1,124 @@
+
 {% extends "backoffice/base.html" %}
 
 {% block backoffice_title %}
 Consultorios · Salud Integral
 {% endblock %}
 
-
 {% block backoffice_styles %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-consultorios.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
 {% endblock %}
-
 
 {% block breadcrumb %}
 <span>/ Consultorios</span>
 {% endblock %}
 
-
 {% block backoffice_content %}
 
-<div class="consultorios-content">
-
-    <div class="consultorios-heading">
-
-        <div>
-            <h1>Consultorios</h1>
-            <p>Administrá las salas disponibles para la atención médica.</p>
-        </div>
-
-        <a class="button button-primary button-small"
-           href="{{ url_for('backoffice.formulario_consultorio') }}"
-
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
-            Nuevo consultorio
-
-        </a>
-
+<div class="abm-header">
+    <div class="abm-heading">
+        <h1>Consultorios</h1>
+        <p>Administrá las salas disponibles para la atención médica.</p>
     </div>
 
-
-    <section class="consultorios-table-card"
-             aria-labelledby="consultorios-list-title">
-
-        <div class="consultorios-toolbar">
-
-            <div class="consultorios-search">
-
-                <i class="bi bi-search" aria-hidden="true"></i>
-
-                <label class="visually-hidden"
-                       for="consultorio-search">
-                    Buscar consultorio
-                </label>
-
-                <input id="consultorio-search"
-                       type="search"
-                       placeholder="Buscar por sala o piso">
-
-            </div>
-
-            <span class="consultorios-count">
-                <strong>{{ consultorios | length }}</strong>
-                consultorios activos
-            </span>
-
-        </div>
-
-
-        <div class="table-responsive">
-
-            <table class="consultorios-table">
-
-                <caption id="consultorios-list-title"
-                         class="visually-hidden">
-                    Listado de consultorios activos
-                </caption>
-
-                <thead>
-                    <tr>
-                        <th scope="col">Consultorio</th>
-                        <th scope="col">Piso</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col" class="consultorio-actions">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-
-
-                <tbody>
-
-                    {% for consultorio in consultorios %}
-
-                        <tr>
-
-                            <th scope="row">
-
-                                <span class="consultorio-icon">
-                                    <i class="bi bi-building"
-                                       aria-hidden="true"></i>
-                                </span>
-
-                                Sala {{ consultorio.numero_sala }}
-
-                            </th>
-
-
-                            <td>
-                                {{ consultorio.piso or "Sin piso asignado" }}
-                            </td>
-
-
-                            <td>
-                                <span class="status-active">
-                                    Activo
-                                </span>
-                            </td>
-
-
-                            <td class="consultorio-actions">
-
-                                <a href="{{ url_for('backoffice.formulario_consultorio', consultorio_id=consultorio.id) }}"
-                                aria-label="Editar sala {{ consultorio.numero_sala }}">
-
-                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
-                                </a>
-
-                                <form
-                                    action="{{ url_for('backoffice.eliminar_consultorio', consultorio_id=consultorio.id) }}"
-                                    method="POST"
-                                >
-                                    <button
-                                        type="submit"
-                                        aria-label="Dar de baja sala {{ consultorio.numero_sala }}"
-                                    >
-                                        <i class="bi bi-trash3" aria-hidden="true"></i>
-                                    </button>
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <div class="consultorios-pagination"
-             aria-label="Paginación de consultorios">
-
-            <span>Mostrando {{ consultorios | length }} resultados</span>
-
-            <div>
-
-                <button type="button"
-                        disabled
-                        aria-label="Página anterior">
-
-                    <i class="bi bi-chevron-left"
-                       aria-hidden="true"></i>
-
-                </button>
-
-                <button class="current"
-                        type="button"
-                        aria-current="page">
-                    1
-                </button>
-
-                <button type="button"
-                        disabled
-                        aria-label="Página siguiente">
-
-                    <i class="bi bi-chevron-right"
-                       aria-hidden="true"></i>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
+    <a class="button button-primary button-small"
+       href="{{ url_for('backoffice.formulario_consultorio') }}">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Nuevo consultorio
+    </a>
 </div>
+
+<section class="abm-card" aria-label="Listado de consultorios">
+
+    <div class="abm-toolbar">
+        <div class="abm-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+
+            <label class="visually-hidden" for="consultorio-search">
+                Buscar consultorio
+            </label>
+
+            <input id="consultorio-search"
+                   type="search"
+                   placeholder="Buscar por sala o piso"
+                   autocomplete="off">
+        </div>
+
+        <div class="abm-count">
+            <strong>{{ consultorios | length }}</strong>
+            registros
+        </div>
+    </div>
+
+    <div class="abm-table-wrap">
+        <table class="abm-table">
+            <thead>
+                <tr>
+                    <th>Consultorio</th>
+                    <th>Piso</th>
+                    <th>Estado</th>
+                    <th class="abm-actions">
+                        <span class="visually-hidden">Acciones</span>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for consultorio in consultorios %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="avatar avatar-small avatar-soft"
+                                      aria-hidden="true">
+                                    <i class="bi bi-building"></i>
+                                </span>
+
+                                <span class="fw-medium">
+                                    Sala {{ consultorio.numero_sala }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ consultorio.piso or "Sin piso asignado" }}
+                        </td>
+
+                        <td>
+                            <span class="status-active">
+                                Activo
+                            </span>
+                        </td>
+
+                        <td class="abm-actions">
+                            <a class="abm-action"
+                               href="{{ url_for('backoffice.formulario_consultorio', consultorio_id=consultorio.id) }}"
+                               aria-label="Editar sala {{ consultorio.numero_sala }}">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                            </a>
+
+                            <form class="d-inline"
+                                  action="{{ url_for('backoffice.eliminar_consultorio', consultorio_id=consultorio.id) }}"
+                                  method="POST">
+                                <button class="abm-action abm-action-danger"
+                                        type="submit"
+                                        aria-label="Dar de baja sala {{ consultorio.numero_sala }}">
+                                    <i class="bi bi-trash3" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="abm-empty">
+                            No hay consultorios registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
 
 {% endblock %}
