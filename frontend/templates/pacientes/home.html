@@ -87,10 +87,11 @@
       <a href="{{ url_for('patient.listar_especialidades') }}">Ver todas</a>
     </div>
     <div class="specialty-grid row g-3">
-      {% for especialidad in especialidades %}
+      {% for especialidad in especialidades[:3] %}
+      <div class="col-6 col-md-4">
         <a
-          class="specialty-card col-6 col-md-4 col-lg-3"
-          href="{{ url_for('patient.reservar_medico', especialidad_id=especialidad.id) }}"
+           class="specialty-card"
+           href="{{ url_for('patient.reservar_medico', especialidad_id=especialidad.id) }}"
         >
           <span class="specialty-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
@@ -119,6 +120,7 @@
             </span>
           {% endif %}
         </a>
+      </div>
       {% else %}
         <p>No hay especialidades disponibles.</p>
       {% endfor %}
@@ -128,11 +130,12 @@
   <section class="content-section" id="profesionales">
     <div class="section-heading">
       <h2>Profesionales destacados</h2>
-      <a href="#profesionales">Ver profesionales</a>
+      <a href="{{ url_for('patient.listar_profesionales') }}">Ver profesionales</a>
     </div>
     <div class="doctor-grid row g-3">
-      {% for medico in medicos %}
-        <article class="doctor-card card col-lg-4">
+      {% for medico in medicos[:3] %}
+      <div class="col-lg-4">
+        <article class="doctor-card card">
 
           <div class="doctor-card-heading">
             <span class="avatar avatar-large">
@@ -190,6 +193,7 @@
           </div>
 
         </article>
+      </div>
       {% else %}
         <p>No hay profesionales disponibles.</p>
       {% endfor %}
