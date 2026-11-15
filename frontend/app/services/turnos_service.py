@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from app.clients.api_client import api_request
 from app.errors.exceptions import ExternalServiceError
+
 
 DIAS_SEMANA = {
     0: "Lunes",
@@ -215,3 +216,45 @@ def listar_turnos_administrativos(
         )
 
     return data
+
+
+def listar_turnos_calendario(
+    fecha_inicio: str,
+    fecha_fin: str,
+    especialidad_id: int | None = None,
+    medico_id: int | None = None,
+    estado: str | None = None,
+) -> list[dict]:
+    inicio = date.fromisoformat(fecha_inicio)
+    fin = date.fromisoformat(fecha_fin)
+
+    if fin < inicio:
+        raise ValueError("La fecha de inicio no puede ser posterior a la fecha de fin.")
+
+    turnos = []
+    dia_actual = inicio
+
+    while dia_actual <= fin:
+        offset = 0
+        limit = 100
+        total = 1
+
+        while offset < total:
+            resultado = listar_turnos_administrativos(
+                limit=limit,
+                offset=offset,
+                fecha=dia_actual.isoformat(),
+                estado=estado,
+                especialidad_id=especialidad_id,
+                medico_id=medico_id,
+            )
+
+            items = resultado["items"]
+            turnos.extend(items)
+
+            total = resultado["total"]
+            offset += len(items)
+
+        dia_actual += timedelta(days=1)
+
+    return turnos

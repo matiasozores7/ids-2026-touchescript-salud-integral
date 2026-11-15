@@ -3,142 +3,39 @@
     "use strict";
 
     // ========================================
-    // DATOS FICTICIOS
-    // day: 0 = lunes ... 5 = sábado
+    // DATOS REALES
     // ========================================
 
-    const appointments = [
-        {
-            id: 1,
-            day: 0,
-            time: "08:00",
-            patient: "Sofía Martínez",
-            doctor: "María González",
-            specialty: "Cardiología",
-            office: "101",
-            status: "confirmado"
-        },
-        {
-            id: 2,
-            day: 0,
-            time: "09:00",
-            patient: "Lucas Fernández",
-            doctor: "Juan Pérez",
-            specialty: "Clínica médica",
-            office: "102",
-            status: "reservado"
-        },
-        {
-            id: 3,
-            day: 0,
-            time: "10:30",
-            patient: "Valentina López",
-            doctor: "Laura Fernández",
-            specialty: "Dermatología",
-            office: "103",
-            status: "atendido"
-        },
-        {
-            id: 4,
-            day: 1,
-            time: "08:30",
-            patient: "Tomás Rodríguez",
-            doctor: "Carlos Rodríguez",
-            specialty: "Traumatología",
-            office: "104",
-            status: "confirmado"
-        },
-        {
-            id: 5,
-            day: 1,
-            time: "10:00",
-            patient: "Camila Torres",
-            doctor: "María González",
-            specialty: "Cardiología",
-            office: "101",
-            status: "cancelado"
-        },
-        {
-            id: 6,
-            day: 1,
-            time: "11:30",
-            patient: "Mateo García",
-            doctor: "Juan Pérez",
-            specialty: "Clínica médica",
-            office: "102",
-            status: "confirmado"
-        },
-        {
-            id: 7,
-            day: 2,
-            time: "09:00",
-            patient: "Martina Díaz",
-            doctor: "Laura Fernández",
-            specialty: "Dermatología",
-            office: "103",
-            status: "reservado"
-        },
-        {
-            id: 8,
-            day: 2,
-            time: "11:00",
-            patient: "Benjamín Castro",
-            doctor: "Carlos Rodríguez",
-            specialty: "Traumatología",
-            office: "104",
-            status: "ausente"
-        },
-        {
-            id: 9,
-            day: 3,
-            time: "08:00",
-            patient: "Emma Romero",
-            doctor: "María González",
-            specialty: "Cardiología",
-            office: "101",
-            status: "confirmado"
-        },
-        {
-            id: 10,
-            day: 3,
-            time: "10:30",
-            patient: "Joaquín Herrera",
-            doctor: "Juan Pérez",
-            specialty: "Clínica médica",
-            office: "102",
-            status: "reservado"
-        },
-        {
-            id: 11,
-            day: 4,
-            time: "09:30",
-            patient: "Isabella Morales",
-            doctor: "Laura Fernández",
-            specialty: "Dermatología",
-            office: "103",
-            status: "confirmado"
-        },
-        {
-            id: 12,
-            day: 4,
-            time: "11:00",
-            patient: "Santiago Acosta",
-            doctor: "Carlos Rodríguez",
-            specialty: "Traumatología",
-            office: "104",
-            status: "cancelado"
-        },
-        {
-            id: 13,
-            day: 5,
-            time: "09:00",
-            patient: "Renata Silva",
-            doctor: "María González",
-            specialty: "Cardiología",
-            office: "101",
-            status: "confirmado"
-        }
-    ];
+    const rawAppointments = window.CALENDAR_DATA?.turnos || [];
+
+    const appointments = rawAppointments.map(turno => {
+        const fechaHora = turno.fecha_hora || "";
+
+        return {
+            id: turno.turno_id,
+
+            dateKey: fechaHora.slice(0, 10),
+            time: fechaHora.slice(11, 16),
+
+            patient: [
+                turno.paciente_nombre,
+                turno.paciente_apellido
+            ].filter(Boolean).join(" ") || "Sin paciente asignado",
+
+            doctor: [
+                turno.medico_nombre,
+                turno.medico_apellido
+            ].filter(Boolean).join(" "),
+
+            doctorId: turno.medico_id,
+            specialtyId: turno.especialidad_id,
+
+            specialty: turno.especialidad || "Sin especialidad",
+
+            office: turno.consultorio_sala ?? "—",
+            status: turno.estado
+        };
+    });
 
     // ========================================
     // ELEMENTOS
@@ -151,27 +48,41 @@
     const previousButton = document.getElementById("calendar-previous");
     const nextButton = document.getElementById("calendar-next");
     const todayButton = document.getElementById("calendar-today");
-    const newAppointmentButton = document.getElementById("calendar-new-appointment");
 
-    const specialtyFilter = document.getElementById("calendar-filter-specialty");
-    const doctorFilter = document.getElementById("calendar-filter-doctor");
-    const showCancelledFilter = document.getElementById("calendar-show-cancelled");
+    const newAppointmentButton = document.getElementById(
+        "calendar-new-appointment"
+    );
 
-    const modalElement = document.getElementById("calendar-appointment-modal");
+    const specialtyFilter = document.getElementById(
+        "calendar-filter-specialty"
+    );
+
+    const doctorFilter = document.getElementById(
+        "calendar-filter-doctor"
+    );
+
+    const showCancelledFilter = document.getElementById(
+        "calendar-show-cancelled"
+    );
+
+    const modalElement = document.getElementById(
+        "calendar-appointment-modal"
+    );
 
     // ========================================
     // ESTADO
     // ========================================
 
-    let weekOffset = 0;
-
     const statusLabels = {
+        disponible: "Disponible",
         reservado: "Reservado",
         confirmado: "Confirmado",
         atendido: "Atendido",
         cancelado: "Cancelado",
         ausente: "Ausente"
     };
+
+    const allowedStatuses = new Set(Object.keys(statusLabels));
 
     const dayFormatter = new Intl.DateTimeFormat("es-AR", {
         weekday: "long"
@@ -187,29 +98,45 @@
     });
 
     // ========================================
+    // SEGURIDAD
+    // ========================================
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => {
+            const entities = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            };
+
+            return entities[character];
+        });
+    }
+
+    // ========================================
     // FECHAS
     // ========================================
 
-    function getMonday(date) {
-        const result = new Date(
+    function parseLocalDate(dateString) {
+        const [year, month, day] = dateString.split("-").map(Number);
+
+        return new Date(year, month - 1, day);
+    }
+
+    function formatDateKey(date) {
+        return [
             date.getFullYear(),
-            date.getMonth(),
-            date.getDate()
-        );
-
-        const day = result.getDay();
-        const difference = day === 0 ? -6 : 1 - day;
-
-        result.setDate(result.getDate() + difference);
-
-        return result;
+            String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0")
+        ].join("-");
     }
 
     function getWeekDates() {
-        const today = new Date();
-        const monday = getMonday(today);
-
-        monday.setDate(monday.getDate() + weekOffset * 7);
+        const monday = parseLocalDate(
+            window.CALENDAR_DATA.fechaInicio
+        );
 
         return Array.from({ length: 6 }, (_, index) => {
             const date = new Date(monday);
@@ -234,34 +161,132 @@
     function isToday(date) {
         const today = new Date();
 
-        return (
-            date.getDate() === today.getDate() &&
-            date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear()
+        return formatDateKey(date) === formatDateKey(today);
+    }
+
+    // ========================================
+    // NAVEGACIÓN
+    // ========================================
+
+    function navigateWeek(offset) {
+        const monday = getWeekDates()[0];
+
+        monday.setDate(monday.getDate() + offset * 7);
+
+        const params = new URLSearchParams(window.location.search);
+
+        params.set("fecha_inicio", formatDateKey(monday));
+
+        window.location.search = params.toString();
+    }
+
+    function navigateToToday() {
+        const params = new URLSearchParams(window.location.search);
+
+        params.delete("fecha_inicio");
+
+        window.location.search = params.toString();
+    }
+
+    // ========================================
+    // FILTROS DINÁMICOS
+    // ========================================
+
+    function populateFilter(select, placeholder, items) {
+        const selectedValue = select.value;
+
+        select.innerHTML = "";
+
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = placeholder;
+
+        select.appendChild(defaultOption);
+
+        items.forEach(item => {
+            const option = document.createElement("option");
+
+            option.value = String(item.id);
+            option.textContent = item.name;
+
+            select.appendChild(option);
+        });
+
+        if (
+            Array.from(select.options).some(
+                option => option.value === selectedValue
+            )
+        ) {
+            select.value = selectedValue;
+        }
+    }
+
+    function initializeFilters() {
+        const specialties = new Map();
+        const doctors = new Map();
+
+        appointments.forEach(appointment => {
+            if (appointment.specialtyId != null) {
+                specialties.set(
+                    String(appointment.specialtyId),
+                    appointment.specialty
+                );
+            }
+
+            if (appointment.doctorId != null) {
+                doctors.set(
+                    String(appointment.doctorId),
+                    appointment.doctor
+                );
+            }
+        });
+
+        const specialtyOptions = Array.from(
+            specialties,
+            ([id, name]) => ({ id, name })
+        ).sort((a, b) => a.name.localeCompare(b.name, "es"));
+
+        const doctorOptions = Array.from(
+            doctors,
+            ([id, name]) => ({ id, name })
+        ).sort((a, b) => a.name.localeCompare(b.name, "es"));
+
+        populateFilter(
+            specialtyFilter,
+            "Todas las especialidades",
+            specialtyOptions
+        );
+
+        populateFilter(
+            doctorFilter,
+            "Todos los profesionales",
+            doctorOptions
         );
     }
 
     // ========================================
-    // FILTROS
+    // FILTRADO
     // ========================================
 
     function getFilteredAppointments(day) {
+        const dateKey = formatDateKey(getWeekDates()[day]);
+
         return appointments
             .filter(appointment => {
-                if (appointment.day !== day) {
+                if (appointment.dateKey !== dateKey) {
                     return false;
                 }
 
                 if (
                     specialtyFilter.value &&
-                    appointment.specialty !== specialtyFilter.value
+                    String(appointment.specialtyId) !== specialtyFilter.value
                 ) {
                     return false;
                 }
 
                 if (
                     doctorFilter.value &&
-                    appointment.doctor !== doctorFilter.value
+                    String(appointment.doctorId) !== doctorFilter.value
                 ) {
                     return false;
                 }
@@ -283,27 +308,31 @@
     // ========================================
 
     function createAppointmentCard(appointment) {
+        const statusClass = allowedStatuses.has(appointment.status)
+            ? `status-${appointment.status}`
+            : "";
+
         return `
             <button
                 type="button"
-                class="calendar-appointment status-${appointment.status}"
-                data-appointment-id="${appointment.id}"
-                aria-label="Turno de ${appointment.patient}, ${appointment.time}"
+                class="calendar-appointment ${statusClass}"
+                data-appointment-id="${escapeHTML(appointment.id)}"
+                aria-label="Turno de ${escapeHTML(appointment.patient)}, ${escapeHTML(appointment.time)}"
             >
                 <span class="calendar-appointment-time">
-                    ${appointment.time}
+                    ${escapeHTML(appointment.time)}
                 </span>
 
                 <span class="calendar-appointment-patient">
-                    ${appointment.patient}
+                    ${escapeHTML(appointment.patient)}
                 </span>
 
                 <span class="calendar-appointment-doctor">
-                    Dr./Dra. ${appointment.doctor}
+                    ${escapeHTML(appointment.doctor)}
                 </span>
 
                 <span class="calendar-appointment-specialty">
-                    ${appointment.specialty}
+                    ${escapeHTML(appointment.specialty)}
                 </span>
             </button>
         `;
@@ -317,7 +346,8 @@
         const dayAppointments = getFilteredAppointments(dayIndex);
 
         const dayName = dayFormatter.format(date);
-        const formattedDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        const formattedDay = dayName.charAt(0).toUpperCase() +
+            dayName.slice(1);
 
         const todayClass = isToday(date) ? "is-today" : "";
 
@@ -392,20 +422,20 @@
 
     function showAppointmentDetails(appointmentId) {
         const appointment = appointments.find(
-            item => item.id === Number(appointmentId)
+            item => String(item.id) === String(appointmentId)
         );
 
         if (!appointment) {
             return;
         }
 
-        const date = getWeekDates()[appointment.day];
+        const date = parseLocalDate(appointment.dateKey);
 
         document.getElementById("calendar-detail-patient").textContent =
             appointment.patient;
 
         document.getElementById("calendar-detail-doctor").textContent =
-            `Dr./Dra. ${appointment.doctor}`;
+            appointment.doctor;
 
         document.getElementById("calendar-detail-specialty").textContent =
             appointment.specialty;
@@ -429,7 +459,9 @@
     function bindAppointmentEvents() {
         board.querySelectorAll("[data-appointment-id]").forEach(button => {
             button.addEventListener("click", () => {
-                showAppointmentDetails(button.dataset.appointmentId);
+                showAppointmentDetails(
+                    button.dataset.appointmentId
+                );
             });
         });
     }
@@ -439,22 +471,18 @@
     // ========================================
 
     previousButton.addEventListener("click", () => {
-        weekOffset--;
-        renderCalendar();
+        navigateWeek(-1);
     });
 
     nextButton.addEventListener("click", () => {
-        weekOffset++;
-        renderCalendar();
+        navigateWeek(1);
     });
 
-    todayButton.addEventListener("click", () => {
-        weekOffset = 0;
-        renderCalendar();
-    });
+    todayButton.addEventListener("click", navigateToToday);
 
     specialtyFilter.addEventListener("change", renderCalendar);
     doctorFilter.addEventListener("change", renderCalendar);
+
     showCancelledFilter.addEventListener("change", renderCalendar);
 
     newAppointmentButton.addEventListener("click", () => {
@@ -467,6 +495,7 @@
     // INICIALIZACIÓN
     // ========================================
 
+    initializeFilters();
     renderCalendar();
 
 })();

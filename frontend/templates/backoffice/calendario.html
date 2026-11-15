@@ -20,7 +20,6 @@ Calendario · Salud Integral
 
 <section class="calendar-page">
 
-    <!-- Encabezado -->
     <header class="calendar-header">
 
         <div>
@@ -39,7 +38,6 @@ Calendario · Salud Integral
 
     </header>
 
-    <!-- Navegación temporal -->
     <section class="calendar-navigation">
 
         <div class="calendar-navigation-controls">
@@ -78,7 +76,6 @@ Calendario · Salud Integral
 
     </section>
 
-    <!-- Filtros -->
     <section class="calendar-filters">
 
         <div class="calendar-filter">
@@ -89,11 +86,6 @@ Calendario · Salud Integral
 
             <select id="calendar-filter-specialty">
                 <option value="">Todas las especialidades</option>
-                <option value="Cardiología">Cardiología</option>
-                <option value="Clínica médica">Clínica médica</option>
-                <option value="Dermatología">Dermatología</option>
-                <option value="Pediatría">Pediatría</option>
-                <option value="Traumatología">Traumatología</option>
             </select>
 
         </div>
@@ -106,10 +98,6 @@ Calendario · Salud Integral
 
             <select id="calendar-filter-doctor">
                 <option value="">Todos los profesionales</option>
-                <option value="María González">Dra. María González</option>
-                <option value="Juan Pérez">Dr. Juan Pérez</option>
-                <option value="Laura Fernández">Dra. Laura Fernández</option>
-                <option value="Carlos Rodríguez">Dr. Carlos Rodríguez</option>
             </select>
 
         </div>
@@ -124,18 +112,13 @@ Calendario · Salud Integral
 
     </section>
 
-    <!-- Calendario semanal -->
     <section
         class="calendar-board"
         id="calendar-board"
         aria-label="Calendario semanal de turnos"
     >
-
-        <!-- Los días y turnos se generan mediante JavaScript -->
-
     </section>
 
-    <!-- Estado sin resultados -->
     <div
         class="calendar-empty"
         id="calendar-empty"
@@ -147,7 +130,6 @@ Calendario · Salud Integral
 
 </section>
 
-<!-- Modal de detalle -->
 <div
     class="modal fade"
     id="calendar-appointment-modal"
@@ -165,6 +147,7 @@ Calendario · Salud Integral
                     <h2 class="modal-title" id="calendar-modal-title">
                         Detalle del turno
                     </h2>
+
                     <p class="calendar-modal-subtitle">
                         Información del turno seleccionado
                     </p>
@@ -237,8 +220,17 @@ Calendario · Salud Integral
 {% endblock %}
 
 {% block backoffice_scripts %}
+
+<script>
+    window.CALENDAR_DATA = {
+        turnos: {{ turnos | tojson }},
+        fechaInicio: {{ fecha_inicio | tojson }}
+    };
+</script>
+
 <script
     src="{{ url_for('static', filename='js/backoffice-calendario.js') }}"
     defer
 ></script>
+
 {% endblock %}
