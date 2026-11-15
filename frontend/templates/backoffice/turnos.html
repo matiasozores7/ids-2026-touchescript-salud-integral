@@ -6,9 +6,9 @@ Turnos · Salud Integral
 {% endblock %}
 
 {% block backoffice_styles %}
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-turnos.css') }}">
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,35 +16,30 @@ Turnos · Salud Integral
 {% endblock %}
 
 {% block backoffice_content %}
+
 {% from "pacientes/_componentes.html" import estado_pill %}
-<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
-    <div class="backoffice-heading">
+
+<div class="abm-header">
+    <div class="abm-heading">
         <h1>Turnos</h1>
         <p>Administración y seguimiento de turnos médicos.</p>
     </div>
 </div>
 
-<section class="card rounded-4 shadow-sm overflow-hidden"
-         aria-label="Listado de turnos">
+<section class="abm-card turnos-card" aria-label="Listado de turnos">
 
     <form method="GET"
           action="{{ url_for('backoffice.backoffice_turnos') }}"
-          class="p-3">
+          class="turnos-filters">
 
-        <div class="row g-3 align-items-end">
+        <div class="turnos-filter-grid">
 
-            <div class="col-lg-4 col-md-6">
-                <label for="turnos-buscar" class="form-label small fw-medium">
-                    Buscar turno
-                </label>
+            <div class="turnos-filter turnos-filter-search">
+                <label for="turnos-buscar">Buscar turno</label>
 
-                <div class="input-group">
-                    <span class="input-group-text bg-white">
-                        <i class="bi bi-search" aria-hidden="true"></i>
-                    </span>
-
+                <div class="turnos-search-input">
+                    <i class="bi bi-search" aria-hidden="true"></i>
                     <input id="turnos-buscar"
-                           class="form-control border-start-0"
                            type="search"
                            name="busqueda"
                            placeholder="Paciente, profesional o ID"
@@ -52,11 +47,8 @@ Turnos · Salud Integral
                 </div>
             </div>
 
-            <div class="col-lg-2 col-md-6">
-                <label for="turnos-fecha" class="form-label small fw-medium">
-                    Fecha
-                </label>
-
+            <div class="turnos-filter">
+                <label for="turnos-fecha">Fecha</label>
                 <input id="turnos-fecha"
                        class="form-control"
                        type="date"
@@ -64,11 +56,8 @@ Turnos · Salud Integral
                        value="{{ request.args.get('fecha', '') }}">
             </div>
 
-            <div class="col-lg-2 col-md-4">
-                <label for="turnos-estado" class="form-label small fw-medium">
-                    Estado
-                </label>
-
+            <div class="turnos-filter">
+                <label for="turnos-estado">Estado</label>
                 <select id="turnos-estado"
                         class="form-select"
                         name="estado">
@@ -83,11 +72,8 @@ Turnos · Salud Integral
                 </select>
             </div>
 
-            <div class="col-lg-2 col-md-4">
-                <label for="turnos-especialidad" class="form-label small fw-medium">
-                    Especialidad
-                </label>
-
+            <div class="turnos-filter">
+                <label for="turnos-especialidad">Especialidad</label>
                 <select id="turnos-especialidad"
                         class="form-select"
                         name="especialidad_id">
@@ -102,11 +88,8 @@ Turnos · Salud Integral
                 </select>
             </div>
 
-            <div class="col-lg-2 col-md-4">
-                <label for="turnos-medico" class="form-label small fw-medium">
-                    Médico
-                </label>
-
+            <div class="turnos-filter">
+                <label for="turnos-medico">Médico</label>
                 <select id="turnos-medico"
                         class="form-select"
                         name="medico_id">
@@ -121,59 +104,45 @@ Turnos · Salud Integral
                 </select>
             </div>
 
-            <div class="col-12 d-flex justify-content-end gap-2">
-                <a href="{{ url_for('backoffice.backoffice_turnos') }}"
-                   class="button button-outline button-small">
-                    Limpiar
-                </a>
-
-                <button type="submit"
-                        class="button button-primary button-small">
-                    Filtrar
-                </button>
-            </div>
-
         </div>
+
+        <div class="turnos-filter-actions">
+            <a href="{{ url_for('backoffice.backoffice_turnos') }}"
+               class="button button-outline button-small">
+                Limpiar filtros
+            </a>
+
+            <button type="submit"
+                    class="button button-primary button-small">
+                <i class="bi bi-funnel" aria-hidden="true"></i>
+                Filtrar
+            </button>
+        </div>
+
     </form>
 
-    <div class="border-top d-flex flex-wrap justify-content-between align-items-center gap-2 p-3">
-        <span class="small text-body-secondary">
-            {{ total }} turnos registrados
+    <div class="turnos-summary">
+        <span class="abm-count">
+            <strong>{{ total }}</strong> turnos registrados
         </span>
 
-        <span class="small text-body-secondary">
-            <span id="turnos-contador">{{ turnos | length }}</span>
-                de {{ turnos | length }} turnos en esta página
+        <span class="abm-count">
+            <strong id="turnos-contador">{{ turnos | length }}</strong>
+            de {{ turnos | length }} en esta página
         </span>
     </div>
 
-    <div class="table-responsive border-top">
-        <table class="table table-hover align-middle mb-0"
-               id="turnos-tabla">
-
-            <thead class="table-light">
+    <div class="abm-table-wrap">
+        <table class="abm-table" id="turnos-tabla">
+            <thead>
                 <tr>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3 ps-3">
-                        Turno
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Paciente
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Profesional
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Especialidad
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Consultorio
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Fecha y hora
-                    </th>
-                    <th class="small text-uppercase text-secondary fw-semibold py-3">
-                        Estado
-                    </th>
+                    <th>Turno</th>
+                    <th>Paciente</th>
+                    <th>Profesional</th>
+                    <th>Especialidad</th>
+                    <th>Consultorio</th>
+                    <th>Fecha y hora</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
 
@@ -181,8 +150,6 @@ Turnos · Salud Integral
                 {% for t in turnos %}
                     {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
                     {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
-
-
                     {% set fecha = t.fecha_hora | replace('T', ' ') %}
 
                     <tr data-busqueda="{{ (
@@ -193,37 +160,34 @@ Turnos · Salud Integral
                         t.estado
                     ) | lower }}">
 
-                        <td class="ps-3">
-                            <span class="fw-medium small">{{ t.turno_id }}</span>
+                        <td>
+                            <span class="fw-semibold">{{ t.turno_id }}</span>
                         </td>
 
                         <td>
-                            <div class="small fw-medium">
+                            <span class="fw-medium">
                                 {{ paciente.strip() or 'Sin paciente asignado' }}
-                            </div>
+                            </span>
                         </td>
 
                         <td>
-                            <div class="small fw-medium">
+                            <span class="fw-medium">
                                 {{ medico.strip() or 'Sin profesional asignado' }}
-                            </div>
+                            </span>
                         </td>
 
-                        <td class="small">
-                            {{ t.especialidad }}
-                        </td>
+                        <td>{{ t.especialidad }}</td>
 
                         <td>
-                            <div class="small fw-medium">
+                            <div class="fw-medium">
                                 Sala {{ t.consultorio_sala }}
                             </div>
-
-                            <div class="small text-body-secondary">
+                            <div class="turnos-secondary-text">
                                 Piso {{ t.consultorio_piso }}
                             </div>
                         </td>
 
-                        <td class="small text-nowrap">
+                        <td class="text-nowrap">
                             {{ fecha }}
                         </td>
 
@@ -234,16 +198,14 @@ Turnos · Salud Integral
 
                 {% else %}
                     <tr id="turnos-sin-datos">
-                        <td colspan="7"
-                            class="text-center text-body-secondary py-5">
+                        <td colspan="7" class="abm-empty">
                             No se encontraron turnos.
                         </td>
                     </tr>
                 {% endfor %}
 
                 <tr id="turnos-vacio" hidden>
-                    <td colspan="7"
-                        class="text-center text-body-secondary py-5">
+                    <td colspan="7" class="abm-empty">
                         No hay turnos que coincidan con la búsqueda.
                     </td>
                 </tr>
@@ -251,35 +213,41 @@ Turnos · Salud Integral
         </table>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center p-3 border-top">
-        <div class="small text-body-secondary">
+    <div class="abm-footer">
+        <span class="abm-count">
             Página {{ (offset // limit) + 1 }}
-        </div>
+        </span>
 
-        <nav aria-label="Paginación de turnos">
-            <ul class="pagination pagination-sm mb-0">
+        <nav class="abm-pagination" aria-label="Paginación de turnos">
 
-                <li class="page-item {% if not paginacion.anterior %}disabled{% endif %}">
-                    {% if paginacion.anterior %}
-                        <a class="page-link" href="{{ paginacion.anterior }}">
-                            Anterior
-                        </a>
-                    {% else %}
-                        <span class="page-link">Anterior</span>
-                    {% endif %}
-                </li>
+            {% if paginacion.anterior %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.anterior }}">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </span>
+            {% endif %}
 
-                <li class="page-item {% if not paginacion.siguiente %}disabled{% endif %}">
-                    {% if paginacion.siguiente %}
-                        <a class="page-link" href="{{ paginacion.siguiente }}">
-                            Siguiente
-                        </a>
-                    {% else %}
-                        <span class="page-link">Siguiente</span>
-                    {% endif %}
-                </li>
+            {% if paginacion.siguiente %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.siguiente }}">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </span>
+            {% endif %}
 
-            </ul>
         </nav>
     </div>
 
@@ -288,6 +256,5 @@ Turnos · Salud Integral
 {% endblock %}
 
 {% block backoffice_scripts %}
-<script src="{{ url_for('static', filename='js/backoffice-turnos.js') }}"
-        defer></script>
+<script src="{{ url_for('static', filename='js/backoffice-turnos.js') }}" defer></script>
 {% endblock %}
