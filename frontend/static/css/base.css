@@ -344,3 +344,20 @@ svg {
     gap: 8px 14px;
   }
 }
+
+.profile-menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.profile-menu-button::after {
+    margin-left: 0.25rem;
+}
