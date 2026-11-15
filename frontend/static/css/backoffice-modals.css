@@ -1,0 +1,81 @@
+
+/* ========================================
+   BACKOFFICE - MODALES ABM
+======================================== */
+
+.abm-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgb(30 45 60 / 14%);
+}
+
+.abm-modal .modal-header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 22px;
+}
+
+.abm-modal .modal-title {
+  color: #2f3e4e;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.abm-modal .modal-body {
+  padding: 22px;
+}
+
+.abm-modal .modal-footer {
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding: 16px 22px;
+}
+
+.abm-modal .form-label {
+  margin-bottom: 8px;
+  color: #354052;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.abm-modal .form-control,
+.abm-modal .form-select {
+  min-height: 42px;
+  border-color: var(--border);
+  border-radius: 8px;
+  color: #354052;
+  font-size: 13px;
+}
+
+.abm-modal .form-control:focus,
+.abm-modal .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgb(0 0 0 / 5%);
+}
+
+.abm-modal .modal-description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.abm-modal .modal-highlight {
+  color: #354052;
+  font-weight: 600;
+}
+
+@media (max-width: 575.98px) {
+  .abm-modal .modal-dialog {
+    margin: 12px;
+  }
+
+  .abm-modal .modal-header,
+  .abm-modal .modal-body {
+    padding: 18px;
+  }
+
+  .abm-modal .modal-footer {
+    padding: 14px 18px;
+  }
+}

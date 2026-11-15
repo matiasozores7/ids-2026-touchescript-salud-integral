@@ -5,94 +5,72 @@
 Pacientes · Salud Integral
 {% endblock %}
 
-
 {% block backoffice_styles %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-pacientes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-pacientes.css') }}">
 {% endblock %}
-
 
 {% block breadcrumb %}
 <span>/ Pacientes</span>
 {% endblock %}
 
-
 {% block backoffice_content %}
 
-<div class="pacientes-content">
-
-    <div class="pacientes-heading">
-
-        <div>
-            <h1>Pacientes</h1>
-            <p>Datos personales, contacto y cobertura médica.</p>
-        </div>
-
-        <button class="button button-primary button-small"
-                type="button"
-                id="btn-nuevo-paciente">
-
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
-            Nuevo
-
-        </button>
-
+<div class="abm-header">
+    <div class="abm-heading">
+        <h1>Pacientes</h1>
+        <p>Datos personales, contacto y cobertura médica.</p>
     </div>
 
+    <button class="button button-primary button-small"
+            type="button"
+            id="btn-nuevo-paciente">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Nuevo paciente
+    </button>
+</div>
 
-    <section class="pacientes-table-card">
+<section class="abm-card" aria-label="Listado de pacientes">
 
-        <div class="pacientes-toolbar">
+    <div class="abm-toolbar">
+        <div class="abm-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
 
-            <div class="pacientes-search">
+            <label class="visually-hidden" for="buscar-paciente">
+                Buscar paciente
+            </label>
 
-                <i class="bi bi-search" aria-hidden="true"></i>
-
-                <label class="visually-hidden" for="buscar-paciente">
-                    Buscar paciente
-                </label>
-
-                <input id="buscar-paciente"
-                       type="search"
-                       placeholder="Buscar…"
-                       autocomplete="off">
-
-            </div>
-
-            <span class="pacientes-count">
-                <strong id="pacientes-count-num">
-                    {{ pacientes | length }}
-                </strong>
-                registros
-            </span>
-
+            <input id="buscar-paciente"
+                   type="search"
+                   placeholder="Buscar paciente..."
+                   autocomplete="off">
         </div>
 
+        <span class="abm-count">
+            <strong id="pacientes-count-num">
+                {{ pacientes | length }}
+            </strong>
+            registros
+        </span>
+    </div>
 
-        <div class="table-responsive">
+    <div class="abm-table-wrap">
+        <table class="abm-table">
+            <thead>
+                <tr>
+                    <th scope="col">Paciente</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Cobertura</th>
+                    <th scope="col" class="abm-actions">
+                        <span class="visually-hidden">Acciones</span>
+                    </th>
+                </tr>
+            </thead>
 
-            <table class="pacientes-table">
-
-                <thead>
-                    <tr>
-                        <th scope="col">PACIENTE</th>
-                        <th scope="col">EMAIL</th>
-                        <th scope="col">TELÉFONO</th>
-                        <th scope="col">COBERTURA</th>
-                        <th scope="col" class="paciente-actions-col">
-                            <span class="visually-hidden">Acciones</span>
-                        </th>
-                    </tr>
-                </thead>
-
-
-                <tbody id="pacientes-table-body">
-
-                    {% for p in pacientes %}
-
+            <tbody id="pacientes-table-body">
+                {% for p in pacientes %}
                     <tr
                         data-id="{{ p.paciente_id }}"
                         data-nombre="{{ p.nombre }}"
@@ -102,306 +80,239 @@ Pacientes · Salud Integral
                         data-cobertura-id="{{ p.cobertura_id or '' }}"
                         data-search="{{ (p.nombre ~ ' ' ~ p.apellido ~ ' ' ~ p.email ~ ' ' ~ (p.telefono or '') ~ ' ' ~ (p.cobertura_medica or '')) | lower }}"
                     >
-
                         <td>
-                            <span class="patient-avatar avatar-teal">
-                                {{ p.nombre[0] | upper }}{{ p.apellido[0] | upper }}
-                            </span>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="avatar avatar-small avatar-soft"
+                                      aria-hidden="true">
+                                    {{ p.nombre[0] | upper }}{{ p.apellido[0] | upper }}
+                                </span>
 
-                            <span class="patient-name">
-                                {{ p.nombre }} {{ p.apellido }}
-                            </span>
-                        </td>
-
-                        <td>
-                            <span class="patient-email">
-                                {{ p.email }}
-                            </span>
-                        </td>
-
-                        <td>
-                            {{ p.telefono or '-' }}
-                        </td>
-
-                        <td>
-                            {{ p.cobertura_medica or '-' }}
-                        </td>
-
-                        <td>
-                            <div class="patient-actions">
-
-                                <button type="button"
-                                        class="action-btn edit-btn"
-                                        data-edit-patient
-                                        title="Editar paciente"
-                                        aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
-
-                                    <i class="bi bi-pencil"
-                                       aria-hidden="true"></i>
-
-                                </button>
-
-
-                                <button type="button"
-                                        class="action-btn delete-btn"
-                                        data-delete-patient
-                                        title="Dar de baja paciente"
-                                        aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
-
-                                    <i class="bi bi-trash3"
-                                       aria-hidden="true"></i>
-
-                                </button>
-
+                                <span class="fw-medium">
+                                    {{ p.nombre }} {{ p.apellido }}
+                                </span>
                             </div>
                         </td>
 
+                        <td>{{ p.email }}</td>
+                        <td>{{ p.telefono or '-' }}</td>
+                        <td>{{ p.cobertura_medica or '-' }}</td>
+
+                        <td class="abm-actions">
+                            <button type="button"
+                                    class="abm-action"
+                                    data-edit-patient
+                                    title="Editar paciente"
+                                    aria-label="Editar {{ p.nombre }} {{ p.apellido }}">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                            </button>
+
+                            <button type="button"
+                                    class="abm-action abm-action-danger"
+                                    data-delete-patient
+                                    title="Dar de baja paciente"
+                                    aria-label="Eliminar {{ p.nombre }} {{ p.apellido }}">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
+                            </button>
+                        </td>
                     </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <p class="pacientes-table-empty"
-           id="pacientes-table-empty"
-           {% if pacientes %}hidden{% endif %}>
-            No se encontraron pacientes que coincidan con la búsqueda.
-        </p>
-
-    </section>
-
-
-    {# Modal de alta y edición de pacientes #}
-
-    <div class="patient-modal-backdrop" id="patient-modal" hidden>
-
-        <div class="patient-modal"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="patient-modal-title">
-
-            <header class="patient-modal-header">
-
-                <h2 id="patient-modal-title">
-                    Nuevo paciente
-                </h2>
-
-                <button class="patient-modal-close"
-                        type="button"
-                        id="btn-cerrar-modal"
-                        aria-label="Cerrar">
-
-                    <i class="bi bi-x-lg" aria-hidden="true"></i>
-
-                </button>
-
-            </header>
-
-
-            <form id="form-paciente"
-                  class="patient-form"
-                  action="#"
-                  method="POST">
-
-                <div class="patient-form-grid">
-
-                    <div class="form-group">
-
-                        <label for="campo-nombre">
-                            Nombre <span class="required">*</span>
-                        </label>
-
-                        <input type="text"
-                               id="campo-nombre"
-                               name="nombre"
-                               class="form-control"
-                               required
-                               placeholder="Ej. María">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-apellido">
-                            Apellido <span class="required">*</span>
-                        </label>
-
-                        <input type="text"
-                               id="campo-apellido"
-                               name="apellido"
-                               class="form-control"
-                               required
-                               placeholder="Ej. Gómez">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-email">
-                            Email <span class="required">*</span>
-                        </label>
-
-                        <input type="email"
-                               id="campo-email"
-                               name="email"
-                               class="form-control"
-                               required
-                               placeholder="Ej. maria@correo.demo">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-telefono">
-                            Teléfono
-                        </label>
-
-                        <input type="tel"
-                               id="campo-telefono"
-                               name="telefono"
-                               class="form-control"
-                               placeholder="Ej. 11 5100-4000">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-cobertura">
-                            Cobertura <span class="required">*</span>
-                        </label>
-
-                        <select id="campo-cobertura"
-                                name="cobertura_id"
-                                class="form-select"
-                                required>
-
-                            <option value="" disabled selected>
-                                Seleccionar...
-                            </option>
-
-                            {% for cobertura in coberturas %}
-                                <option value="{{ cobertura.id }}">
-                                    {{ cobertura.nombre }}
-                                </option>
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="campo-password">
-                            Contraseña <span class="required">*</span>
-                        </label>
-
-                        <input type="password"
-                               id="campo-password"
-                               name="password"
-                               class="form-control"
-                               autocomplete="new-password"
-                               required
-                               placeholder="Contraseña del paciente">
-
-                    </div>
-
-                </div>
-
-
-                <footer class="patient-modal-footer">
-
-                    <button type="button"
-                            class="button button-outline button-small"
-                            id="btn-cancelar-modal">
-                        Cancelar
-                    </button>
-
-                    <button type="submit"
-                            class="button button-primary button-small"
-                            id="btn-guardar-modal">
-                        Guardar
-                    </button>
-
-                </footer>
-
-            </form>
-
-        </div>
-
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
+    <p class="abm-empty"
+       id="pacientes-table-empty"
+       {% if pacientes %}hidden{% endif %}>
+        No se encontraron pacientes que coincidan con la búsqueda.
+    </p>
 
-    {# Modal de confirmación de baja #}
+</section>
 
-    <div class="patient-modal-backdrop" id="delete-modal" hidden>
+{# Modal de alta y edición #}
+<div class="patient-modal-backdrop"
+     id="patient-modal"
+     hidden>
 
-        <div class="patient-modal delete-modal-dialog"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="delete-modal-title">
+    <div class="patient-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="patient-modal-title">
 
-            <div class="delete-modal-content">
+        <header class="patient-modal-header">
+            <h2 id="patient-modal-title">
+                Nuevo paciente
+            </h2>
 
-                <div class="delete-modal-icon">
-                    <i class="bi bi-exclamation-triangle"
-                       aria-hidden="true"></i>
+            <button class="patient-modal-close"
+                    type="button"
+                    id="btn-cerrar-modal"
+                    aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </header>
+
+        <form id="form-paciente"
+              class="patient-form"
+              action="#"
+              method="POST">
+
+            <div class="patient-form-grid">
+
+                <div class="form-group">
+                    <label for="campo-nombre">
+                        Nombre <span class="required">*</span>
+                    </label>
+
+                    <input type="text"
+                           id="campo-nombre"
+                           name="nombre"
+                           class="form-control"
+                           required
+                           placeholder="Ej. María">
                 </div>
 
+                <div class="form-group">
+                    <label for="campo-apellido">
+                        Apellido <span class="required">*</span>
+                    </label>
 
-                <div class="delete-modal-body">
-
-                    <h2 id="delete-modal-title">
-                        ¿Dar de baja paciente?
-                    </h2>
-
-                    <p>
-                        ¿Estás seguro de que deseas dar de baja a
-                        <strong id="delete-patient-name"></strong>?
-                        Esta acción quitará al paciente del listado activo.
-                    </p>
-
+                    <input type="text"
+                           id="campo-apellido"
+                           name="apellido"
+                           class="form-control"
+                           required
+                           placeholder="Ej. Gómez">
                 </div>
 
+                <div class="form-group">
+                    <label for="campo-email">
+                        Email <span class="required">*</span>
+                    </label>
 
-                <footer class="delete-modal-footer">
+                    <input type="email"
+                           id="campo-email"
+                           name="email"
+                           class="form-control"
+                           required
+                           placeholder="Ej. maria@correo.demo">
+                </div>
 
-                    <button type="button"
-                            class="button button-outline button-small"
-                            id="btn-cancelar-eliminar">
-                        Cancelar
-                    </button>
+                <div class="form-group">
+                    <label for="campo-telefono">
+                        Teléfono
+                    </label>
 
-                    <button type="button"
-                            class="button button-danger button-small"
-                            id="btn-confirmar-eliminar">
+                    <input type="tel"
+                           id="campo-telefono"
+                           name="telefono"
+                           class="form-control"
+                           placeholder="Ej. 11 5100-4000">
+                </div>
 
-                        <i class="bi bi-trash3" aria-hidden="true"></i>
-                        Dar de baja
+                <div class="form-group">
+                    <label for="campo-cobertura">
+                        Cobertura <span class="required">*</span>
+                    </label>
 
-                    </button>
+                    <select id="campo-cobertura"
+                            name="cobertura_id"
+                            class="form-select"
+                            required>
+                        <option value="" disabled selected>
+                            Seleccionar...
+                        </option>
 
-                </footer>
+                        {% for cobertura in coberturas %}
+                            <option value="{{ cobertura.id }}">
+                                {{ cobertura.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="campo-password">
+                        Contraseña <span class="required">*</span>
+                    </label>
+
+                    <input type="password"
+                           id="campo-password"
+                           name="password"
+                           class="form-control"
+                           autocomplete="new-password"
+                           required
+                           placeholder="Contraseña del paciente">
+                </div>
 
             </div>
 
-        </div>
+            <footer class="patient-modal-footer">
+                <button type="button"
+                        class="button button-outline button-small"
+                        id="btn-cancelar-modal">
+                    Cancelar
+                </button>
 
+                <button type="submit"
+                        class="button button-primary button-small"
+                        id="btn-guardar-modal">
+                    Guardar
+                </button>
+            </footer>
+
+        </form>
     </div>
+</div>
 
+{# Modal de confirmación de baja #}
+<div class="patient-modal-backdrop"
+     id="delete-modal"
+     hidden>
+
+    <div class="patient-modal delete-modal-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="delete-modal-title">
+
+        <div class="delete-modal-content">
+
+            <div class="delete-modal-icon">
+                <i class="bi bi-exclamation-triangle"
+                   aria-hidden="true"></i>
+            </div>
+
+            <div class="delete-modal-body">
+                <h2 id="delete-modal-title">
+                    ¿Dar de baja paciente?
+                </h2>
+
+                <p>
+                    ¿Estás seguro de que deseas dar de baja a
+                    <strong id="delete-patient-name"></strong>?
+                    Esta acción quitará al paciente del listado activo.
+                </p>
+            </div>
+
+            <footer class="delete-modal-footer">
+                <button type="button"
+                        class="button button-outline button-small"
+                        id="btn-cancelar-eliminar">
+                    Cancelar
+                </button>
+
+                <button type="button"
+                        class="button button-danger button-small"
+                        id="btn-confirmar-eliminar">
+                    <i class="bi bi-trash3" aria-hidden="true"></i>
+                    Dar de baja
+                </button>
+            </footer>
+
+        </div>
+    </div>
 </div>
 
 {% endblock %}
-
 
 {% block backoffice_scripts %}
 <script src="{{ url_for('static', filename='js/backoffice-pacientes.js') }}"></script>
