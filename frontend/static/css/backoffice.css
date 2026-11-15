@@ -23,20 +23,27 @@
 }
 
 .backoffice-layout {
-  display: flex;
   min-height: 100vh;
   color: #354052;
 }
 
 .backoffice-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 1000;
+
   display: flex;
   width: 244px;
-  flex: 0 0 244px;
+  height: 100vh;
   flex-direction: column;
+
+  overflow-y: auto;
   padding: 26px 15px 18px;
+
   background: #fff;
   border-right: 1px solid var(--border);
 }
+
 
 .backoffice-brand {
   display: flex;
@@ -128,7 +135,8 @@
 
 .backoffice-main {
   min-width: 0;
-  flex: 1;
+  min-height: 100vh;
+  margin-left: 244px;
 }
 
 .backoffice-header {
@@ -421,7 +429,10 @@
 @media (max-width: 991.98px) {
   .backoffice-sidebar {
     width: 205px;
-    flex-basis: 205px;
+  }
+
+  .backoffice-main {
+    margin-left: 205px;
   }
 
   .backoffice-header {
