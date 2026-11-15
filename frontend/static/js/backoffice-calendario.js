@@ -3,39 +3,10 @@
     "use strict";
 
     // ========================================
-    // DATOS REALES
+    // DATOS
     // ========================================
 
-    const rawAppointments = window.CALENDAR_DATA?.turnos || [];
-
-    const appointments = rawAppointments.map(turno => {
-        const fechaHora = turno.fecha_hora || "";
-
-        return {
-            id: turno.turno_id,
-
-            dateKey: fechaHora.slice(0, 10),
-            time: fechaHora.slice(11, 16),
-
-            patient: [
-                turno.paciente_nombre,
-                turno.paciente_apellido
-            ].filter(Boolean).join(" ") || "Sin paciente asignado",
-
-            doctor: [
-                turno.medico_nombre,
-                turno.medico_apellido
-            ].filter(Boolean).join(" "),
-
-            doctorId: turno.medico_id,
-            specialtyId: turno.especialidad_id,
-
-            specialty: turno.especialidad || "Sin especialidad",
-
-            office: turno.consultorio_sala ?? "—",
-            status: turno.estado
-        };
-    });
+    const appointments = window.CALENDAR_DATA?.turnos || [];
 
     // ========================================
     // ELEMENTOS
@@ -189,7 +160,7 @@
     }
 
     // ========================================
-    // FILTROS DINÁMICOS
+    // FILTROS
     // ========================================
 
     function populateFilter(select, placeholder, items) {
@@ -222,45 +193,16 @@
     }
 
     function initializeFilters() {
-        const specialties = new Map();
-        const doctors = new Map();
-
-        appointments.forEach(appointment => {
-            if (appointment.specialtyId != null) {
-                specialties.set(
-                    String(appointment.specialtyId),
-                    appointment.specialty
-                );
-            }
-
-            if (appointment.doctorId != null) {
-                doctors.set(
-                    String(appointment.doctorId),
-                    appointment.doctor
-                );
-            }
-        });
-
-        const specialtyOptions = Array.from(
-            specialties,
-            ([id, name]) => ({ id, name })
-        ).sort((a, b) => a.name.localeCompare(b.name, "es"));
-
-        const doctorOptions = Array.from(
-            doctors,
-            ([id, name]) => ({ id, name })
-        ).sort((a, b) => a.name.localeCompare(b.name, "es"));
-
         populateFilter(
             specialtyFilter,
             "Todas las especialidades",
-            specialtyOptions
+            window.CALENDAR_DATA?.especialidades || []
         );
 
         populateFilter(
             doctorFilter,
             "Todos los profesionales",
-            doctorOptions
+            window.CALENDAR_DATA?.medicos || []
         );
     }
 

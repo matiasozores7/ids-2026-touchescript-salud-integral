@@ -224,6 +224,8 @@ Calendario · Salud Integral
 <script>
     window.CALENDAR_DATA = {
         turnos: {{ turnos | tojson }},
+        especialidades: {{ especialidades | tojson }},
+        medicos: {{ medicos | tojson }},
         fechaInicio: {{ fecha_inicio | tojson }}
     };
 </script>

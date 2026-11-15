@@ -3,10 +3,9 @@ from datetime import date, timedelta
 from flask import render_template, request
 
 from app.routes.backoffice import backoffice_bp
+from app.services.calendario_service import preparar_datos_calendario
 from app.services.turnos_service import (
     listar_turnos_calendario,
-    listar_especialidades,
-    listar_medicos,
 )
 
 
@@ -36,14 +35,13 @@ def backoffice_calendario():
         medico_id=medico_id,
     )
 
-    especialidades = listar_especialidades()
-    medicos = listar_medicos()
+    datos_calendario = preparar_datos_calendario(turnos)
 
     return render_template(
         "backoffice/calendario.html",
-        turnos=turnos,
-        especialidades=especialidades,
-        medicos=medicos,
+        turnos=datos_calendario["turnos"],
+        especialidades=datos_calendario["especialidades"],
+        medicos=datos_calendario["medicos"],
         fecha_inicio=fecha_inicio.isoformat(),
         fecha_fin=fecha_fin.isoformat(),
     )
