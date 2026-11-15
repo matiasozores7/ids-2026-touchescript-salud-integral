@@ -137,7 +137,7 @@
       {% for especialidad in especialidades %}
         <a
           class="specialty-card col-6 col-md-4 col-lg-3"
-          href="/reservar-turno/especialidades/{{ especialidad.id }}/medicos"
+          href="{{ url_for('patient.reservar_medico', especialidad_id=especialidad.id) }}"
         >
           <span class="specialty-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
@@ -230,7 +230,7 @@
           <div class="card-actions doctor-card-actions">
             <a
               class="button button-primary button-small"
-              href="/reservar-turno/medicos/{{ medico.id }}/fecha-hora"
+              href="{{ url_for('patient.reservar_fecha_hora', medico_id=medico.id) }}"
             >
               Reservar turno
             </a>
