@@ -4,6 +4,13 @@
   background: #f5f7f8;
 }
 
+.estado {
+  --bg: #e1f0f7;
+  --fg: #2b6a8a;
+  color: var(--fg);
+  /* conservar el resto de las propiedades */
+}
+
 .backoffice-shell .site-header,
 .backoffice-shell .site-footer {
   display: none;
@@ -495,13 +502,6 @@
   }
 }
 
-
-
-/* =========================================
-   DASHBOARD — REFINAMIENTO VISUAL
-
-/* Encabezado */
-
 .backoffice-heading {
   margin-bottom: 4px;
 }
@@ -756,13 +756,6 @@
 
 .upcoming-status {
   justify-self: end;
-  padding: 5px 9px;
-  border: 1px solid #dcefe9;
-  border-radius: 20px;
-  background: #edf8f3;
-  color: #38866b;
-  font-size: 9px;
-  font-weight: 650;
   white-space: nowrap;
 }
 
@@ -866,18 +859,6 @@
   .quick-stat {
     padding: 15px;
   }
-}
-
-.upcoming-status.status-reservado {
-  background: #eff5ff;
-  border-color: #dce7fa;
-  color: #5479b4;
-}
-
-.upcoming-status.status-confirmado {
-  background: #edf8f3;
-  border-color: #dcefe9;
-  color: #38866b;
 }
 
 .backoffice-user-menu {

@@ -6,7 +6,7 @@ Dashboard operativo · Salud Integral
 {% endblock %}
 
 {% block backoffice_content %}
-
+{% from "pacientes/_componentes.html" import estado_pill %}
 {% set metrics = [
     (
         "Turnos de hoy",
@@ -171,9 +171,9 @@ Dashboard operativo · Salud Integral
 
                         </div>
 
-                        <span class="upcoming-status status-{{ turno.estado }}">
-                            {{ turno.estado | capitalize }}
-                        </span>
+                        <div class="upcoming-status">
+                            {{ estado_pill(turno.estado) }}
+                        </div>
 
                     </div>
 
