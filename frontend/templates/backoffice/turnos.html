@@ -6,8 +6,7 @@ Turnos · Salud Integral
 {% endblock %}
 
 {% block backoffice_styles %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/backoffice-layout.css') }}">
+
 <link rel="stylesheet"
       href="{{ url_for('static', filename='css/components.css') }}">
 {% endblock %}
@@ -17,20 +16,12 @@ Turnos · Salud Integral
 {% endblock %}
 
 {% block backoffice_content %}
-
+{% from "pacientes/_componentes.html" import estado_pill %}
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
     <div class="backoffice-heading">
         <h1>Turnos</h1>
         <p>Administración y seguimiento de turnos médicos.</p>
     </div>
-
-    <button class="button button-primary button-small"
-            type="button"
-            disabled
-            title="Funcionalidad pendiente">
-        <i class="bi bi-plus-lg" aria-hidden="true"></i>
-        Nuevo turno
-    </button>
 </div>
 
 <section class="card rounded-4 shadow-sm overflow-hidden"
@@ -44,7 +35,7 @@ Turnos · Salud Integral
 
             <div class="col-lg-4 col-md-6">
                 <label for="turnos-buscar" class="form-label small fw-medium">
-                    Buscar turno o paciente
+                    Buscar turno
                 </label>
 
                 <div class="input-group">
@@ -56,7 +47,7 @@ Turnos · Salud Integral
                            class="form-control border-start-0"
                            type="search"
                            name="busqueda"
-                           placeholder="Nombre o ID del turno"
+                           placeholder="Paciente, profesional o ID"
                            value="{{ request.args.get('busqueda', '') }}">
                 </div>
             </div>
@@ -151,7 +142,8 @@ Turnos · Salud Integral
         </span>
 
         <span class="small text-body-secondary">
-            Mostrando <span id="turnos-contador">{{ turnos | length }}</span> resultados
+            <span id="turnos-contador">{{ turnos | length }}</span>
+                de {{ turnos | length }} turnos en esta página
         </span>
     </div>
 
@@ -190,14 +182,6 @@ Turnos · Salud Integral
                     {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
                     {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
 
-                    {% set estados = {
-                        'disponible': 'secondary',
-                        'reservado': 'info',
-                        'confirmado': 'primary',
-                        'atendido': 'success',
-                        'cancelado': 'danger',
-                        'ausente': 'warning'
-                    } %}
 
                     {% set fecha = t.fecha_hora | replace('T', ' ') %}
 
@@ -210,28 +194,18 @@ Turnos · Salud Integral
                     ) | lower }}">
 
                         <td class="ps-3">
-                            <span class="fw-medium small">#{{ t.turno_id }}</span>
+                            <span class="fw-medium small">{{ t.turno_id }}</span>
                         </td>
 
                         <td>
                             <div class="small fw-medium">
                                 {{ paciente.strip() or 'Sin paciente asignado' }}
                             </div>
-
-                            {% if t.paciente_id %}
-                                <div class="small text-body-secondary">
-                                    ID {{ t.paciente_id }}
-                                </div>
-                            {% endif %}
                         </td>
 
                         <td>
                             <div class="small fw-medium">
                                 {{ medico.strip() or 'Sin profesional asignado' }}
-                            </div>
-
-                            <div class="small text-body-secondary">
-                                ID {{ t.medico_id }}
                             </div>
                         </td>
 
@@ -254,9 +228,7 @@ Turnos · Salud Integral
                         </td>
 
                         <td>
-                            <span class="badge text-bg-{{ estados.get(t.estado, 'secondary') }}">
-                                {{ t.estado | capitalize }}
-                            </span>
+                            {{ estado_pill(t.estado) }}
                         </td>
                     </tr>
 
