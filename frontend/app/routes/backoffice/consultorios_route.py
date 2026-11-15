@@ -19,14 +19,14 @@ def _render_consultorios():
     )
 
 
-@backoffice_bp.get("/consultorios")
+@backoffice_bp.get("/backoffice/consultorios")
 def listar_consultorios():
     return _render_consultorios()
 
 
-@backoffice_bp.route("/consultorios/nuevo", methods=["GET", "POST"])
+@backoffice_bp.route("/backoffice/consultorios/nuevo", methods=["GET", "POST"])
 @backoffice_bp.route(
-    "/consultorios/<int:consultorio_id>/editar",
+    "/backoffice/consultorios/<int:consultorio_id>/editar",
     methods=["GET", "POST"]
 )
 def formulario_consultorio(consultorio_id: int | None = None):
@@ -67,7 +67,7 @@ def formulario_consultorio(consultorio_id: int | None = None):
     )
 
 
-@backoffice_bp.post("/consultorios/<int:consultorio_id>/eliminar")
+@backoffice_bp.post("/backoffice/consultorios/<int:consultorio_id>/eliminar")
 def eliminar_consultorio(consultorio_id: int):
     try:
         consultorio_service.eliminar_consultorio(consultorio_id)

@@ -8,7 +8,7 @@ from app.services.turnos_service import (
 from app.routes.backoffice import backoffice_bp
 
 
-@backoffice_bp.route("/turnos")
+@backoffice_bp.route("/backoffice/turnos")
 def backoffice_turnos():
 
     limit = request.args.get("_limit", 10, type=int)
