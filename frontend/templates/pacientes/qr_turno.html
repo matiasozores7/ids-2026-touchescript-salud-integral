@@ -26,10 +26,12 @@
       <div class="d-flex flex-column align-items-center gap-3 p-4 text-center">
 
         <div class="border rounded-3 bg-white p-3">
-          <div id="qr-code"
-               role="img"
-               aria-label="Código QR para el check-in del turno">
-          </div>
+              <div
+                  id="qr-code"
+                  data-qr-token="{{ qr_token }}"
+                  role="img"
+                  aria-label="Código QR para el check-in del turno"
+              ></div>
         </div>
 
         <p class="qr-codigo font-monospace fw-bold mb-0">
@@ -64,24 +66,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const token = {{ qr_token | tojson }};
-    const container = document.getElementById("qr-code");
-
-    if (typeof QRCode === "undefined") {
-      container.textContent = "No se pudo cargar el generador del QR.";
-      return;
-    }
-
-    new QRCode(container, {
-      text: token,
-      width: 188,
-      height: 188,
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  });
-</script>
+<script src="{{ url_for('static', filename='js/patient-qr.js') }}"></script>
 
 {% endblock %}
