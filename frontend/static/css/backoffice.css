@@ -191,17 +191,6 @@
   font-size: 8px;
 }
 
-.backoffice-user-avatar {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 50%;
-  background: #e2f1f0;
-  color: #327f7b;
-  font-size: 11px;
-  font-weight: 700;
-}
 
 .backoffice-content {
   width: min(100% - 84px, 1180px);
@@ -889,15 +878,56 @@
   background: #edf8f3;
   border-color: #dcefe9;
   color: #38866b;
+}
+
 .backoffice-user-menu {
     display: flex;
     align-items: center;
-    gap: 12px;
-    border: none;
-    background: transparent;
-    color: inherit;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 7px 12px;
+    background: #fff;
+    color: var(--petrol);
     text-align: left;
-    padding: 0;
+}
+
+.backoffice-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+
+.backoffice-user-menu strong {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.backoffice-user-menu small {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.backoffice-user-menu > i {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.backoffice-user-menu::after {
+    display: none;
+}
+
+.backoffice-user-avatar {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: #e2f1f0;
+    color: #327f7b;
+    font-size: 15px;
 }
 
 .backoffice-user-menu > span:nth-child(2) {
@@ -912,13 +942,4 @@
 .backoffice-user-menu small {
     font-size: 11px;
     color: var(--muted);
-}
-
-.backoffice-user-menu > i {
-    font-size: 11px;
-    color: var(--muted);
-}
-
-.backoffice-user-menu::after {
-    display: none;
 }
