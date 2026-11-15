@@ -15,3 +15,4 @@ from . import checkin_route
 from . import pacientes_route
 from . import coberturas_route
 from . import turnos_route
+from . import calendario_route

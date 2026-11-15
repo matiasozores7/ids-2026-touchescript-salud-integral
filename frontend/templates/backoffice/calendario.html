@@ -1,0 +1,244 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Calendario · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/backoffice-calendario.css') }}"
+>
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Calendario</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+<section class="calendar-page">
+
+    <!-- Encabezado -->
+    <header class="calendar-header">
+
+        <div>
+            <h1>Calendario</h1>
+            <p>Visualización semanal de los turnos médicos.</p>
+        </div>
+
+        <button
+            type="button"
+            class="button button-primary button-small"
+            id="calendar-new-appointment"
+        >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Nuevo turno
+        </button>
+
+    </header>
+
+    <!-- Navegación temporal -->
+    <section class="calendar-navigation">
+
+        <div class="calendar-navigation-controls">
+
+            <button
+                type="button"
+                class="calendar-nav-button"
+                id="calendar-previous"
+                aria-label="Semana anterior"
+            >
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+
+            <button
+                type="button"
+                class="calendar-today-button"
+                id="calendar-today"
+            >
+                Hoy
+            </button>
+
+            <button
+                type="button"
+                class="calendar-nav-button"
+                id="calendar-next"
+                aria-label="Semana siguiente"
+            >
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+
+        </div>
+
+        <h2 id="calendar-date-range">
+            Cargando semana...
+        </h2>
+
+    </section>
+
+    <!-- Filtros -->
+    <section class="calendar-filters">
+
+        <div class="calendar-filter">
+
+            <label for="calendar-filter-specialty">
+                Especialidad
+            </label>
+
+            <select id="calendar-filter-specialty">
+                <option value="">Todas las especialidades</option>
+                <option value="Cardiología">Cardiología</option>
+                <option value="Clínica médica">Clínica médica</option>
+                <option value="Dermatología">Dermatología</option>
+                <option value="Pediatría">Pediatría</option>
+                <option value="Traumatología">Traumatología</option>
+            </select>
+
+        </div>
+
+        <div class="calendar-filter">
+
+            <label for="calendar-filter-doctor">
+                Profesional
+            </label>
+
+            <select id="calendar-filter-doctor">
+                <option value="">Todos los profesionales</option>
+                <option value="María González">Dra. María González</option>
+                <option value="Juan Pérez">Dr. Juan Pérez</option>
+                <option value="Laura Fernández">Dra. Laura Fernández</option>
+                <option value="Carlos Rodríguez">Dr. Carlos Rodríguez</option>
+            </select>
+
+        </div>
+
+        <label class="calendar-cancelled-filter">
+            <input
+                type="checkbox"
+                id="calendar-show-cancelled"
+            >
+            <span>Ver cancelados</span>
+        </label>
+
+    </section>
+
+    <!-- Calendario semanal -->
+    <section
+        class="calendar-board"
+        id="calendar-board"
+        aria-label="Calendario semanal de turnos"
+    >
+
+        <!-- Los días y turnos se generan mediante JavaScript -->
+
+    </section>
+
+    <!-- Estado sin resultados -->
+    <div
+        class="calendar-empty"
+        id="calendar-empty"
+        hidden
+    >
+        <i class="bi bi-calendar-x" aria-hidden="true"></i>
+        <p>No hay turnos para los filtros seleccionados.</p>
+    </div>
+
+</section>
+
+<!-- Modal de detalle -->
+<div
+    class="modal fade"
+    id="calendar-appointment-modal"
+    tabindex="-1"
+    aria-labelledby="calendar-modal-title"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 class="modal-title" id="calendar-modal-title">
+                        Detalle del turno
+                    </h2>
+                    <p class="calendar-modal-subtitle">
+                        Información del turno seleccionado
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="calendar-modal-details">
+
+                    <div>
+                        <span>Paciente</span>
+                        <strong id="calendar-detail-patient">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Profesional</span>
+                        <strong id="calendar-detail-doctor">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Especialidad</span>
+                        <strong id="calendar-detail-specialty">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Fecha y hora</span>
+                        <strong id="calendar-detail-datetime">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Consultorio</span>
+                        <strong id="calendar-detail-office">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Estado</span>
+                        <strong id="calendar-detail-status">—</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button button-outline button-small"
+                    data-bs-dismiss="modal"
+                >
+                    Cerrar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block backoffice_scripts %}
+<script
+    src="{{ url_for('static', filename='js/backoffice-calendario.js') }}"
+    defer
+></script>
+{% endblock %}
