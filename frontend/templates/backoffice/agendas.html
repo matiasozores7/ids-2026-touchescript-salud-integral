@@ -1,0 +1,453 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Agendas médicas · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/backoffice-agendas.css') }}"
+>
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Agendas médicas</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+<section class="agendas-page">
+
+    <header class="agendas-header">
+        <div>
+            <h1>Agendas médicas</h1>
+            <p>Bloques horarios semanales que generan las franjas reservables.</p>
+        </div>
+
+        <button
+            id="nuevo-bloque-btn"
+            type="button"
+            class="button button-primary button-small"
+            data-bs-toggle="modal"
+            data-bs-target="#agenda-modal"
+        >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Nuevo bloque
+        </button>
+    </header>
+
+    <div class="agendas-layout">
+
+        <section class="agendas-professionals">
+
+            <div class="agendas-section-header">
+                <h2>Profesionales</h2>
+                <span>{{ medicos | length }}</span>
+            </div>
+
+            <div class="agendas-professionals-list">
+
+                {% for medico in medicos %}
+
+                    <a
+                        href="{{ url_for(
+                            'backoffice.backoffice_agendas',
+                            medico_id=medico.id
+                        ) }}"
+                        class="agenda-professional {% if medico_seleccionado and medico.id == medico_seleccionado.id %}active{% endif %}"
+                    >
+                        <span class="agenda-professional-avatar">
+                            <i class="bi bi-person-fill" aria-hidden="true"></i>
+                        </span>
+
+                        <span class="agenda-professional-info">
+                            <strong>
+                                {{ medico.nombre }} {{ medico.apellido }}
+                            </strong>
+                            <small>{{ medico.especialidad }}</small>
+                        </span>
+
+                        <span class="agenda-professional-count">
+                            {{ medico.cantidad_bloques }}
+                        </span>
+                    </a>
+
+                {% else %}
+
+                    <p class="agendas-empty">
+                        No hay profesionales disponibles.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <section class="agendas-schedule">
+
+            {% if medico_seleccionado %}
+
+                <header class="agendas-schedule-header">
+                    <div>
+                        <h2>
+                            {{ medico_seleccionado.nombre }}
+                            {{ medico_seleccionado.apellido }}
+                        </h2>
+                        <p>{{ medico_seleccionado.especialidad }}</p>
+                    </div>
+
+                    <span class="agendas-schedule-label">
+                        Agenda semanal
+                    </span>
+                </header>
+
+                <div class="agendas-week">
+
+                    {% for dia in agenda_semanal %}
+
+                        <article class="agenda-day">
+
+                            <h3>{{ dia.dia }}</h3>
+
+                            <div class="agenda-day-blocks">
+
+                                {% for bloque in dia.bloques %}
+
+                                    <div class="agenda-block">
+
+                                        <div class="agenda-block-main">
+                                            <strong>
+                                                {{ bloque.hora_inicio }}
+                                                –
+                                                {{ bloque.hora_fin }}
+                                            </strong>
+
+                                            <span>
+                                                {{ bloque.duracion_turno }} min
+                                            </span>
+
+                                            <button
+                                                type="button"
+                                                class="button button-outline button-small"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#agenda-modal"
+                                                data-agenda-id="{{ bloque.id }}"
+                                                data-medico-id="{{ medico_seleccionado.id }}"
+                                                data-consultorio-id="{{ bloque.consultorio_id }}"
+                                                data-dia="{{ bloque.dia_semana }}"
+                                                data-inicio="{{ bloque.hora_inicio }}"
+                                                data-fin="{{ bloque.hora_fin }}"
+                                                data-duracion="{{ bloque.duracion_turno }}"
+                                                data-edit-url="{{ url_for('backoffice.editar_agenda', agenda_id=bloque.id) }}"
+                                            >
+                                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                Editar
+                                            </button>
+
+                                            <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'backoffice.eliminar_agenda',
+                                                agenda_id=bloque.id
+                                            ) }}"
+                                            onsubmit="return confirm('¿Estás seguro de eliminar este bloque horario?');"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="medico_id"
+                                                value="{{ medico_seleccionado.id }}"
+                                            >
+
+                                            <button
+                                                type="submit"
+                                                class="button button-outline button-small"
+                                            >
+                                                <i class="bi bi-trash" aria-hidden="true"></i>
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                        </div>
+
+                                        <div class="agenda-block-details">
+                                            <span>
+                                                <i class="bi bi-calendar-check"></i>
+                                                {{ bloque.cantidad_turnos }} turnos
+                                            </span>
+
+                                            <span>
+                                                <i class="bi bi-building"></i>
+                                                Consultorio
+                                                {{ bloque.numero_sala }}
+                                            </span>
+
+                                            {% if bloque.piso is not none %}
+                                                <span>
+                                                    Piso {{ bloque.piso }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+
+                                        
+
+                                    </div>
+
+                                {% else %}
+
+                                    <span class="agenda-day-empty">
+                                        No atiende
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="agendas-empty-state">
+                    <i class="bi bi-calendar-week"></i>
+                    <h2>Sin profesionales disponibles</h2>
+                    <p>No hay profesionales para mostrar sus agendas.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</section>
+
+
+<div
+    class="modal fade"
+    id="agenda-modal"
+    tabindex="-1"
+    aria-labelledby="agenda-modal-title"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title fs-5" id="agenda-modal-title">
+                        Nuevo bloque horario
+                    </h2>
+
+                    <p class="text-muted small mb-0">
+                        Configurá la disponibilidad del profesional.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+            </div>
+
+            <form
+                id="agenda-form"
+                method="POST"
+                action="{{ url_for('backoffice.crear_agenda') }}"
+            >
+
+                <div class="modal-body">
+
+                    <input
+                        type="hidden"
+                        id="agenda-medico-id"
+                        name="medico_id"
+                        value="{{ medico_seleccionado.id if medico_seleccionado else '' }}"
+                    >
+
+                    <div class="mb-3">
+                        <label for="agenda-consultorio" class="form-label">
+                            Consultorio
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="agenda-consultorio"
+                            name="consultorio_id"
+                            required
+                        >
+                            <option value="">Seleccionar consultorio</option>
+
+                            {% for consultorio in consultorios %}
+                                <option value="{{ consultorio.id }}">
+                                    Consultorio {{ consultorio.numero_sala }}
+                                    {% if consultorio.piso is not none %}
+                                        · Piso {{ consultorio.piso }}
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="agenda-dia" class="form-label">
+                            Día de la semana
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="agenda-dia"
+                            name="dia_semana"
+                            required
+                        >
+                            <option value="">Seleccionar día</option>
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miercoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sabado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-6 mb-3">
+                            <label for="agenda-inicio" class="form-label">
+                                Hora de inicio
+                            </label>
+
+                            <input
+                                type="time"
+                                class="form-control"
+                                id="agenda-inicio"
+                                name="hora_inicio"
+                                required
+                            >
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label for="agenda-fin" class="form-label">
+                                Hora de finalización
+                            </label>
+
+                            <input
+                                type="time"
+                                class="form-control"
+                                id="agenda-fin"
+                                name="hora_fin"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <label for="agenda-duracion" class="form-label">
+                            Duración de cada turno
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="agenda-duracion"
+                            name="duracion_turno"
+                            required
+                        >
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                            <option value="45">45 minutos</option>
+                            <option value="60">60 minutos</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="button button-outline button-small"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        id="agenda-submit-btn"
+                        type="submit"
+                        class="button button-primary button-small"
+                        {% if not medico_seleccionado or not consultorios %}disabled{% endif %}
+                    >
+                        Guardar bloque
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("agenda-modal");
+    const form = document.getElementById("agenda-form");
+
+    const titulo = document.getElementById("agenda-modal-title");
+    const botonGuardar = document.getElementById("agenda-submit-btn");
+
+    const campoMedico = document.getElementById("agenda-medico-id");
+    const campoConsultorio = document.getElementById("agenda-consultorio");
+    const campoDia = document.getElementById("agenda-dia");
+    const campoInicio = document.getElementById("agenda-inicio");
+    const campoFin = document.getElementById("agenda-fin");
+    const campoDuracion = document.getElementById("agenda-duracion");
+
+    const accionCrear = form.action;
+
+    document.getElementById("nuevo-bloque-btn").addEventListener("click", () => {
+
+        form.reset();
+        form.action = accionCrear;
+
+        titulo.textContent = "Nuevo bloque horario";
+        botonGuardar.textContent = "Guardar bloque";
+
+    });
+
+    modal.addEventListener("show.bs.modal", (event) => {
+
+        const boton = event.relatedTarget;
+
+        if (!boton.dataset.agendaId) {
+            return;
+        }
+
+        form.action = boton.dataset.editUrl;
+
+        campoMedico.value = boton.dataset.medicoId;
+        campoConsultorio.value = boton.dataset.consultorioId;
+        campoDia.value = boton.dataset.dia;
+        campoInicio.value = boton.dataset.inicio;
+        campoFin.value = boton.dataset.fin;
+        campoDuracion.value = boton.dataset.duracion;
+
+        titulo.textContent = "Editar bloque horario";
+        botonGuardar.textContent = "Guardar cambios";
+
+    });
+
+});
+</script>
+
+{% endblock %}

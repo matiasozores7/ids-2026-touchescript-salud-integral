@@ -1,0 +1,357 @@
+
+/* ========================================
+   AGENDAS MÉDICAS - BACKOFFICE
+======================================== */
+
+.agendas-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+/* Encabezado */
+
+.agendas-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.agendas-header h1 {
+    margin: 0;
+    color: #263746;
+    font-size: 1.65rem;
+    font-weight: 700;
+}
+
+.agendas-header p {
+    margin: 6px 0 0;
+    color: #71808d;
+    font-size: 0.9rem;
+}
+
+/* Distribución principal */
+
+.agendas-layout {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+/* Paneles */
+
+.agendas-professionals,
+.agendas-schedule {
+    background: #fff;
+    border: 1px solid #e5eaee;
+    border-radius: 12px;
+    min-width: 0;
+}
+
+.agendas-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.agendas-section-header h2 {
+    margin: 0;
+    color: #344654;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.agendas-section-header > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    border-radius: 20px;
+    background: #edf4f7;
+    color: #477f9a;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Profesionales */
+
+.agendas-professionals-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.agenda-professional {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f2f4;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.agenda-professional:last-child {
+    border-bottom: none;
+}
+
+.agenda-professional:hover {
+    background: #f7fafb;
+}
+
+.agenda-professional.active {
+    background: #edf5f8;
+    box-shadow: inset 3px 0 #477f9a;
+}
+
+.agenda-professional-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #edf3f6;
+    color: #477f9a;
+    font-size: 1.1rem;
+}
+
+.agenda-professional-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.agenda-professional-info strong {
+    overflow: hidden;
+    color: #344654;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.agenda-professional-info small {
+    overflow: hidden;
+    color: #87939d;
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.agenda-professional-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 25px;
+    height: 25px;
+    border-radius: 7px;
+    background: #f0f3f5;
+    color: #647582;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Agenda semanal */
+
+.agendas-schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.agendas-schedule-header h2 {
+    margin: 0;
+    color: #344654;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.agendas-schedule-header p {
+    margin: 5px 0 0;
+    color: #87939d;
+    font-size: 0.8rem;
+}
+
+.agendas-schedule-label {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #edf4f7;
+    color: #477f9a;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.agendas-week {
+    padding: 4px 20px;
+}
+
+.agenda-day {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.agenda-day:last-child {
+    border-bottom: none;
+}
+
+.agenda-day h3 {
+    margin: 2px 0 0;
+    color: #526473;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.agenda-day-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.agenda-block {
+    padding: 12px 14px;
+    border: 1px solid #e6edf0;
+    border-radius: 8px;
+    background: #fafcfd;
+}
+
+.agenda-block-main {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.agenda-block-main strong {
+    color: #344654;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.agenda-block-main > span {
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: #edf3f6;
+    color: #607987;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.agenda-block-details {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.agenda-block-details span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #7b8993;
+    font-size: 0.75rem;
+}
+
+.agenda-block-details i {
+    color: #83a2b2;
+}
+
+.agenda-day-empty {
+    color: #a0aab2;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Estados vacíos */
+
+.agendas-empty,
+.agendas-empty-state {
+    color: #89959e;
+    text-align: center;
+}
+
+.agendas-empty {
+    padding: 24px 12px;
+    font-size: 0.85rem;
+}
+
+.agendas-empty-state {
+    padding: 60px 20px;
+}
+
+.agendas-empty-state > i {
+    color: #9aafbb;
+    font-size: 2rem;
+}
+
+.agendas-empty-state h2 {
+    margin: 14px 0 6px;
+    color: #526473;
+    font-size: 1rem;
+}
+
+.agendas-empty-state p {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .agendas-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .agendas-professionals-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agenda-professional {
+        border-right: 1px solid #f0f2f4;
+    }
+}
+
+@media (max-width: 576px) {
+    .agendas-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .agendas-professionals-list {
+        grid-template-columns: 1fr;
+    }
+
+    .agenda-day {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .agendas-schedule-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .agendas-week {
+        padding: 4px 14px;
+    }
+}
