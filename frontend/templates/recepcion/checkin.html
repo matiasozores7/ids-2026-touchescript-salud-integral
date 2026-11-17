@@ -54,13 +54,34 @@
         </span>
       </div>
 
-      <div class="qr-placeholder" role="img" aria-label="Código QR">
-        <span class="qr-corner qr-corner-top-left"></span>
-        <span class="qr-corner qr-corner-top-right"></span>
-        <span class="qr-corner qr-corner-bottom-left"></span>
-        <span class="qr-corner qr-corner-bottom-right"></span>
-        <i class="bi bi-qr-code" aria-hidden="true"></i>
-        <span>Ingreso manual del código</span>
+      <div class="qr-scanner-container">
+
+          <div id="qr-reader"></div>
+
+          <div class="qr-scanner-actions">
+              <button
+                  type="button"
+                  id="start-scanner"
+                  class="button button-primary"
+              >
+                  <i class="bi bi-camera"></i>
+                  Iniciar escáner
+              </button>
+
+              <button
+                  type="button"
+                  id="stop-scanner"
+                  class="button button-secondary"
+                  hidden
+              >
+                  Detener cámara
+              </button>
+          </div>
+
+          <p id="scanner-status" role="status">
+              Presioná iniciar escáner para activar la cámara.
+          </p>
+
       </div>
 
       <div class="checkin-divider">
@@ -117,5 +138,8 @@
   </div>
 
 </div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="{{ url_for('static', filename='js/checkin.js') }}"></script>
 
 {% endblock %}

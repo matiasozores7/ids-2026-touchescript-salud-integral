@@ -448,69 +448,73 @@
   }
 }
 
+
+/* Responsive: Backoffice móvil */
 @media (max-width: 767.98px) {
-  .backoffice-layout {
-    display: block;
-  }
+    .backoffice-sidebar {
+        position: relative;
+        inset: auto;
+        z-index: 1000;
 
-  .backoffice-sidebar {
-    width: 100%;
-    min-height: auto;
-    padding: 16px;
-  }
+        width: 100%;
+        height: auto;
+        min-height: auto;
 
-  .backoffice-brand {
-    padding-bottom: 16px;
-  }
+        padding: 12px 16px;
+        overflow: visible;
 
-  .backoffice-nav {
-    grid-template-columns: repeat(2, 1fr);
-  }
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
 
-  .sidebar-footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 14px;
-  }
+    .backoffice-brand {
+        padding: 0 4px 12px;
+    }
 
-  .backoffice-header {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 18px 24px;
-  }
+    .sidebar-label {
+        display: none;
+    }
 
-  .backoffice-header > div:first-child {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
-  }
+    .backoffice-nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scrollbar-width: thin;
+    }
 
-  .backoffice-content {
-    width: min(100% - 32px, 1180px);
-    padding-top: 26px;
-  }
+    .backoffice-nav a {
+        flex: 0 0 auto;
+        width: auto;
+        white-space: nowrap;
+        padding: 9px 12px;
+    }
 
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .backoffice-main {
+        width: 100%;
+        min-height: auto;
+        margin-left: 0;
+    }
+
+    .backoffice-header {
+        min-height: auto;
+        padding: 14px 16px;
+    }
+
+    .backoffice-content {
+        width: calc(100% - 32px);
+        padding: 22px 0 32px;
+    }
 }
 
 @media (max-width: 480px) {
-  .backoffice-nav {
-    grid-template-columns: 1fr;
-  }
+    .backoffice-header {
+        gap: 12px;
+    }
 
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .backoffice-heading .button {
-    flex: 1;
-  }
-
-  .quick-stat {
-    min-height: 68px;
-  }
+    .backoffice-user-menu {
+        padding: 6px 9px;
+    }
 }
 
 .backoffice-heading {
