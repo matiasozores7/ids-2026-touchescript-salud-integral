@@ -44,7 +44,7 @@ def actualizar_consultorio(
     connection = get_db_connection()
 
     try:
-        consultorio = consultorio_repo.buscar_consultorio_activo(
+        consultorio = consultorio_repo.obtener_consultorio_activo(
             connection,
             consultorio_id
         )
@@ -73,7 +73,7 @@ def eliminar_consultorio(consultorio_id: int) -> None:
     connection = get_db_connection()
 
     try:
-        consultorio = consultorio_repo.buscar_consultorio_activo(
+        consultorio = consultorio_repo.obtener_consultorio_activo(
             connection,
             consultorio_id
         )

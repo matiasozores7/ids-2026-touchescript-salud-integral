@@ -1,9 +1,3 @@
-def obtener_consultorio_activo(connection, consultorio_id):
-    query = "SELECT id FROM consultorios WHERE id = %s AND activo = TRUE"
-    with connection.cursor() as cursor:
-        cursor.execute(query, (consultorio_id,))
-        return cursor.fetchone()
-
 def existe_conflicto(connection, datos, agenda_id=None):
     query = """
         SELECT id

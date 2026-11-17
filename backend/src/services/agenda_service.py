@@ -2,6 +2,7 @@ from src.database.connection import transaction
 from src.errors.exceptions import BadRequestError, ConflictError, NotFoundError
 from src.repositories import agendas_repository as agenda_repo
 from src.repositories import medico_repository as medico_repo
+from src.repositories import consultorio_repository as consultorio_repo
 from datetime import timedelta
 
 
@@ -9,7 +10,7 @@ def _validar_referencias(connection, datos):
     if not medico_repo.obtener_medico_activo(connection, datos["medico_id"]):
         raise NotFoundError(description="El médico no existe o está inactivo.")
 
-    if not agenda_repo.obtener_consultorio_activo(connection, datos["consultorio_id"]):
+    if not consultorio_repo.obtener_consultorio_activo(connection, datos["consultorio_id"]):
         raise NotFoundError(description="El consultorio no existe o está inactivo.")
 
 
