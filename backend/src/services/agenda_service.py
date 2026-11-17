@@ -4,7 +4,8 @@ from src.repositories import agendas_repository as agenda_repo
 from src.repositories import medico_repository as medico_repo
 from src.repositories import consultorio_repository as consultorio_repo
 from src.repositories import especialidades_repository as especialidades_repo
-from datetime import timedelta
+from datetime import date, timedelta
+from src.services.turno_service import generar_turnos_en_conexion
 
 
 def _validar_referencias(connection, datos):
@@ -26,6 +27,17 @@ def crear_agenda(datos):
             )
 
         agenda_id = agenda_repo.crear(connection, datos)
+
+        fecha_inicio = date.today()
+        fecha_fin = fecha_inicio + timedelta(days=29)
+
+        generar_turnos_en_conexion(
+            connection,
+            fecha_inicio,
+            fecha_fin,
+            medico_id=datos["medico_id"]
+        )
+
         return agenda_id
 
 

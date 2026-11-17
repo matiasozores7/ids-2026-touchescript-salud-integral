@@ -25,7 +25,6 @@ def actualizar_estado_turno(turno_id: int):
         message="Estado del turno actualizado correctamente."
     )
 
-
 @turnos_bp.route("/turnos/generar", methods=["POST"])
 @validar_rol("admin")
 def generar_turnos():
@@ -46,7 +45,6 @@ def generar_turnos():
         message=f"Se generaron {cantidad} turnos exitosamente.",
         status_code=201
     )
-
 
 @turnos_bp.route("/turnos", methods=["POST"])
 @validar_rol("paciente", "admin")
@@ -219,7 +217,6 @@ def listar_turnos_administrativos():
         message="Turnos administrativos obtenidos correctamente."
     )
 
-
 @turnos_bp.route("/turnos/<int(min=1):turno_id>/qr", methods=["GET"])
 @validar_rol("paciente", "admin")
 def obtener_qr_turno(turno_id: int):
@@ -288,10 +285,7 @@ def marcar_turnos_ausentes():
         message=f"Se actualizaron {afectados} turnos al estado ausente."
     )
 
-@turnos_bp.route(
-    "/medicos/<int(min=1):medico_id>/dias-disponibles",
-    methods=["GET"]
-)
+@turnos_bp.route("/medicos/<int(min=1):medico_id>/dias-disponibles", methods=["GET"])
 @validar_token
 def obtener_dias_disponibles(medico_id: int):
     dias = turno_service.obtener_dias_disponibles(medico_id)
@@ -301,10 +295,7 @@ def obtener_dias_disponibles(medico_id: int):
         message="Días disponibles obtenidos correctamente."
     )
 
-@turnos_bp.route(
-    "/medicos/<int(min=1):medico_id>/horarios-disponibles",
-    methods=["GET"]
-)
+@turnos_bp.route("/medicos/<int(min=1):medico_id>/horarios-disponibles", methods=["GET"])
 @validar_token
 def obtener_horarios_disponibles(medico_id: int):
     fecha = request.args.get("fecha")
@@ -331,11 +322,7 @@ def obtener_horarios_disponibles(medico_id: int):
         message="Horarios disponibles obtenidos correctamente."
     )
 
-
-@turnos_bp.route(
-    "/medicos/<int(min=1):medico_id>/turnos-disponibles",
-    methods=["GET"]
-)
+@turnos_bp.route("/medicos/<int(min=1):medico_id>/turnos-disponibles", methods=["GET"])
 @validar_rol("paciente", "admin")
 def listar_turnos_disponibles(medico_id: int):
     turnos = turno_service.listar_turnos_disponibles(medico_id)
@@ -345,10 +332,7 @@ def listar_turnos_disponibles(medico_id: int):
         message="Turnos disponibles obtenidos correctamente."
     )
 
-@turnos_bp.route(
-    "/turnos/mis-turnos/<int(min=1):turno_id>",
-    methods=["GET"]
-)
+@turnos_bp.route("/turnos/mis-turnos/<int(min=1):turno_id>", methods=["GET"])
 @validar_rol("paciente", "admin")
 def obtener_detalle_turno(turno_id: int):
     claims = obtener_claims_actuales()
