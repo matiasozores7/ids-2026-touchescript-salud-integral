@@ -85,21 +85,6 @@ def actualizar(connection, agenda_id, datos):
 def eliminar(connection, agenda_id):
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM agendas WHERE id = %s", (agenda_id,))
-        
-def listar_medicos_por_especialidad(connection, especialidad_id):
-    query = """
-        SELECT m.id, u.nombre, u.apellido, u.email,
-               e.id AS especialidad_id, e.nombre AS especialidad
-        FROM medicos m
-        JOIN usuarios u ON u.id = m.usuario_id
-        JOIN especialidades e ON e.id = m.especialidad_id
-        WHERE m.especialidad_id = %s
-          AND u.activo = TRUE
-        ORDER BY u.apellido, u.nombre
-    """
-    with connection.cursor() as cursor:
-        cursor.execute(query, (especialidad_id,))
-        return cursor.fetchall()
 
 def existe_especialidad(connection, especialidad_id):
     with connection.cursor() as cursor:

@@ -86,6 +86,6 @@ def listar_medicos_por_especialidad(especialidad_id):
         if not agenda_repo.existe_especialidad(connection, especialidad_id):
             raise NotFoundError(description="La especialidad no existe.")
 
-        return agenda_repo.listar_medicos_por_especialidad(
+        return medico_repo.listar_por_especialidad(
             connection, especialidad_id
         )
