@@ -85,11 +85,3 @@ def actualizar(connection, agenda_id, datos):
 def eliminar(connection, agenda_id):
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM agendas WHERE id = %s", (agenda_id,))
-
-def existe_especialidad(connection, especialidad_id):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT id FROM especialidades WHERE id = %s",
-            (especialidad_id,)
-        )
-        return cursor.fetchone() is not None

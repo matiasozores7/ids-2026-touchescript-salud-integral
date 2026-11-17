@@ -3,6 +3,7 @@ from src.errors.exceptions import BadRequestError, ConflictError, NotFoundError
 from src.repositories import agendas_repository as agenda_repo
 from src.repositories import medico_repository as medico_repo
 from src.repositories import consultorio_repository as consultorio_repo
+from src.repositories import especialidades_repository as especialidades_repo
 from datetime import timedelta
 
 
@@ -83,7 +84,7 @@ def eliminar_agenda(agenda_id):
 
 def listar_medicos_por_especialidad(especialidad_id):
     with transaction() as connection:
-        if not agenda_repo.existe_especialidad(connection, especialidad_id):
+        if not especialidades_repo.existe_especialidad(connection, especialidad_id):
             raise NotFoundError(description="La especialidad no existe.")
 
         return medico_repo.listar_por_especialidad(

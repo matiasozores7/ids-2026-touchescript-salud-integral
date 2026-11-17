@@ -106,3 +106,11 @@ def eliminar_especialidad(connection, especialidad_id: int) -> None:
 
     with connection.cursor() as cursor:
         cursor.execute(query, (especialidad_id,))
+
+def existe_especialidad(connection, especialidad_id):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT id FROM especialidades WHERE id = %s",
+            (especialidad_id,)
+        )
+        return cursor.fetchone() is not None
