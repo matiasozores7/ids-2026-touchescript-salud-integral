@@ -34,16 +34,26 @@ def listar_especialidades(connection, limit: int, offset: int):
 
 
 
-def existe_nombre(connection, nombre: str) -> bool:
+def existe_nombre(
+    connection,
+    nombre: str,
+    excluir_id: int | None = None
+) -> bool:
     query = """
         SELECT id
         FROM especialidades
         WHERE nombre = %s
-        LIMIT 1
     """
+    params = [nombre]
+
+    if excluir_id is not None:
+        query += " AND id <> %s"
+        params.append(excluir_id)
+
+    query += " LIMIT 1"
 
     with connection.cursor() as cursor:
-        cursor.execute(query, (nombre,))
+        cursor.execute(query, tuple(params))
         return cursor.fetchone() is not None
 
 

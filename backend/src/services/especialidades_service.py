@@ -45,6 +45,15 @@ def actualizar_especialidad(
         if especialidad is None:
             raise NotFoundError(description="La especialidad no existe.")
 
+        if especialidades_repo.existe_nombre(
+            connection,
+            nombre,
+            excluir_id=especialidad_id
+        ):
+            raise ConflictError(
+                description="Ya existe una especialidad con ese nombre."
+            )
+
         especialidades_repo.actualizar_especialidad(
             connection,
             especialidad_id=especialidad_id,

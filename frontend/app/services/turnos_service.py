@@ -78,7 +78,7 @@ def listar_especialidades() -> list[dict]:
     resultado = api_request(
         method="GET",
         endpoint="/especialidades",
-        params={"limit": 100, "offset": 0},
+        params={"_limit": 100, "_offset": 0},
         authenticated=True,
     )
 
