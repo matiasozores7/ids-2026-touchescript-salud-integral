@@ -4,6 +4,7 @@ from src.repositories import agendas_repository as agenda_repo
 from src.repositories import medico_repository as medico_repo
 from src.repositories import consultorio_repository as consultorio_repo
 from src.repositories import especialidades_repository as especialidades_repo
+from src.repositories import turno_repository as turno_repo
 from datetime import date, timedelta
 from src.services.turno_service import generar_turnos_en_conexion
 
@@ -72,7 +73,9 @@ def listar_por_medico(medico_id):
 
 def actualizar_agenda(agenda_id, datos):
     with transaction() as connection:
-        if not agenda_repo.obtener(connection, agenda_id):
+        agenda_actual = agenda_repo.obtener(connection, agenda_id)
+
+        if not agenda_actual:
             raise NotFoundError(description="La agenda no existe.")
 
         _validar_referencias(connection, datos)
@@ -83,7 +86,13 @@ def actualizar_agenda(agenda_id, datos):
                 description="El médico o consultorio ya tiene una agenda en ese horario."
             )
 
+        consultorio_anterior = agenda_actual["consultorio_id"]
+        consultorio_nuevo = datos["consultorio_id"]
+
         agenda_repo.actualizar(connection, agenda_id, datos)
+
+        if consultorio_anterior != consultorio_nuevo:
+            turno_repo.actualizar_consultorio_turnos_agenda(connection, agenda_id, consultorio_nuevo)
 
 
 def eliminar_agenda(agenda_id):

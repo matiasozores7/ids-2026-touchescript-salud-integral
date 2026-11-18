@@ -458,3 +458,19 @@ def listar_turnos_administrativos(
     with connection.cursor() as cursor:
         cursor.execute(query, tuple(params))
         return cursor.fetchall()
+
+def actualizar_consultorio_turnos_agenda(
+    connection,
+    agenda_id: int,
+    consultorio_id: int
+) -> int:
+    query = """
+        UPDATE turnos
+        SET consultorio_id = %s
+        WHERE agenda_id = %s
+          AND estado IN ('disponible', 'reservado')
+          AND fecha_hora >= NOW()
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (consultorio_id, agenda_id))
+        return cursor.rowcount
