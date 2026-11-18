@@ -62,7 +62,7 @@ def actualizar_especialidad(especialidad_id):
     except AppError as exception:
         flash(str(exception), "error")
 
-    return redirect(url_for("backoffice.backoffice_specialties"))
+    return redirect(url_for("backoffice.backoffice_especialidades"))
 
 
 @backoffice_bp.post("/backoffice/especialidades/<int:especialidad_id>/eliminar")
@@ -74,4 +74,4 @@ def eliminar_especialidad(especialidad_id):
     except AppError as exception:
         flash(str(exception), "error")
 
-    return redirect(url_for("backoffice.backoffice_specialties"))
+    return redirect(url_for("backoffice.backoffice_especialidades"))
