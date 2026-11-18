@@ -55,10 +55,3 @@ def eliminar_agenda(agenda_id):
     agenda_service.eliminar_agenda(agenda_id)
 
     return success_response(message="Agenda eliminada exitosamente")
-
-
-
-
-
-
-

@@ -191,18 +191,28 @@ def desactivar_usuario(connection, usuario_id: int):
     with connection.cursor() as cursor:
         cursor.execute(query, (usuario_id,))
 
-
 def listar_por_especialidad(connection, especialidad_id: int):
     query = """
-        SELECT m.id, m.usuario_id, m.especialidad_id,
-               e.descripcion AS especialidad
+        SELECT m.id, u.nombre, u.apellido, u.email,
+               e.id AS especialidad_id, e.nombre AS especialidad
         FROM medicos m
-        INNER JOIN especialidades e
-            ON e.id = m.especialidad_id
+        JOIN usuarios u ON u.id = m.usuario_id
+        JOIN especialidades e ON e.id = m.especialidad_id
         WHERE m.especialidad_id = %s
-        ORDER BY m.id
+          AND u.activo = TRUE
+        ORDER BY u.apellido, u.nombre
     """
-
     with connection.cursor() as cursor:
         cursor.execute(query, (especialidad_id,))
         return cursor.fetchall()
+
+def obtener_medico_activo(connection, medico_id):
+    query = """
+        SELECT m.id
+        FROM medicos m
+        JOIN usuarios u ON u.id = m.usuario_id
+        WHERE m.id = %s AND u.activo = TRUE
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (medico_id,))
+        return cursor.fetchone()

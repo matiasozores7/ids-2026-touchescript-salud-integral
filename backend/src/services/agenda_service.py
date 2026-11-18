@@ -1,14 +1,19 @@
 from src.database.connection import transaction
 from src.errors.exceptions import BadRequestError, ConflictError, NotFoundError
 from src.repositories import agendas_repository as agenda_repo
-from datetime import timedelta
+from src.repositories import medico_repository as medico_repo
+from src.repositories import consultorio_repository as consultorio_repo
+from src.repositories import especialidades_repository as especialidades_repo
+from src.repositories import turno_repository as turno_repo
+from datetime import date, timedelta
+from src.services.turno_service import generar_turnos_en_conexion
 
 
 def _validar_referencias(connection, datos):
-    if not agenda_repo.obtener_medico_activo(connection, datos["medico_id"]):
+    if not medico_repo.obtener_medico_activo(connection, datos["medico_id"]):
         raise NotFoundError(description="El médico no existe o está inactivo.")
 
-    if not agenda_repo.obtener_consultorio_activo(connection, datos["consultorio_id"]):
+    if not consultorio_repo.obtener_consultorio_activo(connection, datos["consultorio_id"]):
         raise NotFoundError(description="El consultorio no existe o está inactivo.")
 
 
@@ -23,6 +28,17 @@ def crear_agenda(datos):
             )
 
         agenda_id = agenda_repo.crear(connection, datos)
+
+        fecha_inicio = date.today()
+        fecha_fin = fecha_inicio + timedelta(days=29)
+
+        generar_turnos_en_conexion(
+            connection,
+            fecha_inicio,
+            fecha_fin,
+            medico_id=datos["medico_id"]
+        )
+
         return agenda_id
 
 
@@ -46,7 +62,7 @@ def _serializar_agenda(agenda):
 
 def listar_por_medico(medico_id):
     with transaction() as connection:
-        if not agenda_repo.obtener_medico_activo(connection, medico_id):
+        if not medico_repo.obtener_medico_activo(connection, medico_id):
             raise NotFoundError(
                 description="El médico no existe o está inactivo."
             )
@@ -57,7 +73,9 @@ def listar_por_medico(medico_id):
 
 def actualizar_agenda(agenda_id, datos):
     with transaction() as connection:
-        if not agenda_repo.obtener(connection, agenda_id):
+        agenda_actual = agenda_repo.obtener(connection, agenda_id)
+
+        if not agenda_actual:
             raise NotFoundError(description="La agenda no existe.")
 
         _validar_referencias(connection, datos)
@@ -68,7 +86,44 @@ def actualizar_agenda(agenda_id, datos):
                 description="El médico o consultorio ya tiene una agenda en ese horario."
             )
 
+        consultorio_anterior = agenda_actual["consultorio_id"]
+        consultorio_nuevo = datos["consultorio_id"]
+
+        horario_modificado = (
+            agenda_actual["hora_inicio"] != datos["hora_inicio"]
+            or agenda_actual["hora_fin"] != datos["hora_fin"]
+            or agenda_actual["duracion_turno"] != datos["duracion_turno"]
+        )
+
+        if horario_modificado:
+            turno_repo.cancelar_reservados_fuera_horario(
+                connection, agenda_id, 
+                datos["hora_inicio"], datos["hora_fin"], 
+                datos["duracion_turno"]
+            )
+
+            turno_repo.eliminar_disponibles_fuera_horario(
+                connection, agenda_id, 
+                datos["hora_inicio"], datos["hora_fin"],
+                datos["duracion_turno"]
+            )
+
+
         agenda_repo.actualizar(connection, agenda_id, datos)
+
+        if horario_modificado:
+            fecha_inicio = date.today()
+            fecha_fin = fecha_inicio + timedelta(days=29)
+
+            generar_turnos_en_conexion(
+                connection,
+                fecha_inicio,
+                fecha_fin,
+                medico_id=datos["medico_id"]
+            )
+
+        if consultorio_anterior != consultorio_nuevo:
+            turno_repo.actualizar_consultorio_turnos_agenda(connection, agenda_id, consultorio_nuevo)
 
 
 def eliminar_agenda(agenda_id):
@@ -76,14 +131,17 @@ def eliminar_agenda(agenda_id):
         if not agenda_repo.obtener(connection, agenda_id):
             raise NotFoundError(description="La agenda no existe.")
 
+        turno_repo.eliminar_disponibles_de_agenda(connection, agenda_id)
+        turno_repo.cancelar_reservados_de_agenda(connection, agenda_id)
+
         agenda_repo.eliminar(connection, agenda_id)
 
 
 def listar_medicos_por_especialidad(especialidad_id):
     with transaction() as connection:
-        if not agenda_repo.existe_especialidad(connection, especialidad_id):
+        if not especialidades_repo.existe_especialidad(connection, especialidad_id):
             raise NotFoundError(description="La especialidad no existe.")
 
-        return agenda_repo.listar_medicos_por_especialidad(
+        return medico_repo.listar_por_especialidad(
             connection, especialidad_id
         )
