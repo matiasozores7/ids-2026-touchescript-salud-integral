@@ -434,6 +434,7 @@ def generar_turnos_en_conexion(
                 if not hay_conflicto:
                     turno_repo.insertar_turno(
                         connection,
+                        agenda_id=agenda["id"],
                         medico_id=agenda["medico_id"],
                         consultorio_id=agenda["consultorio_id"],
                         fecha_hora=fecha_hora_slot,

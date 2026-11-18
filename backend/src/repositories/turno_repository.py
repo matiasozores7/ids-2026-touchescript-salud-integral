@@ -37,13 +37,13 @@ def existe_turno_en_horario(connection, medico_id: int, consultorio_id: int, fec
         return cursor.fetchone() is not None
 
 
-def insertar_turno(connection, medico_id: int, consultorio_id: int, fecha_hora, estado: str = "disponible") -> int:
+def insertar_turno(connection, agenda_id: int, medico_id: int, consultorio_id: int, fecha_hora, estado: str = "disponible") -> int:
     query = """
-        INSERT INTO turnos (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
-        VALUES (%s, NULL, %s, %s, %s, NULL)
+        INSERT INTO turnos (agenda_id, medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
+        VALUES (%s, %s, NULL, %s, %s, %s, NULL)
     """
     with connection.cursor() as cursor:
-        cursor.execute(query, (medico_id, consultorio_id, fecha_hora, estado))
+        cursor.execute(query, (agenda_id, medico_id, consultorio_id, fecha_hora, estado))
         return cursor.lastrowid
 
 
