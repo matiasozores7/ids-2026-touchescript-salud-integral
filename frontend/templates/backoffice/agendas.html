@@ -119,6 +119,7 @@ Agendas médicas · Salud Integral
                                     <div class="agenda-block">
 
                                         <div class="agenda-block-main">
+
                                             <strong>
                                                 {{ bloque.hora_inicio }}
                                                 –
@@ -148,30 +149,32 @@ Agendas médicas · Salud Integral
                                             </button>
 
                                             <form
-                                            method="POST"
-                                            action="{{ url_for(
-                                                'backoffice.eliminar_agenda',
-                                                agenda_id=bloque.id
-                                            ) }}"
-                                            onsubmit="return confirm('¿Estás seguro de eliminar este bloque horario?');"
-                                        >
-                                            <input
-                                                type="hidden"
-                                                name="medico_id"
-                                                value="{{ medico_seleccionado.id }}"
+                                                method="POST"
+                                                action="{{ url_for(
+                                                    'backoffice.eliminar_agenda',
+                                                    agenda_id=bloque.id
+                                                ) }}"
+                                                onsubmit="return confirm('¿Estás seguro de eliminar este bloque horario?');"
                                             >
+                                                <input
+                                                    type="hidden"
+                                                    name="medico_id"
+                                                    value="{{ medico_seleccionado.id }}"
+                                                >
 
-                                            <button
-                                                type="submit"
-                                                class="button button-outline button-small"
-                                            >
-                                                <i class="bi bi-trash" aria-hidden="true"></i>
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                                <button
+                                                    type="submit"
+                                                    class="button button-outline button-small"
+                                                >
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                    Eliminar
+                                                </button>
+                                            </form>
+
                                         </div>
 
                                         <div class="agenda-block-details">
+
                                             <span>
                                                 <i class="bi bi-calendar-check"></i>
                                                 {{ bloque.cantidad_turnos }} turnos
@@ -188,9 +191,8 @@ Agendas médicas · Salud Integral
                                                     Piso {{ bloque.piso }}
                                                 </span>
                                             {% endif %}
-                                        </div>
 
-                                        
+                                        </div>
 
                                     </div>
 
@@ -226,6 +228,8 @@ Agendas médicas · Salud Integral
 
 </section>
 
+
+<!-- Modal de creación y edición -->
 
 <div
     class="modal fade"
@@ -292,6 +296,7 @@ Agendas médicas · Salud Integral
                                     {% endif %}
                                 </option>
                             {% endfor %}
+
                         </select>
                     </div>
 
@@ -324,13 +329,14 @@ Agendas médicas · Salud Integral
                                 Hora de inicio
                             </label>
 
-                            <input
-                                type="time"
-                                class="form-control"
+                            <select
+                                class="form-select"
                                 id="agenda-inicio"
                                 name="hora_inicio"
                                 required
                             >
+                                <option value="">Desde</option>
+                            </select>
                         </div>
 
                         <div class="col-6 mb-3">
@@ -338,18 +344,20 @@ Agendas médicas · Salud Integral
                                 Hora de finalización
                             </label>
 
-                            <input
-                                type="time"
-                                class="form-control"
+                            <select
+                                class="form-select"
                                 id="agenda-fin"
                                 name="hora_fin"
                                 required
+                                disabled
                             >
+                                <option value="">Hasta</option>
+                            </select>
                         </div>
 
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <label for="agenda-duracion" class="form-label">
                             Duración de cada turno
                         </label>
@@ -397,57 +405,9 @@ Agendas médicas · Salud Integral
 </div>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const modal = document.getElementById("agenda-modal");
-    const form = document.getElementById("agenda-form");
-
-    const titulo = document.getElementById("agenda-modal-title");
-    const botonGuardar = document.getElementById("agenda-submit-btn");
-
-    const campoMedico = document.getElementById("agenda-medico-id");
-    const campoConsultorio = document.getElementById("agenda-consultorio");
-    const campoDia = document.getElementById("agenda-dia");
-    const campoInicio = document.getElementById("agenda-inicio");
-    const campoFin = document.getElementById("agenda-fin");
-    const campoDuracion = document.getElementById("agenda-duracion");
-
-    const accionCrear = form.action;
-
-    document.getElementById("nuevo-bloque-btn").addEventListener("click", () => {
-
-        form.reset();
-        form.action = accionCrear;
-
-        titulo.textContent = "Nuevo bloque horario";
-        botonGuardar.textContent = "Guardar bloque";
-
-    });
-
-    modal.addEventListener("show.bs.modal", (event) => {
-
-        const boton = event.relatedTarget;
-
-        if (!boton.dataset.agendaId) {
-            return;
-        }
-
-        form.action = boton.dataset.editUrl;
-
-        campoMedico.value = boton.dataset.medicoId;
-        campoConsultorio.value = boton.dataset.consultorioId;
-        campoDia.value = boton.dataset.dia;
-        campoInicio.value = boton.dataset.inicio;
-        campoFin.value = boton.dataset.fin;
-        campoDuracion.value = boton.dataset.duracion;
-
-        titulo.textContent = "Editar bloque horario";
-        botonGuardar.textContent = "Guardar cambios";
-
-    });
-
-});
-</script>
+<script
+    src="{{ url_for('static', filename='js/backoffice-agendas.js') }}"
+    defer
+></script>
 
 {% endblock %}
