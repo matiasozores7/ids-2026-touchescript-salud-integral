@@ -529,3 +529,24 @@ def eliminar_disponibles_fuera_horario(
             (agenda_id, hora_inicio, duracion_turno, hora_fin)
         )
         return cursor.rowcount
+
+def eliminar_disponibles_de_agenda(connection, agenda_id: int) -> int:
+    query = """
+        DELETE FROM turnos
+        WHERE agenda_id = %s
+          AND estado = 'disponible'
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (agenda_id,))
+        return cursor.rowcount
+
+def cancelar_reservados_de_agenda(connection, agenda_id: int) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'cancelado'
+        WHERE agenda_id = %s
+          AND estado = 'reservado'
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (agenda_id,))
+        return cursor.rowcount

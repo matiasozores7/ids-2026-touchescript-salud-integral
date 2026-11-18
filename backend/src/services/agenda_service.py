@@ -131,6 +131,9 @@ def eliminar_agenda(agenda_id):
         if not agenda_repo.obtener(connection, agenda_id):
             raise NotFoundError(description="La agenda no existe.")
 
+        turno_repo.eliminar_disponibles_de_agenda(connection, agenda_id)
+        turno_repo.cancelar_reservados_de_agenda(connection, agenda_id)
+
         agenda_repo.eliminar(connection, agenda_id)
 
 
