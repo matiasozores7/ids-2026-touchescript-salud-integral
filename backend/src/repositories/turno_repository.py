@@ -474,3 +474,58 @@ def actualizar_consultorio_turnos_agenda(
     with connection.cursor() as cursor:
         cursor.execute(query, (consultorio_id, agenda_id))
         return cursor.rowcount
+
+def cancelar_reservados_fuera_horario(
+    connection,
+    agenda_id: int,
+    hora_inicio,
+    hora_fin,
+    duracion_turno: int
+) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'cancelado'
+        WHERE agenda_id = %s
+          AND estado = 'reservado'
+          AND fecha_hora >= NOW()
+          AND (
+              TIME(fecha_hora) < %s
+              OR ADDTIME(
+                  TIME(fecha_hora),
+                  SEC_TO_TIME(%s * 60)
+              ) > %s
+          )
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            query,
+            (agenda_id, hora_inicio, duracion_turno, hora_fin)
+        )
+        return cursor.rowcount
+
+def eliminar_disponibles_fuera_horario(
+    connection,
+    agenda_id: int,
+    hora_inicio,
+    hora_fin,
+    duracion_turno: int
+) -> int:
+    query = """
+        DELETE FROM turnos
+        WHERE agenda_id = %s
+          AND estado = 'disponible'
+          AND fecha_hora >= NOW()
+          AND (
+              TIME(fecha_hora) < %s
+              OR ADDTIME(
+                  TIME(fecha_hora),
+                  SEC_TO_TIME(%s * 60)
+              ) > %s
+          )
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            query,
+            (agenda_id, hora_inicio, duracion_turno, hora_fin)
+        )
+        return cursor.rowcount

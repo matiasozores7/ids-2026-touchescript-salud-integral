@@ -89,7 +89,38 @@ def actualizar_agenda(agenda_id, datos):
         consultorio_anterior = agenda_actual["consultorio_id"]
         consultorio_nuevo = datos["consultorio_id"]
 
+        horario_modificado = (
+            agenda_actual["hora_inicio"] != datos["hora_inicio"]
+            or agenda_actual["hora_fin"] != datos["hora_fin"]
+            or agenda_actual["duracion_turno"] != datos["duracion_turno"]
+        )
+
+        if horario_modificado:
+            turno_repo.cancelar_reservados_fuera_horario(
+                connection, agenda_id, 
+                datos["hora_inicio"], datos["hora_fin"], 
+                datos["duracion_turno"]
+            )
+
+            turno_repo.eliminar_disponibles_fuera_horario(
+                connection, agenda_id, 
+                datos["hora_inicio"], datos["hora_fin"],
+                datos["duracion_turno"]
+            )
+
+
         agenda_repo.actualizar(connection, agenda_id, datos)
+
+        if horario_modificado:
+            fecha_inicio = date.today()
+            fecha_fin = fecha_inicio + timedelta(days=29)
+
+            generar_turnos_en_conexion(
+                connection,
+                fecha_inicio,
+                fecha_fin,
+                medico_id=datos["medico_id"]
+            )
 
         if consultorio_anterior != consultorio_nuevo:
             turno_repo.actualizar_consultorio_turnos_agenda(connection, agenda_id, consultorio_nuevo)
