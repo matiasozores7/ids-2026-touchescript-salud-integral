@@ -1,5 +1,5 @@
 from src.database.connection import get_db_connection
-from src.errors.exceptions import NotFoundError
+from src.errors.exceptions import NotFoundError, ConflictError
 from src.repositories import consultorio_repository as consultorio_repo
 
 
@@ -81,6 +81,16 @@ def eliminar_consultorio(consultorio_id: int) -> None:
         if consultorio is None:
             raise NotFoundError(
                 description="El consultorio no existe o se encuentra inactivo."
+            )
+
+        tiene_agendas = consultorio_repo.tiene_agendas_asociadas(
+            connection,
+            consultorio_id
+        )
+
+        if tiene_agendas:
+            raise ConflictError(
+                description="No se puede dar de baja el consultorio porque tiene agendas asociadas."
             )
 
         consultorio_repo.eliminar_consultorio(connection, consultorio_id)

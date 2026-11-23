@@ -65,3 +65,16 @@ def obtener_consultorio_activo(connection, consultorio_id):
     with connection.cursor() as cursor:
         cursor.execute(query, (consultorio_id,))
         return cursor.fetchone()
+
+def tiene_agendas_asociadas(connection, consultorio_id: int) -> bool:
+    query = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM agendas
+            WHERE consultorio_id = %s
+        ) AS tiene_agendas
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (consultorio_id,))
+        return bool(cursor.fetchone()["tiene_agendas"])
