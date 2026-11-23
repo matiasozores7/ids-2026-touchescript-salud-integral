@@ -1,10 +1,7 @@
 from src.database.connection import transaction
 from src.repositories.dashboard_repository import (
     obtener_pacientes_en_sala_espera,
-    obtener_turnos_por_medico_y_especialidad,
-    obtener_ocupacion_consultorios,
     obtener_estadisticas_ausentismo,
-    obtener_estadisticas_tiempo_espera,
     obtener_estadisticas_turnos_hoy,
     obtener_turnos_por_hora,
     obtener_proximos_turnos,
@@ -29,28 +26,6 @@ def obtener_sala_espera_service(fecha: str | None = None) -> list[dict]:
                 turno["puntualidad"] = "Llegó puntual"
 
     return turnos
-
-
-def obtener_turnos_por_medico_especialidad_service(fecha: str | None = None) -> list[dict]:
-    with transaction() as connection:
-        return obtener_turnos_por_medico_y_especialidad(connection, fecha)
-
-
-def obtener_ocupacion_consultorios_service(fecha: str | None = None) -> list[dict]:
-    with transaction() as connection:
-        consultorios = obtener_ocupacion_consultorios(connection, fecha)
-
-    for c in consultorios:
-        total = c.get("total_turnos", 0)
-        ocupados = c.get("turnos_ocupados", 0) or 0
-
-        if total > 0:
-            c["porcentaje_ocupacion"] = round((ocupados / total) * 100, 2)
-        else:
-            c["porcentaje_ocupacion"] = 0.0
-
-    return consultorios
-
 
 def obtener_ausentismo_service(fecha: str | None = None) -> dict:
     with transaction() as connection:
@@ -87,30 +62,6 @@ def obtener_ausentismo_service(fecha: str | None = None) -> dict:
             "cancelados": cancelados_general,
             "porcentaje_ausentismo": porcentaje_general
         },
-        "por_medico": medicos_data
-    }
-
-
-def obtener_tiempo_espera_service(fecha: str | None = None) -> dict:
-    with transaction() as connection:
-        medicos_data = obtener_estadisticas_tiempo_espera(connection, fecha)
-
-    suma_tiempos = 0.0
-    total_pacientes = 0
-
-    for m in medicos_data:
-        pacientes = m.get("pacientes_evaluados", 0)
-        promedio = float(m.get("tiempo_promedio_minutos") or 0.0)
-
-        m["tiempo_espera_promedio_minutos"] = round(promedio, 1)
-
-        suma_tiempos += (promedio * pacientes)
-        total_pacientes += pacientes
-
-    promedio_general = round(suma_tiempos / total_pacientes, 1) if total_pacientes > 0 else 0.0
-
-    return {
-        "promedio_general_minutos": promedio_general,
         "por_medico": medicos_data
     }
 
