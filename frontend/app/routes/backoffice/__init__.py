@@ -17,3 +17,4 @@ from . import coberturas_route
 from . import turnos_route
 from . import calendario_route
 from . import agendas_route
+from . import sala_espera_route
