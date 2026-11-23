@@ -63,7 +63,7 @@ Turnos · Salud Integral
                         name="estado">
                     <option value="">Todos</option>
 
-                    {% for estado in ['disponible', 'reservado', 'confirmado', 'atendido', 'cancelado', 'ausente'] %}
+                    {% for estado in ['disponible', 'reservado', 'confirmado', 'en_consulta', 'atendido', 'cancelado', 'ausente'] %}
                         <option value="{{ estado }}"
                             {% if request.args.get('estado') == estado %}selected{% endif %}>
                             {{ estado | capitalize }}

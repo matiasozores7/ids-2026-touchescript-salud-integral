@@ -1,0 +1,284 @@
+.sala-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+    align-items: stretch;
+    gap: 20px;
+}
+
+.sala-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 564px;
+    overflow: hidden;
+}
+
+.sala-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 18px;
+}
+
+.sala-section-header h2 {
+    margin: 0;
+    color: #273344;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sala-section-header p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.sala-lista {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+
+.sala-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #e8edf1;
+    padding: 16px 18px;
+}
+
+.sala-item:last-child,
+.sala-proximo:last-child {
+    border-bottom: 0;
+}
+
+.sala-identidad {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sala-identidad > .avatar {
+    flex-shrink: 0;
+    margin-top: 17px;
+}
+
+.sala-personas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.sala-persona {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.sala-label {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.sala-paciente-nombre {
+    color: #273344;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.sala-medico-nombre {
+    color: #536274;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.sala-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 125px;
+    flex-shrink: 0;
+    color: #536274;
+    font-size: 11px;
+}
+
+.sala-item-details span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sala-item-details i {
+    color: #8492a2;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.sala-sin-llegada {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.sala-estado {
+    margin-top: 2px;
+}
+
+.sala-item form {
+    flex-shrink: 0;
+}
+
+.sala-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    min-height: 180px;
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.sala-empty strong {
+    color: #273344;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sala-empty p {
+    margin: 0;
+}
+
+.sala-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 2px;
+    border-radius: 50%;
+    background: #e0f3fc;
+    color: #1686b3;
+    font-size: 20px;
+}
+
+.sala-proximos .sala-lista {
+    overflow-y: auto;
+}
+
+.sala-proximo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #e8edf1;
+    padding: 15px 16px;
+}
+
+.sala-proximo-hora {
+    min-width: 42px;
+    color: #263448;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.sala-proximo-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+}
+
+.sala-proximo .sala-paciente-nombre {
+    font-size: 12px;
+}
+
+.sala-proximo .sala-medico-nombre {
+    font-size: 11px;
+}
+
+.sala-proximo-estado {
+    flex-shrink: 0;
+}
+
+.sala-proximo .badge {
+    white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+    .sala-item {
+        gap: 12px;
+    }
+
+    .sala-item-details {
+        min-width: 110px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sala-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sala-card {
+        height: 480px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sala-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .sala-identidad {
+        flex-basis: 100%;
+    }
+
+    .sala-item-details {
+        flex: 1;
+    }
+
+    .sala-proximo {
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .sala-proximo-estado {
+        align-self: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .sala-proximo {
+        flex-wrap: wrap;
+    }
+
+    .sala-proximo-info {
+        flex-basis: calc(100% - 60px);
+    }
+
+    .sala-proximo-estado {
+        margin-left: 52px;
+    }
+}
