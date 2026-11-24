@@ -7,4 +7,6 @@ venv/
 .idea/
 *.db
 AGENTS.md
+PULL_REQUEST.md
+
 
