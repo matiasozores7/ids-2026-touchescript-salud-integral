@@ -1,5 +1,5 @@
 from datetime import datetime
-from src.constants_turnos import ESTADOS_VALIDOS
+from src.constants_turnos import ReglasTurno
 from src.errors.exceptions import BadRequestError
 
 
@@ -20,11 +20,11 @@ def validar_actualizacion_estado(data: dict) -> None:
         )
 
     estado_limpio = estado.strip().lower()
-    if estado_limpio not in ESTADOS_VALIDOS:
+    if estado_limpio not in ReglasTurno.ESTADOS_VALIDOS:
         raise BadRequestError(
             description=(
                 f"El estado '{estado}' no es válido. Estados permitidos: "
-                f"{', '.join(ESTADOS_VALIDOS)}."
+                f"{', '.join(ReglasTurno.ESTADOS_VALIDOS)}."
             )
         )
 

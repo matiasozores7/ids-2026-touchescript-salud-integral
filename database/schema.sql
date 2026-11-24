@@ -87,7 +87,7 @@ CREATE TABLE agendas (
 
 CREATE TABLE turnos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    agenda_id INT NOT NULL,
+    agenda_id INT NULL,
     medico_id INT NOT NULL,
     paciente_id INT,
     consultorio_id INT NOT NULL,

@@ -1,46 +1,57 @@
-# Constantes y reglas para el módulo de turnos
+class ReglasTurno:
+    ESTADO_DISPONIBLE = "disponible"
+    ESTADO_RESERVADO = "reservado"
+    ESTADO_CONFIRMADO = "confirmado"
+    ESTADO_EN_CONSULTA = "en_consulta"
+    ESTADO_ATENDIDO = "atendido"
+    ESTADO_CANCELADO = "cancelado"
+    ESTADO_AUSENTE = "ausente"
 
-ESTADO_DISPONIBLE = "disponible"
-ESTADO_RESERVADO = "reservado"
-ESTADO_CONFIRMADO = "confirmado"
-ESTADO_EN_CONSULTA = "en_consulta"
-ESTADO_ATENDIDO = "atendido"
-ESTADO_CANCELADO = "cancelado"
-ESTADO_AUSENTE = "ausente"
+    ESTADOS_VALIDOS = (
+        ESTADO_DISPONIBLE,
+        ESTADO_RESERVADO,
+        ESTADO_CONFIRMADO,
+        ESTADO_EN_CONSULTA,
+        ESTADO_ATENDIDO,
+        ESTADO_CANCELADO,
+        ESTADO_AUSENTE,
+    )
 
-ESTADOS_VALIDOS = (
-    ESTADO_DISPONIBLE,
-    ESTADO_RESERVADO,
-    ESTADO_CONFIRMADO,
-    ESTADO_EN_CONSULTA,
-    ESTADO_ATENDIDO,
-    ESTADO_CANCELADO,
-    ESTADO_AUSENTE,
-)
+    @classmethod
+    def transiciones_validas(cls) -> dict:
+        return {
+            cls.ESTADO_DISPONIBLE: (
+                cls.ESTADO_RESERVADO,
+                cls.ESTADO_CANCELADO,
+            ),
+            cls.ESTADO_RESERVADO: (
+                cls.ESTADO_CONFIRMADO,
+                cls.ESTADO_CANCELADO,
+                cls.ESTADO_AUSENTE,
+                cls.ESTADO_DISPONIBLE,
+            ),
+            cls.ESTADO_CONFIRMADO: (
+                cls.ESTADO_EN_CONSULTA,
+                cls.ESTADO_ATENDIDO,
+                cls.ESTADO_CANCELADO,
+                cls.ESTADO_AUSENTE,
+            ),
+            cls.ESTADO_EN_CONSULTA: (cls.ESTADO_ATENDIDO,),
+            cls.ESTADO_ATENDIDO: (),
+            cls.ESTADO_CANCELADO: (cls.ESTADO_DISPONIBLE,),
+            cls.ESTADO_AUSENTE: (cls.ESTADO_DISPONIBLE,),
+        }
 
-# Matriz de transiciones válidas según el ciclo de vida de un turno
-TRANSICIONES_VALIDAS = {
-    ESTADO_DISPONIBLE: {ESTADO_RESERVADO, ESTADO_CANCELADO},
-    ESTADO_RESERVADO: {ESTADO_CONFIRMADO, ESTADO_CANCELADO, ESTADO_AUSENTE, ESTADO_DISPONIBLE},
-    ESTADO_CONFIRMADO: {ESTADO_EN_CONSULTA, ESTADO_ATENDIDO, ESTADO_CANCELADO, ESTADO_AUSENTE},
-    ESTADO_EN_CONSULTA: {ESTADO_ATENDIDO},
-    ESTADO_ATENDIDO: set(),  # Estado terminal
-    ESTADO_CANCELADO: {ESTADO_DISPONIBLE},  # Permite reapertura manual por administración
-    ESTADO_AUSENTE: {ESTADO_DISPONIBLE},   # Permite reapertura manual por administración
-}
+    @classmethod
+    def dias_semana(cls) -> dict:
+        return {
+            0: "Lunes",
+            1: "Martes",
+            2: "Miercoles",
+            3: "Jueves",
+            4: "Viernes",
+            5: "Sabado",
+            6: "Domingo",
+        }
 
-# Mapeo de días de la semana en Python (0=Lunes) a los valores del ENUM en MySQL
-DIAS_SEMANA_MAPA = {
-    0: "Lunes",
-    1: "Martes",
-    2: "Miercoles",
-    3: "Jueves",
-    4: "Viernes",
-    5: "Sabado",
-    6: "Domingo",
-}
-
-
-
-# Ventana en minutos para el check-in (15 min antes hasta 15 min después)
-VENTANA_CHECKIN_MINUTOS = 15
+    VENTANA_CHECKIN_MINUTOS = 15

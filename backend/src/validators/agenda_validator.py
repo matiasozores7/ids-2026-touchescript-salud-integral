@@ -2,10 +2,11 @@ from datetime import datetime
 from src.errors.exceptions import BadRequestError
 
 
-DIAS_VALIDOS = {
-    "Lunes", "Martes", "Miercoles", "Jueves",
-    "Viernes", "Sabado", "Domingo"
-}
+def dias_validos() -> tuple[str, ...]:
+    return (
+        "Lunes", "Martes", "Miercoles", "Jueves",
+        "Viernes", "Sabado", "Domingo",
+    )
 
 
 def validar(datos):
@@ -20,7 +21,7 @@ def validar(datos):
             description=f"Faltan campos requeridos: {', '.join(faltantes)}."
         )
 
-    if datos["dia_semana"] not in DIAS_VALIDOS:
+    if datos["dia_semana"] not in dias_validos():
         raise BadRequestError(description="El día de la semana no es válido.")
 
     try:

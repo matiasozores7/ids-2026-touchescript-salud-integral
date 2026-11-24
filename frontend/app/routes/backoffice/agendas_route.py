@@ -9,21 +9,14 @@ from app.services.turnos_service import (
     listar_especialidades,
 )
 
-
-DIAS_SEMANA = [
-    "Lunes",
-    "Martes",
-    "Miercoles",
-    "Jueves",
-    "Viernes",
-    "Sabado",
-]
-
-
 def preparar_agenda_semanal(agendas):
     agenda_por_dia = []
+    dias_semana = (
+        "Lunes", "Martes", "Miercoles",
+        "Jueves", "Viernes", "Sabado",
+    )
 
-    for dia in DIAS_SEMANA:
+    for dia in dias_semana:
         bloques = []
 
         for agenda in agendas:
