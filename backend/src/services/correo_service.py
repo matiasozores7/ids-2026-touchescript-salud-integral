@@ -334,3 +334,4 @@ def enviar_aviso_reserva(turno_id: int) -> bool:
         )
     finally:
         connection.close()
+
