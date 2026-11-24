@@ -15,16 +15,18 @@ from app.errors.exceptions import (
 )
 
 
-HTTP_ERRORS = {
-    400: ValidationError,
-    401: AuthenticationError,
-    403: ForbiddenError,
-    404: NotFoundError,
-    409: ConflictError,
-    502: ExternalServiceError,
-    503: ServiceUnavailableError,
-    504: ServiceTimeoutError
-}
+def _error_por_codigo(codigo: int, predeterminado=None):
+    errores = {
+        400: ValidationError,
+        401: AuthenticationError,
+        403: ForbiddenError,
+        404: NotFoundError,
+        409: ConflictError,
+        502: ExternalServiceError,
+        503: ServiceUnavailableError,
+        504: ServiceTimeoutError,
+    }
+    return errores.get(codigo, predeterminado)
 
 
 def api_request(
@@ -92,7 +94,7 @@ def api_request(
                 or mensaje
             )
 
-        exception_class = HTTP_ERRORS.get(
+        exception_class = _error_por_codigo(
             response.status_code,
             ExternalServiceError
         )

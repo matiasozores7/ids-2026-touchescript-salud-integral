@@ -2,19 +2,8 @@ from flask import render_template, flash, redirect, url_for
 from app.routes.patient import patient_bp
 from app.services import turnos_service
 from app.errors.exceptions import AppError
+from app.utils.date_format import fecha_larga
 from datetime import datetime
-
-MESES = {
-    1: "enero", 2: "febrero", 3: "marzo",
-    4: "abril", 5: "mayo", 6: "junio",
-    7: "julio", 8: "agosto", 9: "septiembre",
-    10: "octubre", 11: "noviembre", 12: "diciembre"
-}
-
-DIAS = [
-    "lunes", "martes", "miércoles", "jueves",
-    "viernes", "sábado", "domingo"
-]
 
 @patient_bp.route("/mis-turnos", methods=["GET"])
 def mis_turnos():
@@ -49,10 +38,7 @@ def detalle_turno(turno_id):
 
         fecha_hora = datetime.fromisoformat(turno["fecha_hora"])
 
-        turno["fecha_larga"] = (
-            f"{DIAS[fecha_hora.weekday()].capitalize()} "
-            f"{fecha_hora.day} de {MESES[fecha_hora.month]}"
-        )
+        turno["fecha_larga"] = fecha_larga(fecha_hora)
 
         turno["hora"] = fecha_hora.strftime("%H:%M")
         turno["medico"] = (
@@ -103,10 +89,7 @@ def qr_turno(turno_id):
 
         fecha_hora = datetime.fromisoformat(turno["fecha_hora"])
 
-        turno["fecha_larga"] = (
-            f"{DIAS[fecha_hora.weekday()]} "
-            f"{fecha_hora.day} de {MESES[fecha_hora.month]}"
-        )
+        turno["fecha_larga"] = fecha_larga(fecha_hora)
 
         turno["hora"] = fecha_hora.strftime("%H:%M")
 

@@ -42,7 +42,11 @@ VALUES
 ('Camila', 'Romero', 'camila@mail.com', '11 4000-0018', 'hash_paciente_9', 'paciente', TRUE),
 ('Federico', 'Acosta', 'federico@mail.com', '11 4000-0019', 'hash_paciente_10', 'paciente', TRUE),
 ('Julieta', 'Herrera', 'julieta@mail.com', '11 4000-0020', 'hash_paciente_11', 'paciente', TRUE),
-('Agustin', 'Morales', 'agustin@mail.com', '11 4000-0021', 'hash_paciente_12', 'paciente', FALSE);
+('Agustin', 'Morales', 'agustin@mail.com', '11 4000-0021', 'hash_paciente_12', 'paciente', FALSE),
+
+-- Usuarios de prueba con contraseña hasheada
+('Paciente', 'Demo', 'paciente.demo@clinica.com', '11 4000-0030', 'scrypt:32768:8:1$zVnd4N2CwEgYG1iF$37003090a8833c5f3a3abfd242eefe87d5d3e2b142ba3ecf807a76228034851ff36d434b5acc5dd473d9bdd1b178b07deb459f7ceca6b3236ef7cbaf106ca672', 'paciente', TRUE), -- Contraseña: Paciente123!
+('Administrador', 'Demo', 'admin.demo@clinica.com', '11 4000-0031', 'scrypt:32768:8:1$91tP9zUKZw32YklH$563b889be82f37a3489c41fef7cf095e6812fc61d31fc3590b0fe5e7f0ba8186abd9746896ef368c8bf5e40d95afd0d76646683540a8920191c458433f8afcf6', 'admin', TRUE); -- Contraseña: Admin123!
 
 -- =====================================================
 -- 3. PACIENTES
@@ -60,7 +64,8 @@ INSERT INTO pacientes (usuario_id, cobertura_id) VALUES
 (16, 3),
 (17, 4),
 (18, 2),
-(19, 5);
+(19, 5),
+(20, 1);
 
 -- =====================================================
 -- 4. ESPECIALIDADES
@@ -104,119 +109,3 @@ INSERT INTO consultorios (numero_sala, piso, activo) VALUES
 ('205A', '2', TRUE),
 ('206B', '2', TRUE),
 ('301A', '3', FALSE);
-
--- =====================================================
--- 8. AGENDAS
--- =====================================================
-
-INSERT INTO agendas
-    (medico_id, consultorio_id, dia_semana, hora_inicio, hora_fin, duracion_turno)
-VALUES
--- Clinica medica
-(1, 1, 'Lunes', '08:00:00', '13:00:00', 30),
-(1, 1, 'Miercoles', '08:00:00', '13:00:00', 30),
-(1, 1, 'Viernes', '08:00:00', '13:00:00', 30),
-
--- Cardiologia
-(2, 2, 'Lunes', '09:00:00', '14:00:00', 30),
-(2, 2, 'Martes', '09:00:00', '14:00:00', 30),
-(2, 2, 'Jueves', '09:00:00', '14:00:00', 30),
-
--- Dermatologia
-(3, 3, 'Martes', '08:00:00', '12:00:00', 30),
-(3, 3, 'Jueves', '08:00:00', '12:00:00', 30),
-
--- Traumatologia
-(4, 4, 'Lunes', '14:00:00', '18:00:00', 30),
-(4, 4, 'Miercoles', '14:00:00', '18:00:00', 30),
-(4, 4, 'Viernes', '14:00:00', '18:00:00', 30);
-
--- =====================================================
--- 9. TURNOS HISTORICOS
--- Ultimos 30 dias
--- =====================================================
-
-INSERT INTO turnos
-    (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
-VALUES
-
--- Hace 2 dias
-(1, 1, 1, DATE_SUB(NOW(), INTERVAL 2 DAY), 'atendido', 'qr_hist_001'),
-(1, 2, 1, DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 30 MINUTE, 'atendido', 'qr_hist_002'),
-(2, 3, 2, DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 1 HOUR, 'ausente', 'qr_hist_003'),
-(3, 4, 3, DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 2 HOUR, 'atendido', 'qr_hist_004'),
-(4, 5, 4, DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 3 HOUR, 'cancelado', 'qr_hist_005'),
-
--- Hace 5 dias
-(1, 6, 1, DATE_SUB(NOW(), INTERVAL 5 DAY), 'atendido', 'qr_hist_006'),
-(1, 7, 1, DATE_SUB(NOW(), INTERVAL 5 DAY) + INTERVAL 30 MINUTE, 'ausente', 'qr_hist_007'),
-(2, 8, 2, DATE_SUB(NOW(), INTERVAL 5 DAY) + INTERVAL 1 HOUR, 'atendido', 'qr_hist_008'),
-(3, 9, 3, DATE_SUB(NOW(), INTERVAL 5 DAY) + INTERVAL 2 HOUR, 'atendido', 'qr_hist_009'),
-(4, 10, 4, DATE_SUB(NOW(), INTERVAL 5 DAY) + INTERVAL 3 HOUR, 'atendido', 'qr_hist_010'),
-
--- Hace 10 dias
-(1, 11, 1, DATE_SUB(NOW(), INTERVAL 10 DAY), 'atendido', 'qr_hist_011'),
-(2, 12, 2, DATE_SUB(NOW(), INTERVAL 10 DAY) + INTERVAL 30 MINUTE, 'ausente', 'qr_hist_012'),
-(3, 1, 3, DATE_SUB(NOW(), INTERVAL 10 DAY) + INTERVAL 1 HOUR, 'atendido', 'qr_hist_013'),
-(4, 2, 4, DATE_SUB(NOW(), INTERVAL 10 DAY) + INTERVAL 2 HOUR, 'cancelado', 'qr_hist_014'),
-
--- Hace 20 dias
-(1, 3, 1, DATE_SUB(NOW(), INTERVAL 20 DAY), 'atendido', 'qr_hist_015'),
-(2, 4, 2, DATE_SUB(NOW(), INTERVAL 20 DAY) + INTERVAL 30 MINUTE, 'atendido', 'qr_hist_016'),
-(3, 5, 3, DATE_SUB(NOW(), INTERVAL 20 DAY) + INTERVAL 1 HOUR, 'ausente', 'qr_hist_017'),
-(4, 6, 4, DATE_SUB(NOW(), INTERVAL 20 DAY) + INTERVAL 2 HOUR, 'atendido', 'qr_hist_018');
-
--- =====================================================
--- 10. TURNOS DE HOY
--- Mezcla de estados para probar el dashboard
--- =====================================================
-
-INSERT INTO turnos
-    (medico_id, paciente_id, consultorio_id, fecha_hora, fecha_hora_llegada, estado, qr_token)
-VALUES
-
--- Clinica medica
-(1, 1, 1, DATE_SUB(NOW(), INTERVAL 3 HOUR), DATE_SUB(NOW(), INTERVAL 3 HOUR) + INTERVAL 5 MINUTE, 'atendido', 'qr_hoy_001'),
-(1, 2, 1, DATE_SUB(NOW(), INTERVAL 2 HOUR), DATE_SUB(NOW(), INTERVAL 2 HOUR) + INTERVAL 10 MINUTE, 'atendido', 'qr_hoy_002'),
-(1, 3, 1, DATE_SUB(NOW(), INTERVAL 1 HOUR), DATE_SUB(NOW(), INTERVAL 1 HOUR) + INTERVAL 5 MINUTE, 'confirmado', 'qr_hoy_003'),
-(1, 4, 1, DATE_ADD(NOW(), INTERVAL 1 HOUR), NULL, 'reservado', 'qr_hoy_004'),
-
--- Cardiologia
-(2, 5, 2, DATE_SUB(NOW(), INTERVAL 90 MINUTE), DATE_SUB(NOW(), INTERVAL 85 MINUTE), 'atendido', 'qr_hoy_005'),
-(2, 6, 2, DATE_SUB(NOW(), INTERVAL 30 MINUTE), NULL, 'ausente', 'qr_hoy_006'),
-(2, 7, 2, DATE_ADD(NOW(), INTERVAL 2 HOUR), NULL, 'reservado', 'qr_hoy_007'),
-
--- Dermatologia
-(3, 8, 3, DATE_ADD(NOW(), INTERVAL 3 HOUR), NULL, 'reservado', 'qr_hoy_008'),
-(3, 9, 3, DATE_ADD(NOW(), INTERVAL 4 HOUR), NULL, 'reservado', 'qr_hoy_009'),
-
--- Traumatologia
-(4, 10, 4, DATE_ADD(NOW(), INTERVAL 5 HOUR), NULL, 'reservado', 'qr_hoy_010'),
-(4, 11, 4, DATE_ADD(NOW(), INTERVAL 6 HOUR), NULL, 'disponible', NULL);
-
--- =====================================================
--- 11. TURNOS FUTUROS
--- =====================================================
-
-INSERT INTO turnos
-    (medico_id, paciente_id, consultorio_id, fecha_hora, estado, qr_token)
-VALUES
-
--- Mañana
-(1, 1, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY) + INTERVAL 9 HOUR, 'reservado', 'qr_fut_001'),
-(1, 2, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY) + INTERVAL 10 HOUR, 'reservado', 'qr_fut_002'),
-(1, NULL, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY) + INTERVAL 11 HOUR, 'disponible', NULL),
-(2, 3, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY) + INTERVAL 9 HOUR, 'reservado', 'qr_fut_003'),
-(2, 4, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY) + INTERVAL 10 HOUR, 'reservado', 'qr_fut_004'),
-
--- En 3 dias
-(1, 5, 1, DATE_ADD(CURDATE(), INTERVAL 3 DAY) + INTERVAL 9 HOUR, 'reservado', 'qr_fut_005'),
-(2, 6, 2, DATE_ADD(CURDATE(), INTERVAL 3 DAY) + INTERVAL 10 HOUR, 'reservado', 'qr_fut_006'),
-(3, 7, 3, DATE_ADD(CURDATE(), INTERVAL 3 DAY) + INTERVAL 11 HOUR, 'reservado', 'qr_fut_007'),
-(4, 8, 4, DATE_ADD(CURDATE(), INTERVAL 3 DAY) + INTERVAL 14 HOUR, 'reservado', 'qr_fut_008'),
-
--- En 7 dias
-(1, 9, 1, DATE_ADD(CURDATE(), INTERVAL 7 DAY) + INTERVAL 9 HOUR, 'reservado', 'qr_fut_009'),
-(1, 10, 1, DATE_ADD(CURDATE(), INTERVAL 7 DAY) + INTERVAL 10 HOUR, 'reservado', 'qr_fut_010'),
-(2, 11, 2, DATE_ADD(CURDATE(), INTERVAL 7 DAY) + INTERVAL 11 HOUR, 'reservado', 'qr_fut_011'),
-(3, 12, 3, DATE_ADD(CURDATE(), INTERVAL 7 DAY) + INTERVAL 12 HOUR, 'reservado', 'qr_fut_012');

@@ -1,11 +1,11 @@
 from flask import Blueprint
 
-from app.constants.roles import ADMIN
+from app.constants.roles import Roles
 from app.utils.access_control import proteger_por_rol
 
 backoffice_bp = Blueprint("backoffice", __name__)
 
-backoffice_bp.before_request(proteger_por_rol(ADMIN))
+backoffice_bp.before_request(proteger_por_rol(Roles.ADMIN))
 
 from . import dashboard_route
 from . import especialidades_route
