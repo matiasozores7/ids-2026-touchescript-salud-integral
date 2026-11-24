@@ -282,9 +282,9 @@ def enviar_correo(
 
     try:
         if smtp_ssl:
-            servidor = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=5)
+            servidor = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10)
         else:
-            servidor = smtplib.SMTP(smtp_host, smtp_port, timeout=5)
+            servidor = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
 
         with servidor:
             if smtp_tls and not smtp_ssl:
