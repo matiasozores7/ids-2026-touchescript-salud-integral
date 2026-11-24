@@ -1,6 +1,3 @@
-from types import MappingProxyType
-
-
 class ReglasTurno:
     ESTADO_DISPONIBLE = "disponible"
     ESTADO_RESERVADO = "reservado"
@@ -20,28 +17,41 @@ class ReglasTurno:
         ESTADO_AUSENTE,
     )
 
-    TRANSICIONES_VALIDAS = MappingProxyType({
-        ESTADO_DISPONIBLE: frozenset((ESTADO_RESERVADO, ESTADO_CANCELADO)),
-        ESTADO_RESERVADO: frozenset((
-            ESTADO_CONFIRMADO, ESTADO_CANCELADO, ESTADO_AUSENTE, ESTADO_DISPONIBLE,
-        )),
-        ESTADO_CONFIRMADO: frozenset((
-            ESTADO_EN_CONSULTA, ESTADO_ATENDIDO, ESTADO_CANCELADO, ESTADO_AUSENTE,
-        )),
-        ESTADO_EN_CONSULTA: frozenset((ESTADO_ATENDIDO,)),
-        ESTADO_ATENDIDO: frozenset(),
-        ESTADO_CANCELADO: frozenset((ESTADO_DISPONIBLE,)),
-        ESTADO_AUSENTE: frozenset((ESTADO_DISPONIBLE,)),
-    })
+    @classmethod
+    def transiciones_validas(cls) -> dict:
+        return {
+            cls.ESTADO_DISPONIBLE: (
+                cls.ESTADO_RESERVADO,
+                cls.ESTADO_CANCELADO,
+            ),
+            cls.ESTADO_RESERVADO: (
+                cls.ESTADO_CONFIRMADO,
+                cls.ESTADO_CANCELADO,
+                cls.ESTADO_AUSENTE,
+                cls.ESTADO_DISPONIBLE,
+            ),
+            cls.ESTADO_CONFIRMADO: (
+                cls.ESTADO_EN_CONSULTA,
+                cls.ESTADO_ATENDIDO,
+                cls.ESTADO_CANCELADO,
+                cls.ESTADO_AUSENTE,
+            ),
+            cls.ESTADO_EN_CONSULTA: (cls.ESTADO_ATENDIDO,),
+            cls.ESTADO_ATENDIDO: (),
+            cls.ESTADO_CANCELADO: (cls.ESTADO_DISPONIBLE,),
+            cls.ESTADO_AUSENTE: (cls.ESTADO_DISPONIBLE,),
+        }
 
-    DIAS_SEMANA_MAPA = MappingProxyType({
-        0: "Lunes",
-        1: "Martes",
-        2: "Miercoles",
-        3: "Jueves",
-        4: "Viernes",
-        5: "Sabado",
-        6: "Domingo",
-    })
+    @classmethod
+    def dias_semana(cls) -> dict:
+        return {
+            0: "Lunes",
+            1: "Martes",
+            2: "Miercoles",
+            3: "Jueves",
+            4: "Viernes",
+            5: "Sabado",
+            6: "Domingo",
+        }
 
     VENTANA_CHECKIN_MINUTOS = 15

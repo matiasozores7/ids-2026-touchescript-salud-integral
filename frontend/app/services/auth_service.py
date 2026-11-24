@@ -10,10 +10,15 @@ def obtener_usuario_actual() -> dict:
     )
 
     data = resultado.get("data")
+    roles_validos = (
+        Roles.PACIENTE,
+        Roles.MEDICO,
+        Roles.ADMIN,
+    )
 
     if (
         not isinstance(data, dict)
-        or data.get("rol") not in Roles.validos()
+        or data.get("rol") not in roles_validos
     ):
         raise ExternalServiceError(
             "La respuesta de autenticación tiene un formato inválido."

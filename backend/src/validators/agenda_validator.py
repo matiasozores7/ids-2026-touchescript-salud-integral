@@ -2,11 +2,11 @@ from datetime import datetime
 from src.errors.exceptions import BadRequestError
 
 
-def dias_validos() -> frozenset[str]:
-    return frozenset((
+def dias_validos() -> tuple[str, ...]:
+    return (
         "Lunes", "Martes", "Miercoles", "Jueves",
         "Viernes", "Sabado", "Domingo",
-    ))
+    )
 
 
 def validar(datos):

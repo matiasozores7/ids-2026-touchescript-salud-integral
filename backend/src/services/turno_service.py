@@ -38,8 +38,8 @@ def actualizar_estado(turno_id: int, nuevo_estado: str) -> None:
         if estado_actual == nuevo_estado:
             return
 
-        transiciones_permitidas = ReglasTurno.TRANSICIONES_VALIDAS.get(
-            estado_actual, frozenset()
+        transiciones_permitidas = ReglasTurno.transiciones_validas().get(
+            estado_actual, ()
         )
         if nuevo_estado not in transiciones_permitidas:
             raise ConflictError(
@@ -413,7 +413,7 @@ def generar_turnos_en_conexion(
 
     for i in range(dias_total):
         dia_actual = fecha_inicio + timedelta(days=i)
-        dia_semana_nombre = ReglasTurno.DIAS_SEMANA_MAPA.get(dia_actual.weekday())
+        dia_semana_nombre = ReglasTurno.dias_semana().get(dia_actual.weekday())
 
         agendas_dia = [
             a for a in agendas
