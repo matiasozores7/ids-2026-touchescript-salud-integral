@@ -15,7 +15,7 @@ from app.errors.exceptions import (
 )
 
 
-def _error_por_codigo(codigo: int):
+def _error_por_codigo(codigo: int, predeterminado=None):
     errores = {
         400: ValidationError,
         401: AuthenticationError,
@@ -26,7 +26,7 @@ def _error_por_codigo(codigo: int):
         503: ServiceUnavailableError,
         504: ServiceTimeoutError,
     }
-    return errores.get(codigo)
+    return errores.get(codigo, predeterminado)
 
 
 def api_request(
