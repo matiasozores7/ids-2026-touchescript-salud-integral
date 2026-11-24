@@ -110,7 +110,8 @@ def registrar_paciente():
             apellido=request.form.get("apellido", "").strip(),
             email=request.form.get("email", "").strip(),
             password=request.form.get("password", ""),
-            cobertura_id=cobertura_id
+            cobertura_id=cobertura_id,
+            telefono=request.form.get("telefono", "").strip() or None
         )
         session.clear()
         session["access_token"] = resultado["access_token"]

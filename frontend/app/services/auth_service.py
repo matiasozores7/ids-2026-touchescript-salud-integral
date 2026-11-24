@@ -43,7 +43,8 @@ def login_usuario(email: str, password: str) -> dict:
 
 def registrar_paciente(
     nombre: str, apellido: str, email: str,
-    password: str, cobertura_id: int | None = None
+    password: str, cobertura_id: int | None = None,
+    telefono: str | None = None
 ) -> dict:
 
     resultado = api_request(
@@ -54,7 +55,8 @@ def registrar_paciente(
             "apellido": apellido,
             "email": email,
             "password": password,
-            "cobertura_id": cobertura_id
+            "cobertura_id": cobertura_id,
+            "telefono": telefono
         }
     )
 

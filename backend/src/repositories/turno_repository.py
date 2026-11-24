@@ -83,6 +83,19 @@ def existe_paciente(connection, paciente_id: int) -> bool:
         return cursor.fetchone() is not None
 
 
+def paciente_cubre_medico(connection, paciente_id: int, medico_id: int) -> bool:
+    query = """
+        SELECT 1
+        FROM pacientes p
+        JOIN medicos_coberturas mc ON mc.cobertura_id = p.cobertura_id
+        WHERE p.id = %s AND mc.medico_id = %s
+        LIMIT 1
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id, medico_id))
+        return cursor.fetchone() is not None
+
+
 def existe_reserva_paciente_con_medico_en_fecha(connection, paciente_id: int, medico_id: int, fecha_inicio, fecha_fin) -> bool:
     query = """
         SELECT id

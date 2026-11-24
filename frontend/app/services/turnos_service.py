@@ -88,8 +88,8 @@ def listar_especialidades() -> list[dict]:
 
 def listar_medicos(especialidad_id: int | None = None) -> list[dict]:
     params = {
-        "limit": 100,
-        "offset": 0,
+        "_limit": 100,
+        "_offset": 0,
     }
 
     if especialidad_id is not None:
