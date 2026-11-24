@@ -563,3 +563,48 @@ def cancelar_reservados_de_agenda(connection, agenda_id: int) -> int:
     with connection.cursor() as cursor:
         cursor.execute(query, (agenda_id,))
         return cursor.rowcount
+
+
+def obtener_turno_con_detalles_para_correo(connection, turno_id: int):
+    query = """
+        SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+               t.fecha_hora_llegada, t.estado, t.qr_token,
+               u_pac.nombre AS paciente_nombre, u_pac.apellido AS paciente_apellido,
+               u_pac.email AS paciente_email,
+               u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+               e.nombre AS especialidad_nombre,
+               c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+        FROM turnos t
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+        JOIN medicos m ON t.medico_id = m.id
+        JOIN usuarios u_med ON m.usuario_id = u_med.id
+        LEFT JOIN especialidades e ON m.especialidad_id = e.id
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id,))
+        return cursor.fetchone()
+
+
+def obtener_turno_por_id_y_token(connection, turno_id: int, token: str):
+    query = """
+        SELECT t.id, t.medico_id, t.paciente_id, t.consultorio_id, t.fecha_hora,
+               t.estado, t.qr_token,
+               u_pac.nombre AS paciente_nombre, u_pac.apellido AS paciente_apellido,
+               u_med.nombre AS medico_nombre, u_med.apellido AS medico_apellido,
+               e.nombre AS especialidad_nombre,
+               c.numero_sala AS consultorio_sala, c.piso AS consultorio_piso
+        FROM turnos t
+        LEFT JOIN pacientes p ON t.paciente_id = p.id
+        LEFT JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+        JOIN medicos m ON t.medico_id = m.id
+        JOIN usuarios u_med ON m.usuario_id = u_med.id
+        LEFT JOIN especialidades e ON m.especialidad_id = e.id
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.id = %s AND t.qr_token = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id, token))
+        return cursor.fetchone()

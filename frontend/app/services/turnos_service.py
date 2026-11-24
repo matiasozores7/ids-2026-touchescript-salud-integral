@@ -258,3 +258,23 @@ def listar_turnos_calendario(
         dia_actual += timedelta(days=1)
 
     return turnos
+
+
+def obtener_detalle_publico(turno_id: int, token: str) -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/turnos/{turno_id}/detalle-publico",
+        params={"token": token},
+        authenticated=False,
+    )
+    return resultado.get("data") or {}
+
+
+def cancelar_turno_con_token(turno_id: int, token: str) -> None:
+    api_request(
+        method="PATCH",
+        endpoint=f"/turnos/{turno_id}/cancelar-con-token",
+        json={"token": token},
+        authenticated=False,
+    )
+

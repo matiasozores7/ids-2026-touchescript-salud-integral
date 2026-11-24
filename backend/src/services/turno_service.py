@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import date, datetime, time, timedelta
 
@@ -161,6 +162,12 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
             raise ConflictError(
                 description="No fue posible reservar el turno porque su estado cambió de forma concurrente."
             )
+
+    try:
+        from src.services import correo_service
+        correo_service.enviar_aviso_reserva(turno_id)
+    except Exception as error:
+        logging.warning("No fue posible despachar el aviso de reserva por correo para turno %s: %s", turno_id, error)
 
     return turno_id
 
@@ -454,3 +461,52 @@ def generar_turnos_en_conexion(
                 actual_segundos += duracion_segundos
 
     return turnos_creados
+
+
+def cancelar_turno_con_token(turno_id: int, token: str) -> None:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id_y_token(connection, turno_id, token)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno correspondiente al token provisto.")
+
+        estado_actual = turno["estado"]
+
+        if estado_actual == ESTADO_CANCELADO:
+            raise ConflictError(description="El turno ya se encuentra cancelado.")
+
+        if estado_actual == ESTADO_ATENDIDO:
+            raise ConflictError(
+                description="No es posible cancelar un turno que ya ha sido atendido."
+            )
+
+        if estado_actual == ESTADO_AUSENTE:
+            raise ConflictError(
+                description="No es posible cancelar un turno marcado como ausente."
+            )
+
+        turno_repo.cancelar_turno(connection, turno_id)
+
+
+def obtener_detalle_publico_turno(turno_id: int, token: str) -> dict:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id_y_token(connection, turno_id, token)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno correspondiente al token provisto.")
+
+        # Ocultar token interno por seguridad
+        turno.pop("qr_token", None)
+        return _serializar_turno(turno)
+
+
+def enviar_aviso_reserva_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool = False) -> bool:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        if not es_admin and (paciente_id is None or turno.get("paciente_id") != paciente_id):
+            raise ForbiddenError(description="No tenés permiso para enviar recordatorios de este turno.")
+
+    from src.services import correo_service
+    return correo_service.enviar_aviso_reserva(turno_id)
+

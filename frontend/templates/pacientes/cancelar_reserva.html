@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Cancelar reserva · Salud Integral{% endblock %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reservar-turno.css') }}">
+<style>
+  .cancel-container {
+    max-width: 520px;
+    margin: 48px auto;
+    padding: 0 16px;
+  }
+  .cancel-card {
+    background: #ffffff;
+    border: 1px solid var(--border, #e3e8ec);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(41, 77, 93, 0.06);
+    padding: 32px;
+  }
+  .icon-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin: 0 auto 20px auto;
+  }
+  .badge-warning-custom {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  .badge-danger-custom {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  .badge-info-custom {
+    background-color: #eaf3f7;
+    color: #477f9a;
+  }
+  .detail-box {
+    background-color: #f7f9fa;
+    border: 1px solid #e3e8ec;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+  }
+  .detail-item {
+    margin-bottom: 12px;
+  }
+  .detail-item:last-child {
+    margin-bottom: 0;
+  }
+  .detail-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #788493;
+    margin-bottom: 2px;
+  }
+  .detail-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #294d5d;
+  }
+  .btn-cancel-confirm {
+    background-color: #dc3545;
+    color: #ffffff;
+    border: none;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+  .btn-cancel-confirm:hover {
+    background-color: #bb2d3b;
+    color: #ffffff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="cancel-container">
+  <div class="cancel-card text-center">
+
+    {% if error %}
+      <div class="icon-badge badge-danger-custom">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+      </div>
+      <h1 class="h4 fw-bold text-dark mb-2">No se pudo procesar la solicitud</h1>
+      <p class="text-secondary mb-4">{{ error }}</p>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('patient.patient_home') }}" class="button button-primary button-large">
+          Ir al inicio
+        </a>
+      </div>
+
+    {% elif turno %}
+
+      {% if turno.estado == 'cancelado' %}
+        <div class="icon-badge badge-info-custom">
+          <i class="bi bi-info-circle" aria-hidden="true"></i>
+        </div>
+        <h1 class="h4 fw-bold text-dark mb-2">Turno ya cancelado</h1>
+        <p class="text-secondary mb-4">
+          Este turno ya se encuentra cancelado y no requiere ninguna acción adicional.
+        </p>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('patient.patient_home') }}" class="button button-primary button-large">
+            Ir al inicio
+          </a>
+        </div>
+
+      {% elif turno.estado in ['reservado', 'confirmado'] %}
+        <div class="icon-badge badge-warning-custom">
+          <i class="bi bi-calendar-x" aria-hidden="true"></i>
+        </div>
+        <h1 class="h4 fw-bold text-dark mb-2">¿Deseás cancelar tu reserva?</h1>
+        <p class="text-secondary small mb-3">
+          Estás a punto de cancelar tu cita médica. Si confirmás, el horario quedará liberado para que otro paciente pueda tomarlo.
+        </p>
+
+        <!-- Resumen del turno -->
+        <div class="detail-box">
+          <div class="detail-item">
+            <div class="detail-label">Fecha y horario</div>
+            <div class="detail-value text-primary fs-5 fw-bold">
+              {{ turno.fecha_formateada }} · {{ turno.hora_formateada }} hs
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Profesional y especialidad</div>
+            <div class="detail-value">
+              {{ turno.medico_completo }}
+              <span class="badge bg-light text-primary border ms-1">{{ turno.especialidad_nombre }}</span>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Consultorio</div>
+            <div class="detail-value text-muted">
+              {{ turno.consultorio_completo }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de confirmación -->
+        <form method="POST" action="{{ url_for('cancelacion.procesar_cancelacion') }}">
+          <input type="hidden" name="turno_id" value="{{ turno.id }}">
+          <input type="hidden" name="token" value="{{ token }}">
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn-cancel-confirm">
+              Sí, cancelar mi turno
+            </button>
+            <a href="{{ url_for('patient.patient_home') }}" class="button button-outline button-large">
+              No, conservar mi turno
+            </a>
+          </div>
+        </form>
+
+      {% else %}
+        <div class="icon-badge badge-info-custom">
+          <i class="bi bi-clock-history" aria-hidden="true"></i>
+        </div>
+        <h1 class="h4 fw-bold text-dark mb-2">Estado del turno: {{ turno.estado | capitalize }}</h1>
+        <p class="text-secondary mb-4">
+          Este turno no puede ser cancelado debido a que su estado actual es "{{ turno.estado }}".
+        </p>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('patient.patient_home') }}" class="button button-primary button-large">
+            Ir al inicio
+          </a>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="icon-badge badge-danger-custom">
+        <i class="bi bi-question-circle" aria-hidden="true"></i>
+      </div>
+      <h1 class="h4 fw-bold text-dark mb-2">Turno no encontrado</h1>
+      <p class="text-secondary mb-4">No se pudo identificar la reserva indicada.</p>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('patient.patient_home') }}" class="button button-primary button-large">
+          Ir al inicio
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</main>
+{% endblock %}

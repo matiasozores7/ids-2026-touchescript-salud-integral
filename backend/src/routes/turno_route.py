@@ -363,3 +363,54 @@ def obtener_detalle_turno(turno_id: int):
         data=resultado,
         message="Detalle del turno obtenido correctamente."
     )
+
+
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/enviar-recordatorio", methods=["POST"])
+@validar_rol("paciente", "admin")
+def enviar_recordatorio_turno(turno_id: int):
+    claims = obtener_claims_actuales()
+    rol = claims.get("rol")
+    es_admin = rol == "admin"
+    paciente_id = claims.get("perfil_id") if rol == "paciente" else None
+
+    despachado = turno_service.enviar_aviso_reserva_turno(
+        turno_id=turno_id,
+        paciente_id=paciente_id,
+        es_admin=es_admin
+    )
+
+    if not despachado:
+        return success_response(
+            message="No se pudo enviar el correo de recordatorio (verifique la configuración del servidor de correo o la dirección del paciente).",
+            status_code=200
+        )
+
+    return success_response(
+        message="Recordatorio de la reserva enviado por correo electrónico exitosamente."
+    )
+
+
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/detalle-publico", methods=["GET"])
+def obtener_detalle_publico(turno_id: int):
+    token = request.args.get("token", "").strip()
+    if not token:
+        raise BadRequestError(description="El parámetro 'token' es obligatorio para consultar el turno.")
+
+    detalle = turno_service.obtener_detalle_publico_turno(turno_id, token)
+    return success_response(
+        data=detalle,
+        message="Detalle del turno obtenido exitosamente."
+    )
+
+
+@turnos_bp.route("/turnos/<int(min=1):turno_id>/cancelar-con-token", methods=["PATCH"])
+def cancelar_turno_con_token(turno_id: int):
+    data = request.get_json(silent=True) or {}
+    turno_validator.validar_cancelar_con_token(data)
+
+    token = data["token"].strip()
+    turno_service.cancelar_turno_con_token(turno_id, token)
+
+    return success_response(
+        message="Turno cancelado exitosamente."
+    )

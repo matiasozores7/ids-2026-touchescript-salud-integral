@@ -96,3 +96,14 @@ def validar_checkin(data: dict) -> None:
         raise BadRequestError(
             description="El campo 'qr_token' es obligatorio y debe ser una cadena no vacía."
         )
+
+
+def validar_cancelar_con_token(data: dict) -> None:
+    _validar_tipo_diccionario(data)
+
+    token = data.get("token")
+    if not isinstance(token, str) or not token.strip():
+        raise BadRequestError(
+            description="El campo 'token' es obligatorio y debe ser una cadena no vacía."
+        )
+

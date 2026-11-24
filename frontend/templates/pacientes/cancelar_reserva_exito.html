@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Turno cancelado · Salud Integral{% endblock %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reservar-turno.css') }}">
+<style>
+  .cancel-container {
+    max-width: 520px;
+    margin: 48px auto;
+    padding: 0 16px;
+  }
+  .cancel-card {
+    background: #ffffff;
+    border: 1px solid var(--border, #e3e8ec);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(41, 77, 93, 0.06);
+    padding: 36px 32px;
+  }
+  .icon-badge-success {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #d1e7dd;
+    color: #0f5132;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="cancel-container">
+  <div class="cancel-card text-center">
+    
+    <div class="icon-badge-success">
+      <i class="bi bi-check-circle" aria-hidden="true"></i>
+    </div>
+
+    <h1 class="h3 fw-bold text-dark mb-2">Turno cancelado exitosamente</h1>
+    <p class="text-secondary mb-4">
+      Tu reserva #{{ turno_id }} ha sido cancelada correctamente. El horario quedó liberado para otros pacientes.
+    </p>
+
+    <div class="d-grid gap-2">
+      <a href="{{ url_for('patient.reservar_especialidad') }}" class="button button-primary button-large">
+        Reservar un nuevo turno
+      </a>
+      <a href="{{ url_for('patient.patient_home') }}" class="button button-outline button-large">
+        Ir al inicio
+      </a>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
