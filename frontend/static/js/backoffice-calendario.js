@@ -20,10 +20,6 @@
     const nextButton = document.getElementById("calendar-next");
     const todayButton = document.getElementById("calendar-today");
 
-    const newAppointmentButton = document.getElementById(
-        "calendar-new-appointment"
-    );
-
     const specialtyFilter = document.getElementById(
         "calendar-filter-specialty"
     );
@@ -427,11 +423,6 @@
 
     showCancelledFilter.addEventListener("change", renderCalendar);
 
-    newAppointmentButton.addEventListener("click", () => {
-        window.alert(
-            "La creación de turnos se implementará durante la etapa de integración."
-        );
-    });
 
     // ========================================
     // INICIALIZACIÓN
