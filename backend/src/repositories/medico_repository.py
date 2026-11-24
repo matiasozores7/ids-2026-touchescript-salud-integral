@@ -43,7 +43,22 @@ def buscar_medico_por_matricula(connection, matricula: str, excluir_id=None):
         return cursor.fetchone()
 
 
-def contar_medicos(connection, especialidad_id=None):
+def _agregar_filtro_cobertura_paciente(query, params, paciente_id):
+    if paciente_id is not None:
+        query += """
+            AND EXISTS (
+                SELECT 1
+                FROM pacientes p
+                JOIN medicos_coberturas mc ON mc.cobertura_id = p.cobertura_id
+                WHERE p.id = %s AND mc.medico_id = m.id
+            )
+        """
+        params.append(paciente_id)
+
+    return query
+
+
+def contar_medicos(connection, especialidad_id=None, paciente_id=None):
     query = """
         SELECT COUNT(*) AS total
         FROM medicos m
@@ -57,12 +72,20 @@ def contar_medicos(connection, especialidad_id=None):
         query += " AND m.especialidad_id = %s"
         params.append(especialidad_id)
 
+    query = _agregar_filtro_cobertura_paciente(query, params, paciente_id)
+
     with connection.cursor() as cursor:
         cursor.execute(query, tuple(params))
         return cursor.fetchone()["total"]
 
 
-def listar_medicos(connection, limit: int, offset: int, especialidad_id: int | None = None):
+def listar_medicos(
+    connection,
+    limit: int,
+    offset: int,
+    especialidad_id: int | None = None,
+    paciente_id: int | None = None
+):
     query = """
         SELECT m.id, u.nombre, u.apellido, u.email, u.telefono,
                m.especialidad_id, m.matricula,
@@ -78,6 +101,8 @@ def listar_medicos(connection, limit: int, offset: int, especialidad_id: int | N
     if especialidad_id is not None:
         query += " AND m.especialidad_id = %s"
         params.append(especialidad_id)
+
+    query = _agregar_filtro_cobertura_paciente(query, params, paciente_id)
 
     query += """
         ORDER BY u.apellido, u.nombre

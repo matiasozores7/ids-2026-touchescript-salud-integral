@@ -114,6 +114,15 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
         if turno is None:
             raise NotFoundError(description="No se encontró el turno especificado.")
 
+        if not turno_repo.paciente_cubre_medico(
+            connection,
+            paciente_id,
+            turno["medico_id"]
+        ):
+            raise ConflictError(
+                description="El médico no acepta la cobertura médica del paciente."
+            )
+
         if turno["estado"] != ESTADO_DISPONIBLE:
             raise ConflictError(
                 description="El turno seleccionado ya no se encuentra disponible (doble reserva evitada)."
