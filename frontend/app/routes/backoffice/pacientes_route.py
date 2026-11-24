@@ -20,7 +20,7 @@ def _render_pacientes():
         pacientes = []
 
     try:
-        coberturas = coberturas_service.listar_coberturas()
+        coberturas = coberturas_service.listar_coberturas()["items"]
     except AppError as error:
         flash(error.message, "error")
         coberturas = []
