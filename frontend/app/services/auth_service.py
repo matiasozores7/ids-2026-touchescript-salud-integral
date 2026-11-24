@@ -1,6 +1,6 @@
 from app.clients.api_client import api_request
 from app.errors.exceptions import ExternalServiceError
-from app.constants.roles import ROLES_VALIDOS
+from app.constants.roles import Roles
 
 def obtener_usuario_actual() -> dict:
     resultado = api_request(
@@ -10,10 +10,15 @@ def obtener_usuario_actual() -> dict:
     )
 
     data = resultado.get("data")
+    roles_validos = (
+        Roles.PACIENTE,
+        Roles.MEDICO,
+        Roles.ADMIN,
+    )
 
     if (
         not isinstance(data, dict)
-        or data.get("rol") not in ROLES_VALIDOS
+        or data.get("rol") not in roles_validos
     ):
         raise ExternalServiceError(
             "La respuesta de autenticación tiene un formato inválido."
@@ -43,7 +48,8 @@ def login_usuario(email: str, password: str) -> dict:
 
 def registrar_paciente(
     nombre: str, apellido: str, email: str,
-    password: str, cobertura_id: int | None = None
+    password: str, cobertura_id: int | None = None,
+    telefono: str | None = None
 ) -> dict:
 
     resultado = api_request(
@@ -54,7 +60,8 @@ def registrar_paciente(
             "apellido": apellido,
             "email": email,
             "password": password,
-            "cobertura_id": cobertura_id
+            "cobertura_id": cobertura_id,
+            "telefono": telefono
         }
     )
 

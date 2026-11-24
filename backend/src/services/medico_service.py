@@ -25,10 +25,25 @@ def _obtener_medico_activo(connection, medico_id: int) -> dict:
     return medico
 
 
-def listar_medicos(limit: int, offset: int, especialidad_id: int | None = None):
+def listar_medicos(
+    limit: int,
+    offset: int,
+    especialidad_id: int | None = None,
+    paciente_id: int | None = None
+):
     with transaction() as connection:
-        total = medico_repo.contar_medicos(connection, especialidad_id)
-        items = medico_repo.listar_medicos(connection, limit, offset, especialidad_id)
+        total = medico_repo.contar_medicos(
+            connection,
+            especialidad_id,
+            paciente_id
+        )
+        items = medico_repo.listar_medicos(
+            connection,
+            limit,
+            offset,
+            especialidad_id,
+            paciente_id
+        )
 
         for medico in items:
             medico["coberturas"] = medico_repo.listar_coberturas(

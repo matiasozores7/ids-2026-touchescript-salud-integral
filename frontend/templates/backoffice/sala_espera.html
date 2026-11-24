@@ -1,0 +1,261 @@
+
+{% extends "backoffice/base.html" %}
+
+{% block backoffice_title %}
+Sala de espera · Salud Integral
+{% endblock %}
+
+{% block backoffice_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-abm.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backoffice-sala-espera.css') }}">
+{% endblock %}
+
+{% block breadcrumb %}
+<span>/ Sala de espera</span>
+{% endblock %}
+
+{% block backoffice_content %}
+
+{% from "pacientes/_componentes.html" import estado_pill %}
+
+{# Componente para pacientes en espera y en consulta #}
+{% macro paciente_item(t, en_consulta=false) %}
+
+    {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
+    {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
+
+    {% set hora_turno = (t.fecha_hora|string)[11:16] if t.fecha_hora else '' %}
+    {% set hora_llegada = (t.fecha_hora_llegada|string)[11:16] if t.fecha_hora_llegada else '' %}
+
+    <article class="sala-item">
+
+        <!-- IDENTIDAD DEL PACIENTE -->
+        <div class="sala-identidad">
+
+            <span class="avatar avatar-small avatar-soft" aria-hidden="true">
+                {{ (t.paciente_nombre or 'P')[0] }}{{ (t.paciente_apellido or '')[:1] }}
+            </span>
+
+            <div class="sala-personas">
+
+                <div class="sala-persona">
+                    <span class="sala-label">Paciente</span>
+                    <strong class="sala-paciente-nombre">
+                        {{ paciente.strip() or 'Paciente sin nombre' }}
+                    </strong>
+                </div>
+
+                <div class="sala-persona">
+                    <span class="sala-label">Médico a cargo</span>
+                    <span class="sala-medico-nombre">
+                        Dr. {{ medico.strip() or 'Profesional asignado' }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- INFORMACIÓN DEL TURNO -->
+        <div class="sala-item-details">
+
+            {% if hora_turno %}
+                <span>
+                    <i class="bi bi-calendar-check" aria-hidden="true"></i>
+                    Turno: {{ hora_turno }}
+                </span>
+            {% endif %}
+
+            {% if hora_llegada %}
+                <span>
+                    <i class="bi bi-clock" aria-hidden="true"></i>
+                    Llegada: {{ hora_llegada }}
+                </span>
+            {% else %}
+                <span class="sala-sin-llegada">
+                    <i class="bi bi-clock" aria-hidden="true"></i>
+                    Sin hora de llegada
+                </span>
+            {% endif %}
+
+            {% if not en_consulta and t.fecha_hora %}
+                <span
+                    class="sala-tiempo"
+                    data-turno="{{ t.fecha_hora|string|replace(' ', 'T') }}"
+                ></span>
+            {% endif %}
+
+            <span>
+                <i class="bi bi-building" aria-hidden="true"></i>
+                Sala {{ t.consultorio_sala or '—' }}
+                · Piso {{ t.consultorio_piso or '—' }}
+            </span>
+
+            {% if en_consulta %}
+                <div class="sala-estado">
+                    {{ estado_pill(t.estado) }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <!-- ACCIÓN -->
+        {% if en_consulta %}
+
+            <form method="POST"
+                  action="{{ url_for('backoffice.finalizar_atencion', turno_id=t.turno_id) }}">
+
+                <button type="submit" class="button button-success button-small">
+                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                    Finalizar
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <form method="POST"
+                  action="{{ url_for('backoffice.llamar_paciente', turno_id=t.turno_id) }}">
+
+                <button type="submit" class="button button-primary button-small">
+                    <i class="bi bi-megaphone" aria-hidden="true"></i>
+                    Llamar
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </article>
+
+{% endmacro %}
+
+
+<div class="abm-header">
+
+    <div class="abm-heading">
+        <h1>Sala de espera</h1>
+        <p>Pacientes ordenados según su llegada y estado de atención.</p>
+    </div>
+
+    <a href="{{ url_for('backoffice.backoffice_checkin') }}"
+       class="button button-primary button-small">
+
+        <i class="bi bi-qr-code-scan" aria-hidden="true"></i>
+        Registrar llegada
+
+    </a>
+
+</div>
+
+
+<div class="sala-layout">
+
+    <!-- PACIENTES EN ESPERA Y EN CONSULTA -->
+    <section class="abm-card sala-card sala-espera-card">
+
+        <div class="sala-section-header">
+            <div>
+                <h2>
+                    En espera ({{ en_espera | length + en_consulta | length }})
+                </h2>
+                <p>Pacientes con check-in registrado.</p>
+            </div>
+        </div>
+
+        <div class="sala-lista">
+
+            {% if en_espera or en_consulta %}
+
+                {% for t in en_espera %}
+                    {{ paciente_item(t) }}
+                {% endfor %}
+
+                {% for t in en_consulta %}
+                    {{ paciente_item(t, true) }}
+                {% endfor %}
+
+            {% else %}
+
+                <div class="sala-empty">
+
+                    <div class="sala-empty-icon">
+                        <i class="bi bi-person-workspace" aria-hidden="true"></i>
+                    </div>
+
+                    <strong>No hay pacientes en espera</strong>
+                    <p>Cuando se registre una llegada aparecerá en esta lista.</p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- TURNOS PENDIENTES DE LLEGADA -->
+    <section class="abm-card sala-card sala-proximos">
+
+        <div class="sala-section-header">
+            <div>
+                <h2>Por llegar hoy ({{ por_llegar | length }})</h2>
+                <p>Turnos que todavía no registraron su llegada.</p>
+            </div>
+        </div>
+
+        <div class="sala-lista">
+
+            {% for t in por_llegar %}
+
+                {% set paciente = (t.paciente_nombre or '') ~ ' ' ~ (t.paciente_apellido or '') %}
+                {% set medico = (t.medico_nombre or '') ~ ' ' ~ (t.medico_apellido or '') %}
+
+                <article class="sala-proximo">
+
+                    <div class="sala-proximo-hora">
+                        {{ (t.fecha_hora|string)[11:16] if t.fecha_hora else '--:--' }}
+                    </div>
+
+                    <div class="sala-proximo-info">
+
+                        <div class="sala-persona">
+                            <span class="sala-label">Paciente</span>
+                            <strong class="sala-paciente-nombre">
+                                {{ paciente.strip() or 'Paciente sin nombre' }}
+                            </strong>
+                        </div>
+
+                        <div class="sala-persona">
+                            <span class="sala-label">Médico a cargo</span>
+                            <span class="sala-medico-nombre">
+                                Dr. {{ medico.strip() or 'Profesional asignado' }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="sala-proximo-estado">
+                        {{ estado_pill(t.estado) }}
+                    </div>
+
+                </article>
+
+            {% else %}
+
+                <div class="sala-empty">
+                    <strong>No hay turnos pendientes de llegada.</strong>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/backoffice-sala-espera.js') }}"></script>
+
+{% endblock %}

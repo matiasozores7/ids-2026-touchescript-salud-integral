@@ -59,6 +59,3 @@ def validar_rol(*roles_permitidos):
 
 
 # Alias para máxima flexibilidad y compatibilidad con código existente
-token_requerido = validar_token
-roles_requeridos = validar_rol
-rol_requerido = validar_rol

@@ -24,7 +24,7 @@ def _render_medicos():
         medicos = resultado["items"]
 
         especialidades = especialidades_service.listar_especialidades()
-        coberturas = coberturas_service.listar_coberturas()
+        coberturas = coberturas_service.listar_coberturas()["items"]
 
     except AppError as exception:
         medicos = []

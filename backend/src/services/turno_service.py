@@ -1,17 +1,7 @@
 import uuid
 from datetime import date, datetime, time, timedelta
 
-from src.constants_turnos import (
-    DIAS_SEMANA_MAPA,
-    ESTADO_ATENDIDO,
-    ESTADO_AUSENTE,
-    ESTADO_CANCELADO,
-    ESTADO_CONFIRMADO,
-    ESTADO_DISPONIBLE,
-    ESTADO_RESERVADO,
-    TRANSICIONES_VALIDAS,
-    VENTANA_CHECKIN_MINUTOS,
-)
+from src.constants_turnos import ReglasTurno
 from src.database.connection import transaction
 from src.errors.exceptions import ConflictError, ForbiddenError, NotFoundError
 from src.repositories import turno_repository as turno_repo
@@ -48,7 +38,9 @@ def actualizar_estado(turno_id: int, nuevo_estado: str) -> None:
         if estado_actual == nuevo_estado:
             return
 
-        transiciones_permitidas = TRANSICIONES_VALIDAS.get(estado_actual, set())
+        transiciones_permitidas = ReglasTurno.transiciones_validas().get(
+            estado_actual, ()
+        )
         if nuevo_estado not in transiciones_permitidas:
             raise ConflictError(
                 description=(
@@ -114,7 +106,16 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
         if turno is None:
             raise NotFoundError(description="No se encontró el turno especificado.")
 
-        if turno["estado"] != ESTADO_DISPONIBLE:
+        if not turno_repo.paciente_cubre_medico(
+            connection,
+            paciente_id,
+            turno["medico_id"]
+        ):
+            raise ConflictError(
+                description="El médico no acepta la cobertura médica del paciente."
+            )
+
+        if turno["estado"] != ReglasTurno.ESTADO_DISPONIBLE:
             raise ConflictError(
                 description="El turno seleccionado ya no se encuentra disponible (doble reserva evitada)."
             )
@@ -239,15 +240,15 @@ def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool
             
         estado_actual = turno["estado"]
 
-        if estado_actual == ESTADO_CANCELADO:
+        if estado_actual == ReglasTurno.ESTADO_CANCELADO:
             raise ConflictError(description="El turno ya se encuentra cancelado.")
 
-        if estado_actual == ESTADO_ATENDIDO:
+        if estado_actual == ReglasTurno.ESTADO_ATENDIDO:
             raise ConflictError(
                 description="No es posible cancelar un turno que ya ha sido atendido."
             )
 
-        if estado_actual == ESTADO_AUSENTE:
+        if estado_actual == ReglasTurno.ESTADO_AUSENTE:
             raise ConflictError(
                 description="No es posible cancelar un turno marcado como ausente."
             )
@@ -264,20 +265,23 @@ def realizar_checkin(qr_token: str) -> None:
 
         estado_actual = turno["estado"]
 
-        if estado_actual == ESTADO_CANCELADO:
+        if estado_actual == ReglasTurno.ESTADO_CANCELADO:
             raise ConflictError(description="El turno se encuentra cancelado.")
 
-        if estado_actual in (ESTADO_CONFIRMADO, ESTADO_ATENDIDO):
+        if estado_actual in (
+            ReglasTurno.ESTADO_CONFIRMADO,
+            ReglasTurno.ESTADO_ATENDIDO,
+        ):
             raise ConflictError(
                 description="El código QR ya fue utilizado anteriormente (check-in previo o turno atendido)."
             )
 
-        if estado_actual == ESTADO_AUSENTE:
+        if estado_actual == ReglasTurno.ESTADO_AUSENTE:
             raise ConflictError(
                 description="El turno ha sido marcado como ausente y no admite check-in."
             )
 
-        if estado_actual != ESTADO_RESERVADO:
+        if estado_actual != ReglasTurno.ESTADO_RESERVADO:
             raise ConflictError(
                 description=f"El turno no puede recibir check-in desde su estado actual '{estado_actual}'."
             )
@@ -287,8 +291,12 @@ def realizar_checkin(qr_token: str) -> None:
         if isinstance(fecha_turno, str):
             fecha_turno = datetime.fromisoformat(fecha_turno)
 
-        ventana_inicio = fecha_turno - timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
-        ventana_fin = fecha_turno + timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
+        ventana_inicio = fecha_turno - timedelta(
+            minutes=ReglasTurno.VENTANA_CHECKIN_MINUTOS
+        )
+        ventana_fin = fecha_turno + timedelta(
+            minutes=ReglasTurno.VENTANA_CHECKIN_MINUTOS
+        )
 
         if ahora < ventana_inicio:
             raise ConflictError(
@@ -296,7 +304,9 @@ def realizar_checkin(qr_token: str) -> None:
             )
 
         if ahora > ventana_fin:
-            turno_repo.actualizar_estado_turno(connection, turno["id"], ESTADO_AUSENTE)
+            turno_repo.actualizar_estado_turno(
+                connection, turno["id"], ReglasTurno.ESTADO_AUSENTE
+            )
             raise ConflictError(
                 description="La ventana horaria de check-in ha expirado (+15 minutos). El turno ha sido marcado como ausente."
             )
@@ -312,10 +322,10 @@ def marcar_atendido(turno_id: int) -> None:
 
         estado_actual = turno["estado"]
 
-        if estado_actual == ESTADO_ATENDIDO:
+        if estado_actual == ReglasTurno.ESTADO_ATENDIDO:
             raise ConflictError(description="El turno ya se encuentra en estado atendido.")
 
-        if estado_actual != ESTADO_CONFIRMADO:
+        if estado_actual != ReglasTurno.ESTADO_CONFIRMADO:
             raise ConflictError(
                 description=(
                     f"Solo se pueden marcar como atendidos los turnos con check-in confirmado "
@@ -327,7 +337,9 @@ def marcar_atendido(turno_id: int) -> None:
 
 
 def marcar_ausentes() -> int:
-    fecha_limite = datetime.now() - timedelta(minutes=VENTANA_CHECKIN_MINUTOS)
+    fecha_limite = datetime.now() - timedelta(
+        minutes=ReglasTurno.VENTANA_CHECKIN_MINUTOS
+    )
     with transaction() as connection:
         afectados = turno_repo.marcar_turnos_ausentes_expirados(connection, fecha_limite)
 
@@ -401,7 +413,7 @@ def generar_turnos_en_conexion(
 
     for i in range(dias_total):
         dia_actual = fecha_inicio + timedelta(days=i)
-        dia_semana_nombre = DIAS_SEMANA_MAPA.get(dia_actual.weekday())
+        dia_semana_nombre = ReglasTurno.dias_semana().get(dia_actual.weekday())
 
         agendas_dia = [
             a for a in agendas
@@ -438,7 +450,7 @@ def generar_turnos_en_conexion(
                         medico_id=agenda["medico_id"],
                         consultorio_id=agenda["consultorio_id"],
                         fecha_hora=fecha_hora_slot,
-                        estado=ESTADO_DISPONIBLE,
+                        estado=ReglasTurno.ESTADO_DISPONIBLE,
                     )
                     turnos_creados += 1
 

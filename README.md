@@ -81,14 +81,101 @@ ids-2026-touchescript-salud-integral/
 
 ## Instalación e Inicialización
 
-### 1. Clonar el repositorio
+El proyecto ofrece dos métodos de ejecución: mediante Docker (recomendado) o mediante una instalación manual del entorno de desarrollo.
+
+### Opción 1: Ejecución con Docker (recomendada)
+
+Permite ejecutar el sistema completo sin instalar Python, MySQL ni sus dependencias directamente en el equipo.
+
+**Requisitos previos**
+- Git.
+- Docker Desktop (Windows/macOS) o Docker Engine y Docker Compose (Linux).
+
+**1. Clonar el repositorio**
 
 ```bash
 git clone https://github.com/matiasozores7/ids-2026-touchescript-salud-integral.git
 cd ids-2026-touchescript-salud-integral
 ```
 
-### 2. Ejecutar el script de inicialización
+**2. Configurar las variables de entorno**
+
+Crear el archivo `.env` a partir de la plantilla:
+
+```bash
+cp .env.example .env
+```
+
+Crear también `.env.docker` a partir de su plantilla:
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+Completar ambos archivos con las claves secretas y credenciales correspondientes. No subir estos archivos al repositorio.
+
+**3. Construir e iniciar los servicios**
+
+Desde la raíz del proyecto, ejecutar:
+
+```bash
+docker compose --env-file .env.docker up --build -d
+```
+
+Docker construirá las imágenes necesarias e iniciará automáticamente los tres servicios:
+
+- **MySQL:** servidor de base de datos.
+- **Backend:** API REST desarrollada con Flask.
+- **Frontend:** aplicación web y backoffice.
+
+En la primera ejecución, MySQL inicializará automáticamente la base de datos utilizando los archivos `database/schema.sql` y `database/seed.sql`.
+
+**4. Verificar el funcionamiento**
+
+Consultar el estado de los contenedores:
+
+```bash
+docker compose --env-file .env.docker ps
+```
+
+Los servicios deberían encontrarse en ejecución y MySQL debe aparecer como `healthy`.
+
+**5. Acceder al sistema**
+
+- Frontend: http://localhost:5001
+- Backend API: http://localhost:5000/api
+- Healthcheck: http://localhost:5000/api/healthcheck
+
+**6. Detener los servicios**
+
+Para detener los contenedores sin eliminar los datos de la base de datos:
+
+```bash
+docker compose --env-file .env.docker down
+```
+
+Para volver a iniciar el proyecto posteriormente:
+
+```bash
+docker compose --env-file .env.docker up -d
+```
+
+**Importante:** los datos de MySQL se conservan en un volumen Docker. No utilizar `docker compose down -v` salvo que se quiera eliminar también la base de datos persistida.
+
+---
+
+### Opción 2: Instalación manual
+
+Este método permite ejecutar el proyecto directamente en el equipo, sin Docker.
+
+**1. Clonar el repositorio**
+
+```bash
+git clone https://github.com/matiasozores7/ids-2026-touchescript-salud-integral.git
+cd ids-2026-touchescript-salud-integral
+```
+
+**2. Ejecutar el script de inicialización**
 
 Otorgar permisos de ejecución al script `init.sh` para crear el entorno virtual e instalar las dependencias necesarias:
 
@@ -97,7 +184,7 @@ chmod +x init.sh
 ./init.sh
 ```
 
-### 3. Configurar las variables de entorno
+**3. Configurar las variables de entorno**
 
 Copiar la plantilla `.env.example` y completar los datos correspondientes a la conexión con la base de datos MySQL local y las claves secretas necesarias:
 
@@ -105,13 +192,35 @@ Copiar la plantilla `.env.example` y completar los datos correspondientes a la c
 cp .env.example .env
 ```
 
-### 4. Inicializar la base de datos
+**4. Inicializar la base de datos**
 
 Cargar el esquema de la base de datos en el servidor MySQL:
 
 ```bash
 mysql -u tu_usuario -p tu_base_de_datos < database/schema.sql
 ```
+
+**5. Ejecutar el sistema**
+
+Para ejecutar la solución completa, es necesario levantar ambos servidores en terminales independientes.
+
+Terminal 1: Servidor Backend (API REST)
+
+```bash
+cd backend
+python app.py
+```
+
+El servidor estará disponible en http://localhost:5000/api.
+
+Terminal 2: Servidor Frontend (Web App / Backoffice)
+
+```bash
+cd frontend
+python run.py
+```
+
+El portal web estará disponible en http://localhost:5001.
 
 ---
 

@@ -110,3 +110,17 @@ def actualizar_paciente_por_id(connection, paciente_id: int, cobertura_id: int) 
     values = (cobertura_id, paciente_id)
     cursor.execute(query, values)
     cursor.close()
+
+def tiene_turnos_pendientes(connection, paciente_id: int) -> bool:
+    query = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM turnos
+            WHERE paciente_id = %s
+              AND estado IN ('reservado', 'confirmado')
+        ) AS tiene_turnos
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, (paciente_id,))
+        return bool(cursor.fetchone()["tiene_turnos"])

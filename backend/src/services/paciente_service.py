@@ -11,8 +11,8 @@ from src.repositories.paciente_repository import (
     listar_pacientes,
     insertar_paciente,
     actualizar_paciente_por_id,
-    obtener_usuario_id_por_paciente_id,
-    buscar_paciente_por_id
+    buscar_paciente_por_id,
+    tiene_turnos_pendientes
 )
 from src.validators.paciente_validator import validar_datos_paciente, validar_datos_actualizacion_paciente
 from src.errors.exceptions import NotFoundError, ConflictError
@@ -112,5 +112,8 @@ def eliminar_paciente_service(paciente_id: int) -> None:
 
         if not paciente.get("activo"):
             raise NotFoundError(description=f"El paciente con ID {paciente_id} ya se encuentra dado de baja.")
+
+        if tiene_turnos_pendientes(connection, paciente_id):
+            raise ConflictError(description="No se puede dar de baja al paciente porque tiene turnos reservados o confirmados.")
 
         desactivar_usuario_por_id(connection, paciente.get("usuario_id"))

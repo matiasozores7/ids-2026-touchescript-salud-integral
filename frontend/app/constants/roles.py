@@ -1,9 +1,4 @@
-PACIENTE = "paciente"
-MEDICO = "medico"
-ADMIN = "admin"
-
-ROLES_VALIDOS = {
-    PACIENTE,
-    MEDICO,
-    ADMIN
-}
+class Roles:
+    PACIENTE = "paciente"
+    MEDICO = "medico"
+    ADMIN = "admin"

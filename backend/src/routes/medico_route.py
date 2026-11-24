@@ -1,7 +1,9 @@
 from flask import Blueprint, request
 
+from src.errors.exceptions import ForbiddenError
 from src.utils.responses import success_response
 from src.utils.decorators import validar_rol
+from src.utils.jwt_config import obtener_claims_actuales
 from src.utils.pagination import get_pagination_params, generate_hateoas_links
 from src.services import medico_service
 from src.validators import medico_validator
@@ -14,8 +16,22 @@ medico_bp = Blueprint("medicos", __name__)
 def listar_medicos():
     limit, offset = get_pagination_params()
     especialidad_id = request.args.get("especialidad_id", type=int)
+    claims = obtener_claims_actuales()
+    paciente_id = None
 
-    items, total = medico_service.listar_medicos(limit, offset, especialidad_id)
+    if claims.get("rol") == "paciente":
+        paciente_id = claims.get("perfil_id")
+        if paciente_id is None:
+            raise ForbiddenError(
+                description="No se pudo identificar el perfil del paciente autenticado."
+            )
+
+    items, total = medico_service.listar_medicos(
+        limit,
+        offset,
+        especialidad_id,
+        paciente_id
+    )
 
     links = generate_hateoas_links(request.base_url, limit, offset, total, request.args)
 

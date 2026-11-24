@@ -149,6 +149,7 @@ def listar_turnos_administrativos():
         "disponible",
         "reservado",
         "confirmado",
+        "en_consulta",
         "atendido",
         "cancelado",
         "ausente"

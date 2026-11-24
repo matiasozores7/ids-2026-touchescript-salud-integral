@@ -87,13 +87,13 @@ CREATE TABLE agendas (
 
 CREATE TABLE turnos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    agenda_id INT NOT NULL,
+    agenda_id INT NULL,
     medico_id INT NOT NULL,
     paciente_id INT,
     consultorio_id INT NOT NULL,
     fecha_hora DATETIME NOT NULL,
     fecha_hora_llegada DATETIME NULL,
-    estado ENUM('disponible', 'reservado', 'confirmado', 'atendido', 'cancelado', 'ausente') DEFAULT 'disponible',
+    estado ENUM('disponible', 'reservado', 'confirmado', 'en_consulta','atendido', 'cancelado', 'ausente') DEFAULT 'disponible',
     qr_token VARCHAR(255) UNIQUE, 
     FOREIGN KEY (agenda_id) REFERENCES agendas(id) ON DELETE SET NULL,
     FOREIGN KEY (medico_id) REFERENCES medicos(id),
