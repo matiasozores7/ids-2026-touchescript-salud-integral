@@ -263,13 +263,13 @@ def enviar_correo(
         logging.warning("No se proporcionó un destinatario válido para enviar el correo.")
         return False
 
-    smtp_host = os.getenv("SMTP_HOST", "localhost")
-    smtp_port = int(os.getenv("SMTP_PORT", "1025"))
-    smtp_user = os.getenv("SMTP_USER", "")
-    smtp_password = os.getenv("SMTP_PASSWORD", "")
-    smtp_tls = os.getenv("SMTP_TLS", "False").lower() in ("true", "1")
-    smtp_ssl = os.getenv("SMTP_SSL", "False").lower() in ("true", "1")
-    remitente = os.getenv("EMAIL_REMITENTE", "Salud Integral <no-reply@saludintegral.com>")
+    smtp_host = os.getenv("SMTP_HOST", "localhost").strip()
+    smtp_port = int(str(os.getenv("SMTP_PORT", "1025")).strip())
+    smtp_user = os.getenv("SMTP_USER", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    smtp_tls = os.getenv("SMTP_TLS", "False").strip().lower() in ("true", "1")
+    smtp_ssl = os.getenv("SMTP_SSL", "False").strip().lower() in ("true", "1")
+    remitente = os.getenv("EMAIL_REMITENTE", "Salud Integral <no-reply@saludintegral.com>").strip()
 
     mensaje = MIMEMultipart("alternative")
     mensaje["Subject"] = asunto
