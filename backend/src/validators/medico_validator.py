@@ -7,10 +7,11 @@ from src.constants import (
 )
 from src.errors.exceptions import BadRequestError
 
-CAMPOS_MODIFICABLES = [
-    "nombre", "apellido", "email", "telefono", "especialidad_id",
-    "matricula", "cobertura_ids"
-]
+def campos_modificables() -> tuple[str, ...]:
+    return (
+        "nombre", "apellido", "email", "telefono", "especialidad_id",
+        "matricula", "cobertura_ids",
+    )
 
 
 def validar_creacion(data):
@@ -30,9 +31,10 @@ def validar_creacion(data):
 def validar_modificacion_parcial(data):
     _validar_tipo_data(data)
 
-    if not any(campo in data for campo in CAMPOS_MODIFICABLES):
+    campos = campos_modificables()
+    if not any(campo in data for campo in campos):
         raise BadRequestError(
-            description=f"Debe enviar al menos uno de estos campos: {', '.join(CAMPOS_MODIFICABLES)}."
+            description=f"Debe enviar al menos uno de estos campos: {', '.join(campos)}."
         )
 
     # Solo se validan los campos de texto que efectivamente llegaron

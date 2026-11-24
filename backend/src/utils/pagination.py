@@ -1,22 +1,29 @@
 from flask import request
 
-DEFAULT_LIMIT = 10
-MIN_LIMIT = 1
-MAX_LIMIT = 100
-MIN_OFFSET = 0
+class Paginacion:
+    DEFAULT_LIMIT = 10
+    MIN_LIMIT = 1
+    MAX_LIMIT = 100
+    MIN_OFFSET = 0
 
 def get_pagination_params():
     try:  
-        limit = int(request.args.get('_limit', DEFAULT_LIMIT))
-        offset = int(request.args.get('_offset', MIN_OFFSET))
+        limit = int(request.args.get('_limit', Paginacion.DEFAULT_LIMIT))
+        offset = int(request.args.get('_offset', Paginacion.MIN_OFFSET))
     except ValueError:
         raise ValueError("Los parámetros '_limit' y '_offset' deben ser números enteros.")
 
-    if not (MIN_LIMIT <= limit <= MAX_LIMIT):
-        raise ValueError(f"El parámetro '_limit' debe estar entre {MIN_LIMIT} y {MAX_LIMIT}.")
+    if not (Paginacion.MIN_LIMIT <= limit <= Paginacion.MAX_LIMIT):
+        raise ValueError(
+            f"El parámetro '_limit' debe estar entre "
+            f"{Paginacion.MIN_LIMIT} y {Paginacion.MAX_LIMIT}."
+        )
 
-    if offset < MIN_OFFSET:
-        raise ValueError(f"El parámetro '_offset' debe ser mayor o igual a {MIN_OFFSET}.")
+    if offset < Paginacion.MIN_OFFSET:
+        raise ValueError(
+            f"El parámetro '_offset' debe ser mayor o igual a "
+            f"{Paginacion.MIN_OFFSET}."
+        )
 
     return limit, offset
 
