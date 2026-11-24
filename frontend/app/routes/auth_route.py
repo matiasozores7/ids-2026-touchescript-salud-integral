@@ -12,14 +12,16 @@ from flask import (
 
 from app.services import auth_service, coberturas_service
 from app.errors.exceptions import AppError, AuthenticationError
-from app.constants.roles import PACIENTE, ADMIN
+from app.constants.roles import Roles
 
 auth_bp = Blueprint("auth", __name__)
 
-RUTAS_POR_ROL = {
-    PACIENTE: "patient.patient_home",
-    ADMIN: "backoffice.dashboard"
-}
+def _ruta_por_rol(rol: str | None) -> str | None:
+    rutas = {
+        Roles.PACIENTE: "patient.patient_home",
+        Roles.ADMIN: "backoffice.dashboard",
+    }
+    return rutas.get(rol)
 
 @auth_bp.before_request
 def verificar_sesion():
@@ -36,7 +38,7 @@ def verificar_sesion():
         session.clear()
         return
 
-    endpoint = RUTAS_POR_ROL.get(usuario.get("rol"))
+    endpoint = _ruta_por_rol(usuario.get("rol"))
 
     if endpoint is None:
         abort(403)

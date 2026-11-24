@@ -1,46 +1,47 @@
-# Constantes y reglas para el módulo de turnos
-
-ESTADO_DISPONIBLE = "disponible"
-ESTADO_RESERVADO = "reservado"
-ESTADO_CONFIRMADO = "confirmado"
-ESTADO_EN_CONSULTA = "en_consulta"
-ESTADO_ATENDIDO = "atendido"
-ESTADO_CANCELADO = "cancelado"
-ESTADO_AUSENTE = "ausente"
-
-ESTADOS_VALIDOS = (
-    ESTADO_DISPONIBLE,
-    ESTADO_RESERVADO,
-    ESTADO_CONFIRMADO,
-    ESTADO_EN_CONSULTA,
-    ESTADO_ATENDIDO,
-    ESTADO_CANCELADO,
-    ESTADO_AUSENTE,
-)
-
-# Matriz de transiciones válidas según el ciclo de vida de un turno
-TRANSICIONES_VALIDAS = {
-    ESTADO_DISPONIBLE: {ESTADO_RESERVADO, ESTADO_CANCELADO},
-    ESTADO_RESERVADO: {ESTADO_CONFIRMADO, ESTADO_CANCELADO, ESTADO_AUSENTE, ESTADO_DISPONIBLE},
-    ESTADO_CONFIRMADO: {ESTADO_EN_CONSULTA, ESTADO_ATENDIDO, ESTADO_CANCELADO, ESTADO_AUSENTE},
-    ESTADO_EN_CONSULTA: {ESTADO_ATENDIDO},
-    ESTADO_ATENDIDO: set(),  # Estado terminal
-    ESTADO_CANCELADO: {ESTADO_DISPONIBLE},  # Permite reapertura manual por administración
-    ESTADO_AUSENTE: {ESTADO_DISPONIBLE},   # Permite reapertura manual por administración
-}
-
-# Mapeo de días de la semana en Python (0=Lunes) a los valores del ENUM en MySQL
-DIAS_SEMANA_MAPA = {
-    0: "Lunes",
-    1: "Martes",
-    2: "Miercoles",
-    3: "Jueves",
-    4: "Viernes",
-    5: "Sabado",
-    6: "Domingo",
-}
+from types import MappingProxyType
 
 
+class ReglasTurno:
+    ESTADO_DISPONIBLE = "disponible"
+    ESTADO_RESERVADO = "reservado"
+    ESTADO_CONFIRMADO = "confirmado"
+    ESTADO_EN_CONSULTA = "en_consulta"
+    ESTADO_ATENDIDO = "atendido"
+    ESTADO_CANCELADO = "cancelado"
+    ESTADO_AUSENTE = "ausente"
 
-# Ventana en minutos para el check-in (15 min antes hasta 15 min después)
-VENTANA_CHECKIN_MINUTOS = 15
+    ESTADOS_VALIDOS = (
+        ESTADO_DISPONIBLE,
+        ESTADO_RESERVADO,
+        ESTADO_CONFIRMADO,
+        ESTADO_EN_CONSULTA,
+        ESTADO_ATENDIDO,
+        ESTADO_CANCELADO,
+        ESTADO_AUSENTE,
+    )
+
+    TRANSICIONES_VALIDAS = MappingProxyType({
+        ESTADO_DISPONIBLE: frozenset((ESTADO_RESERVADO, ESTADO_CANCELADO)),
+        ESTADO_RESERVADO: frozenset((
+            ESTADO_CONFIRMADO, ESTADO_CANCELADO, ESTADO_AUSENTE, ESTADO_DISPONIBLE,
+        )),
+        ESTADO_CONFIRMADO: frozenset((
+            ESTADO_EN_CONSULTA, ESTADO_ATENDIDO, ESTADO_CANCELADO, ESTADO_AUSENTE,
+        )),
+        ESTADO_EN_CONSULTA: frozenset((ESTADO_ATENDIDO,)),
+        ESTADO_ATENDIDO: frozenset(),
+        ESTADO_CANCELADO: frozenset((ESTADO_DISPONIBLE,)),
+        ESTADO_AUSENTE: frozenset((ESTADO_DISPONIBLE,)),
+    })
+
+    DIAS_SEMANA_MAPA = MappingProxyType({
+        0: "Lunes",
+        1: "Martes",
+        2: "Miercoles",
+        3: "Jueves",
+        4: "Viernes",
+        5: "Sabado",
+        6: "Domingo",
+    })
+
+    VENTANA_CHECKIN_MINUTOS = 15

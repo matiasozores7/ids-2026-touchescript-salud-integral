@@ -12,20 +12,7 @@ from flask import (
 from app.routes.patient import patient_bp
 from app.services import turnos_service
 from app.errors.exceptions import AppError
-
-
-MESES = {
-    1: "enero", 2: "febrero", 3: "marzo",
-    4: "abril", 5: "mayo", 6: "junio",
-    7: "julio", 8: "agosto", 9: "septiembre",
-    10: "octubre", 11: "noviembre", 12: "diciembre",
-}
-
-DIAS_SEMANA = {
-    0: "Lunes", 1: "Martes", 2: "Miércoles",
-    3: "Jueves", 4: "Viernes", 5: "Sábado",
-    6: "Domingo",
-}
+from app.utils.date_format import nombre_dia_corto, fecha_larga
 
 
 @patient_bp.route("/reservar-turno", methods=["GET"])
@@ -81,7 +68,7 @@ def reservar_fecha_hora(medico_id):
             if fecha not in fechas_dict:
                 fechas_dict[fecha] = {
                     "valor": fecha,
-                    "dia": DIAS_SEMANA[fecha_hora.weekday()][:3],
+                    "dia": nombre_dia_corto(fecha_hora),
                     "num": fecha_hora.day,
                     "libres": 0,
                 }
@@ -141,10 +128,7 @@ def reservar_confirmacion():
 
         medico = turnos_service.obtener_medico(medico_id)
 
-        fecha_formateada = (
-            f"{DIAS_SEMANA[fecha_hora.weekday()]} "
-            f"{fecha_hora.day} de {MESES[fecha_hora.month]}"
-        )
+        fecha_formateada = fecha_larga(fecha_hora)
 
     except (AppError, ValueError) as error:
         mensaje = (

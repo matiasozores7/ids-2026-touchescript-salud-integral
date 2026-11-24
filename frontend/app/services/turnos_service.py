@@ -2,32 +2,7 @@ from datetime import datetime, date, timedelta
 
 from app.clients.api_client import api_request
 from app.errors.exceptions import ExternalServiceError
-
-
-DIAS_SEMANA = {
-    0: "Lunes",
-    1: "Martes",
-    2: "Miércoles",
-    3: "Jueves",
-    4: "Viernes",
-    5: "Sábado",
-    6: "Domingo",
-}
-
-MESES = {
-    1: "enero",
-    2: "febrero",
-    3: "marzo",
-    4: "abril",
-    5: "mayo",
-    6: "junio",
-    7: "julio",
-    8: "agosto",
-    9: "septiembre",
-    10: "octubre",
-    11: "noviembre",
-    12: "diciembre",
-}
+from app.utils.date_format import nombre_dia, nombre_mes
 
 
 def _formatear_turno(turno: dict) -> dict:
@@ -48,8 +23,8 @@ def _formatear_turno(turno: dict) -> dict:
         else "MD"
     )
 
-    dia = DIAS_SEMANA[fecha_hora.weekday()]
-    mes = MESES[fecha_hora.month]
+    dia = nombre_dia(fecha_hora)
+    mes = nombre_mes(fecha_hora)
 
     return {
         **turno,
