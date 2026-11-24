@@ -138,7 +138,7 @@ Salud Integral · Centro Médico
               
               <!-- Badge de estado -->
               <div style="display: inline-block; background-color: #eaf3f7; color: #477f9a; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 12px; border-radius: 20px; margin-bottom: 16px;">
-                Reserva confirmada · Turno #{turno_id}
+                Reserva confirmada
               </div>
 
               <h1 style="margin: 0 0 12px 0; color: #294d5d; font-size: 24px; font-weight: 800; line-height: 1.25;">
@@ -325,7 +325,7 @@ def enviar_aviso_reserva(turno_id: int) -> bool:
             url_portal=url_portal
         )
 
-        asunto = f"Confirmación de tu reserva · Turno #{turno_id} - Salud Integral"
+        asunto = f"Confirmación de tu reserva - Salud Integral"
         return enviar_correo(
             destinatario=destinatario,
             asunto=asunto,

@@ -29,6 +29,17 @@
     </ol>
   {% endblock %}
 
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+      {% for categoria, mensaje in mensajes %}
+        <div class="alert alert-{{ 'danger' if categoria == 'error' else categoria }} alert-dismissible fade show mb-4" role="alert">
+          {{ mensaje }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
   {% block paso %}{% endblock %}
 
 </div>

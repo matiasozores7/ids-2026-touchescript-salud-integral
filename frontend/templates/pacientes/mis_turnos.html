@@ -88,6 +88,17 @@
 
 <div class="mis-turnos-page">
 
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+      {% for categoria, mensaje in mensajes %}
+        <div class="alert alert-{{ 'danger' if categoria == 'error' else categoria }} alert-dismissible fade show mb-4" role="alert">
+          {{ mensaje }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
     <h1 class="fw-bold mb-0">Mis turnos</h1>
 
