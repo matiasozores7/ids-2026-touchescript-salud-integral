@@ -29,6 +29,7 @@ def obtener_ausentismo_general(connection, periodo: int) -> float:
 
 
 def obtener_espera_promedio(connection, periodo: int) -> float:
+    # greatest evita que el resultado sea negativo, esto se contempla por si llego 5 min tarde quedaria -5 por lo tanto se excluye
     query = """
         SELECT ROUND(
             AVG(GREATEST(
@@ -135,7 +136,7 @@ def obtener_ocupacion_consultorios(connection, periodo: int) -> list:
 def obtener_espera_diaria(connection, periodo: int) -> list:
     query = """
         SELECT
-            DATE_FORMAT(turnos.fecha_hora, '%%d/%%m') AS label,
+            DATE_FORMAT(MIN(turnos.fecha_hora), '%%d/%%m') AS label,
             ROUND(
                 AVG(GREATEST(
                     TIMESTAMPDIFF(
@@ -153,7 +154,7 @@ def obtener_espera_diaria(connection, periodo: int) -> list:
           AND turnos.estado = 'atendido'
           AND turnos.fecha_hora_llegada IS NOT NULL
         GROUP BY DATE(turnos.fecha_hora)
-        ORDER BY DATE(turnos.fecha_hora)
+        ORDER BY MIN(turnos.fecha_hora)
     """
 
     with connection.cursor() as cursor:
