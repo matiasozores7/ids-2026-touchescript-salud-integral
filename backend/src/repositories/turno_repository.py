@@ -243,6 +243,48 @@ def confirmar_checkin(connection, turno_id: int, fecha_hora_llegada) -> int:
         return cursor.rowcount
 
 
+def obtener_turno_con_detalles_para_correo(connection, turno_id: int):
+    query = """
+        SELECT t.id, t.qr_token, t.fecha_hora, t.estado,
+               u_pac.nombre AS paciente_nombre,
+               u_pac.apellido AS paciente_apellido,
+               u_pac.email AS paciente_email,
+               u_med.nombre AS medico_nombre,
+               u_med.apellido AS medico_apellido,
+               e.nombre AS especialidad_nombre,
+               c.numero_sala AS consultorio_sala,
+               c.piso AS consultorio_piso
+        FROM turnos t
+        JOIN pacientes p ON t.paciente_id = p.id
+        JOIN usuarios u_pac ON p.usuario_id = u_pac.id
+        JOIN medicos m ON t.medico_id = m.id
+        JOIN usuarios u_med ON m.usuario_id = u_med.id
+        LEFT JOIN especialidades e ON m.especialidad_id = e.id
+        JOIN consultorios c ON t.consultorio_id = c.id
+        WHERE t.id = %s
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id,))
+        return cursor.fetchone()
+
+
+def cancelar_turno_con_token(
+    connection,
+    turno_id: int,
+    qr_token: str,
+) -> int:
+    query = """
+        UPDATE turnos
+        SET estado = 'cancelado'
+        WHERE id = %s
+          AND qr_token = %s
+          AND estado IN ('reservado', 'confirmado')
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, (turno_id, qr_token))
+        return cursor.rowcount
+
+
 def marcar_atendido(connection, turno_id: int) -> int:
     query = """
         UPDATE turnos

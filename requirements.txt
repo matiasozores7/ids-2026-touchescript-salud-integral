@@ -4,3 +4,4 @@ python-dotenv==1.0.1
 Flask-JWT-Extended
 requests==2.32.5
 cryptography
+qrcode==8.2

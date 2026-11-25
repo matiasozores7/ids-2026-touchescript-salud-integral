@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Cancelar reserva · Salud Integral{% endblock %}
+
+{% block content %}
+<section class="py-5 mx-auto" style="max-width: 620px">
+  <div class="card border-0 shadow-sm p-4 p-md-5">
+    {% if error %}
+      <div class="text-center">
+        <i class="bi bi-exclamation-circle text-danger fs-1" aria-hidden="true"></i>
+        <h1 class="h3 fw-bold mt-3">No se pudo procesar la solicitud</h1>
+        <p class="text-body-secondary">{{ error }}</p>
+        <a class="button button-primary button-large mt-2"
+           href="{{ url_for('auth.mostrar_login') }}">
+          Ir al inicio
+        </a>
+      </div>
+    {% elif turno.estado == "cancelado" %}
+      <div class="text-center">
+        <i class="bi bi-info-circle text-primary fs-1" aria-hidden="true"></i>
+        <h1 class="h3 fw-bold mt-3">Este turno ya está cancelado</h1>
+        <p class="text-body-secondary">No hace falta realizar ninguna otra acción.</p>
+        <a class="button button-primary button-large mt-2"
+           href="{{ url_for('auth.mostrar_login') }}">
+          Ir al inicio
+        </a>
+      </div>
+    {% elif turno.estado in ["reservado", "confirmado"] %}
+      <h1 class="h3 fw-bold">¿Querés cancelar tu turno?</h1>
+      <p class="text-body-secondary">
+        Si confirmás, el horario quedará disponible para otro paciente.
+      </p>
+
+      <dl class="border rounded-3 bg-light p-3 my-3">
+        <dt class="small text-body-secondary">Profesional</dt>
+        <dd class="mb-3">{{ turno.medico_completo }}</dd>
+        <dt class="small text-body-secondary">Especialidad</dt>
+        <dd class="mb-3">{{ turno.especialidad_nombre or "Consulta médica" }}</dd>
+        <dt class="small text-body-secondary">Fecha y hora</dt>
+        <dd class="mb-3">{{ turno.fecha_formateada }} · {{ turno.hora_formateada }}</dd>
+        <dt class="small text-body-secondary">Consultorio</dt>
+        <dd class="mb-0">{{ turno.consultorio_completo }}</dd>
+      </dl>
+
+      <form method="post" action="{{ url_for('cancelacion.procesar_cancelacion') }}">
+        <input type="hidden" name="turno_id" value="{{ turno.id }}">
+        <input type="hidden" name="token" value="{{ token }}">
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-danger btn-lg">
+            Sí, cancelar mi turno
+          </button>
+          <a class="button button-outline button-large"
+             href="{{ url_for('auth.mostrar_login') }}">
+            No, conservar mi turno
+          </a>
+        </div>
+      </form>
+    {% else %}
+      <div class="text-center">
+        <i class="bi bi-clock-history text-primary fs-1" aria-hidden="true"></i>
+        <h1 class="h3 fw-bold mt-3">Este turno no se puede cancelar</h1>
+        <p class="text-body-secondary">
+          El turno ya no se encuentra en un estado que permita cancelarlo.
+        </p>
+        <a class="button button-primary button-large mt-2"
+           href="{{ url_for('auth.mostrar_login') }}">
+          Ir al inicio
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

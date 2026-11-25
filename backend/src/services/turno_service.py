@@ -1,5 +1,10 @@
+import hashlib
+import hmac
+import logging
 import uuid
 from datetime import date, datetime, time, timedelta
+
+from flask import current_app
 
 from src.constants_turnos import ReglasTurno
 from src.database.connection import transaction
@@ -154,7 +159,22 @@ def reservar_turno(turno_id: int, paciente_id: int) -> dict:
                 description="No fue posible reservar el turno porque su estado cambió de forma concurrente."
             )
 
-    return turno_id
+    # El correo es posterior al commit: un fallo SMTP no debe deshacer la reserva.
+    try:
+        from src.services import correo_service
+
+        email_enviado = correo_service.enviar_aviso_reserva(turno_id)
+    except Exception:
+        logging.exception(
+            "La reserva del turno %s se completó, pero falló el envío del correo.",
+            turno_id,
+        )
+        email_enviado = False
+
+    return {
+        "id": turno_id,
+        "email_enviado": email_enviado,
+    }
 
 
 def listar_mis_turnos(paciente_id: int, limit: int, offset: int, estado: str | None = None):
@@ -254,6 +274,123 @@ def cancelar_turno(turno_id: int, paciente_id: int | None = None, es_admin: bool
             )
 
         turno_repo.cancelar_turno(connection, turno_id)
+
+
+def reenviar_aviso_reserva(
+    turno_id: int,
+    paciente_id: int | None = None,
+    es_admin: bool = False,
+) -> bool:
+    with transaction() as connection:
+        turno = turno_repo.obtener_turno_por_id(connection, turno_id)
+        if turno is None:
+            raise NotFoundError(description="No se encontró el turno especificado.")
+
+        if not es_admin and (
+            paciente_id is None or turno["paciente_id"] != paciente_id
+        ):
+            raise ForbiddenError(
+                description="No tenés permiso para reenviar el correo de este turno."
+            )
+
+        if turno["estado"] not in (
+            ReglasTurno.ESTADO_RESERVADO,
+            ReglasTurno.ESTADO_CONFIRMADO,
+        ):
+            raise ConflictError(
+                description="Solo se pueden reenviar correos de turnos vigentes."
+            )
+
+    from src.services import correo_service
+
+    return correo_service.enviar_aviso_reserva(turno_id)
+
+
+def generar_token_cancelacion(turno_id: int, qr_token: str) -> str:
+    secret = current_app.config.get("JWT_SECRET_KEY")
+    if not secret:
+        raise RuntimeError(
+            "JWT_SECRET_KEY es necesaria para generar enlaces de cancelación."
+        )
+
+    payload = f"cancelar-turno:{turno_id}:{qr_token}".encode("utf-8")
+    return hmac.new(
+        str(secret).encode("utf-8"),
+        payload,
+        hashlib.sha256,
+    ).hexdigest()
+
+
+def _obtener_turno_con_token_valido(
+    connection,
+    turno_id: int,
+    token: str,
+) -> dict:
+    turno = turno_repo.obtener_turno_con_detalles(connection, turno_id)
+    if turno is None or not turno.get("qr_token"):
+        raise NotFoundError(
+            description="No se encontró el turno correspondiente al enlace."
+        )
+
+    if not isinstance(token, str):
+        raise NotFoundError(
+            description="No se encontró el turno correspondiente al enlace."
+        )
+
+    token_esperado = generar_token_cancelacion(turno_id, turno["qr_token"])
+    if not hmac.compare_digest(token, token_esperado):
+        raise NotFoundError(
+            description="No se encontró el turno correspondiente al enlace."
+        )
+
+    return turno
+
+
+def obtener_detalle_publico_turno(turno_id: int, token: str) -> dict:
+    with transaction() as connection:
+        turno = _obtener_turno_con_token_valido(connection, turno_id, token)
+
+    campos_publicos = (
+        "id",
+        "fecha_hora",
+        "estado",
+        "medico_nombre",
+        "medico_apellido",
+        "especialidad_nombre",
+        "consultorio_sala",
+        "consultorio_piso",
+    )
+    return _serializar_turno(
+        {campo: turno.get(campo) for campo in campos_publicos}
+    )
+
+
+def cancelar_turno_con_token(turno_id: int, token: str) -> None:
+    with transaction() as connection:
+        turno = _obtener_turno_con_token_valido(connection, turno_id, token)
+        estado_actual = turno["estado"]
+
+        if estado_actual == ReglasTurno.ESTADO_CANCELADO:
+            raise ConflictError(description="El turno ya se encuentra cancelado.")
+
+        if estado_actual not in (
+            ReglasTurno.ESTADO_RESERVADO,
+            ReglasTurno.ESTADO_CONFIRMADO,
+        ):
+            raise ConflictError(
+                description="El estado actual del turno no permite cancelarlo."
+            )
+
+        filas_afectadas = turno_repo.cancelar_turno_con_token(
+            connection,
+            turno_id,
+            turno["qr_token"],
+        )
+        if filas_afectadas != 1:
+            raise ConflictError(
+                description="El turno cambió de estado y ya no puede cancelarse."
+            )
+
 
 def realizar_checkin(qr_token: str) -> None:
     with transaction() as connection:

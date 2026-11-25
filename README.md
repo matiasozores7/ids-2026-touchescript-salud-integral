@@ -114,6 +114,24 @@ cp .env.docker.example .env.docker
 
 Completar ambos archivos con las claves secretas y credenciales correspondientes. No subir estos archivos al repositorio.
 
+Para una prueba local con Docker, no necesitás una cuenta de correo ni credenciales SMTP:
+
+- En `.env`, reemplazá `JWT_SECRET_KEY` y `FLASK_SECRET_KEY` por valores aleatorios propios y distintos.
+- En `.env.docker`, cambiá `MYSQL_ROOT_PASSWORD` por una contraseña local segura. Dejá los valores SMTP de la plantilla como están para usar Mailpit:
+
+```env
+SMTP_HOST=mailpit
+SMTP_PORT=1025
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_TLS=False
+SMTP_SSL=False
+EMAIL_REMITENTE=Salud Integral <no-reply@saludintegral.com>
+FRONTEND_URL=http://localhost:5001
+```
+
+En esta prueba, Mailpit captura los mensajes y no los entrega a una casilla real. El destinatario puede ser el email de una cuenta de prueba del portal.
+
 **3. Construir e iniciar los servicios**
 
 Desde la raíz del proyecto, ejecutar:
@@ -122,11 +140,12 @@ Desde la raíz del proyecto, ejecutar:
 docker compose --env-file .env.docker up --build -d
 ```
 
-Docker construirá las imágenes necesarias e iniciará automáticamente los tres servicios:
+Docker construirá las imágenes necesarias e iniciará automáticamente los servicios:
 
 - **MySQL:** servidor de base de datos.
 - **Backend:** API REST desarrollada con Flask.
 - **Frontend:** aplicación web y backoffice.
+- **Mailpit:** captura los correos de prueba sin enviarlos a destinatarios reales.
 
 En la primera ejecución, MySQL inicializará automáticamente la base de datos utilizando los archivos `database/schema.sql` y `database/seed.sql`.
 
@@ -145,6 +164,29 @@ Los servicios deberían encontrarse en ejecución y MySQL debe aparecer como `he
 - Frontend: http://localhost:5001
 - Backend API: http://localhost:5000/api
 - Healthcheck: http://localhost:5000/api/healthcheck
+- Bandeja de correos de prueba: http://localhost:8025
+
+**Probar el correo de reserva**
+
+1. Abrí el portal en http://localhost:5001 e iniciá sesión con una cuenta de paciente, o registrá una cuenta de prueba.
+2. Reservá un turno disponible.
+3. Abrí http://localhost:8025 y buscá el mensaje dirigido al email de esa cuenta. Ahí podés revisar los datos, el QR y el enlace para cancelar.
+4. Abrí el enlace de cancelación y confirmá la acción. La página debe indicar que se canceló y el turno debe quedar liberado.
+
+Para enviar correos a casillas reales, configurá SMTP en `.env.docker` (no uses `SMTP_USERNAME`: el nombre de variable esperado es `SMTP_USER`). Con Gmail, activá la verificación en dos pasos y generá una contraseña de aplicación; no uses la contraseña normal de Gmail:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu_cuenta_real@gmail.com
+SMTP_PASSWORD=tu_contraseña_de_aplicacion
+SMTP_TLS=True
+SMTP_SSL=False
+EMAIL_REMITENTE=Salud Integral <tu_cuenta_real@gmail.com>
+FRONTEND_URL=http://localhost:5001
+```
+
+`SMTP_USER` y `EMAIL_REMITENTE` deben corresponder a la cuenta remitente. Para un despliegue, `FRONTEND_URL` debe ser la dirección pública del portal. No compartas ni subas `.env` o `.env.docker`.
 
 **6. Detener los servicios**
 

@@ -164,8 +164,13 @@ def reservar_resultado():
         return redirect(url_for("patient.reservar_especialidad"))
 
     try:
-        turnos_service.reservar_turno(turno_id)
+        resultado = turnos_service.reservar_turno(turno_id)
         flash("Turno reservado exitosamente.", "success")
+        if not resultado.get("email_enviado"):
+            flash(
+                "La reserva se realizó, pero no se pudo enviar el correo de confirmación.",
+                "warning",
+            )
         return redirect(url_for("patient.mis_turnos"))
 
     except AppError as error:

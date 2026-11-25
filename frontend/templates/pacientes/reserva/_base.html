@@ -27,6 +27,21 @@
         </li>
       {% endfor %}
     </ol>
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}
+        {% set color = {
+          'success': 'alert-success',
+          'error': 'alert-danger',
+          'warning': 'alert-warning',
+          'info': 'alert-info'
+        }.get(categoria, 'alert-secondary') %}
+        <div class="alert {{ color }} alert-dismissible fade show" role="alert">
+          {{ mensaje }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
   {% endblock %}
 
   {% block paso %}{% endblock %}
