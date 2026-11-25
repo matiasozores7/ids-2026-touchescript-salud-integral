@@ -1,48 +1,19 @@
-import os
-
-import requests
-from flask import session
-
-from app.errors.exceptions import AppError
+from app.clients.api_client import api_request
+from app.errors.exceptions import ExternalServiceError
 
 
 def obtener_reportes(periodo: int) -> dict:
-    token = (
-        session.get("access_token")
-        or session.get("token")
-        or session.get("jwt")
+    resultado = api_request(
+        method="GET",
+        endpoint="/reportes",
+        params={"period": periodo},
+        authenticated=True,
     )
 
-    headers = {}
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-
-    try:
-        respuesta = requests.get(
-            f"{os.getenv('API_BASE_URL')}/reportes",
-            params={"period": periodo},
-            headers=headers,
-            timeout=10,
+    data = resultado.get("data")
+    if not isinstance(data, dict):
+        raise ExternalServiceError(
+            "La respuesta de reportes tiene un formato inválido."
         )
 
-        if respuesta.status_code >= 400:
-            try:
-                detalle = respuesta.json()
-            except ValueError:
-                detalle = respuesta.text
-
-            raise AppError(
-                f"Backend reportes: HTTP {respuesta.status_code} - {detalle}"
-            )
-
-        payload = respuesta.json()
-
-        if "data" in payload:
-            return payload["data"]
-
-        return payload
-
-    except requests.RequestException as error:
-        raise AppError(
-            f"El frontend no pudo conectar con el backend: {error}"
-        )
+    return data
