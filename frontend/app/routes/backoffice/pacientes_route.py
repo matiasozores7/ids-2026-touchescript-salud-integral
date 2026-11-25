@@ -13,11 +13,17 @@ from . import backoffice_bp
 
 
 def _render_pacientes():
+    limit = request.args.get("_limit", 10, type=int)
+    offset = request.args.get("_offset", 0, type=int)
+
     try:
-        pacientes = pacientes_service.listar_pacientes()
+        resultado = pacientes_service.listar_pacientes(limit=limit, offset=offset)
+        pacientes = resultado.get("items", [])
+        total = resultado.get("total", len(pacientes))
     except AppError as error:
         flash(error.message, "error")
         pacientes = []
+        total = 0
 
     try:
         coberturas = coberturas_service.listar_coberturas()["items"]
@@ -25,10 +31,30 @@ def _render_pacientes():
         flash(error.message, "error")
         coberturas = []
 
+    def url_pagina(nuevo_offset):
+        parametros = request.args.to_dict()
+        parametros["_limit"] = limit
+        parametros["_offset"] = nuevo_offset
+
+        return url_for(
+            "backoffice.backoffice_pacientes",
+            **parametros
+        )
+
+    paginacion = {
+        "anterior": url_pagina(max(0, offset - limit)) if offset > 0 else None,
+        "siguiente": url_pagina(offset + limit)
+        if offset + limit < total else None
+    }
+
     return render_template(
         "backoffice/pacientes.html",
         pacientes=pacientes,
         coberturas=coberturas,
+        total=total,
+        limit=limit,
+        offset=offset,
+        paginacion=paginacion,
     )
 
 

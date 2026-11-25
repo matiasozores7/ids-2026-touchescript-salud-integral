@@ -47,12 +47,18 @@ Pacientes · Salud Integral
                    autocomplete="off">
         </div>
 
-        <span class="abm-count">
-            <strong id="pacientes-count-num">
-                {{ pacientes | length }}
-            </strong>
-            registros
-        </span>
+        <div class="d-flex align-items-center gap-3">
+            <span class="abm-count">
+                <strong>{{ total }}</strong> pacientes registrados
+            </span>
+
+            <span class="abm-count">
+                <strong id="pacientes-count-num">
+                    {{ pacientes | length }}
+                </strong>
+                de {{ pacientes | length }} en esta página
+            </span>
+        </div>
     </div>
 
     <div class="abm-table-wrap">
@@ -125,6 +131,44 @@ Pacientes · Salud Integral
        {% if pacientes %}hidden{% endif %}>
         No se encontraron pacientes que coincidan con la búsqueda.
     </p>
+
+    <div class="abm-footer">
+        <span class="abm-count">
+            Página {{ (offset // limit) + 1 }}
+        </span>
+
+        <nav class="abm-pagination" aria-label="Paginación de pacientes">
+
+            {% if paginacion.anterior %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.anterior }}">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% if paginacion.siguiente %}
+                <a class="button button-outline button-small"
+                   href="{{ paginacion.siguiente }}">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </a>
+            {% else %}
+                <span class="button button-outline button-small is-disabled"
+                      aria-disabled="true">
+                    Siguiente
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </span>
+            {% endif %}
+
+        </nav>
+    </div>
 
 </section>
 

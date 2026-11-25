@@ -26,7 +26,7 @@ def contar_pacientes(connection) -> int:
         SELECT COUNT(*) AS total
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
-        WHERE usuarios.activo = 1
+        WHERE usuarios.activo = 1 AND usuarios.rol = 'paciente'
     """
 
     with connection.cursor() as cursor:
@@ -47,7 +47,7 @@ def listar_pacientes(connection, limit: int, offset: int) -> list:
         FROM pacientes
         INNER JOIN usuarios ON pacientes.usuario_id = usuarios.id
         LEFT JOIN coberturas ON pacientes.cobertura_id = coberturas.id
-        WHERE usuarios.activo = 1
+        WHERE usuarios.activo = 1 AND usuarios.rol = 'paciente'
         ORDER BY usuarios.apellido, usuarios.nombre, pacientes.id
         LIMIT %s OFFSET %s
     """

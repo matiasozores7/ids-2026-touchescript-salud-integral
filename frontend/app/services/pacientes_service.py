@@ -1,17 +1,29 @@
 
 from app.clients.api_client import api_request
+from app.errors.exceptions import ExternalServiceError
 
 
-def listar_pacientes() -> list[dict]:
+def listar_pacientes(limit: int = 10, offset: int = 0) -> dict:
     resultado = api_request(
         method="GET",
         endpoint="/pacientes",
-        params={"limit": 100, "offset": 0},
+        params={
+            "_limit": limit,
+            "_offset": offset,
+        },
         authenticated=True,
     )
 
-    data = resultado.get("data") or {}
-    return data.get("items", [])
+    data = resultado.get("data")
+    if (
+        not isinstance(data, dict)
+        or not isinstance(data.get("items"), list)
+    ):
+        raise ExternalServiceError(
+            "La respuesta del servicio de pacientes tiene un formato inválido."
+        )
+
+    return data
 
 
 def crear_paciente(
