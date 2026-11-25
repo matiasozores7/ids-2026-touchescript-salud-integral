@@ -1,0 +1,72 @@
+{% extends "backoffice/base.html" %}
+
+{% block title %}Reportes | Salud Integral{% endblock %}
+
+{% block backoffice_styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/backoffice-reportes.css') }}">
+{% endblock %}
+
+{% block backoffice_content %}
+<div class="reports-shell">
+
+    <main class="reports-page">
+        <header class="reports-header">
+            <div>
+                <nav>Backoffice / <strong>Reportes</strong></nav>
+                <h1>Reportes</h1>
+                <p>
+                    {{ total_turnos }} turnos analizados -
+                    Ausentismo general {{ ausentismo_general }}% -
+                    Espera promedio {{ espera_promedio }} min
+                </p>
+            </div>
+
+            <div class="reports-actions">
+                {% for dias in (7, 14, 28) %}
+                <a href="{{ url_for('backoffice.backoffice_reportes', period=dias) }}"
+                   class="period-button {% if periodo == dias %}active{% endif %}">
+                    {{ dias }} días
+                </a>
+                {% endfor %}
+            </div>
+        </header>
+
+        <section class="reports-grid">
+            <article class="report-card">
+                <h2>Ausentismo por especialidad</h2>
+                <canvas id="specialtiesChart"></canvas>
+            </article>
+
+            <article class="report-card">
+                <h2>Resultado de los turnos</h2>
+                <canvas id="appointmentsChart"></canvas>
+            </article>
+
+            <article class="report-card">
+                <h2>Ocupación de consultorios</h2>
+                <canvas id="occupancyChart"></canvas>
+            </article>
+
+            <article class="report-card">
+                <h2>Tiempo de espera diario</h2>
+                <canvas id="waitingChart"></canvas>
+            </article>
+
+            <article class="report-card report-card-full">
+                <h2>Espera promedio por profesional</h2>
+                <canvas id="professionalsChart"></canvas>
+            </article>
+        </section>
+    </main>
+</div>
+
+<script>
+window.REPORT_DATA = {{ report_data | tojson }};
+</script>
+{% endblock %}
+
+{% block backoffice_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/backoffice-reportes.js') }}"></script>
+{% endblock %}
