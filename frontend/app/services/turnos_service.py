@@ -127,6 +127,25 @@ def cancelar_turno(turno_id: int) -> None:
         authenticated=True
     )
 
+
+def obtener_detalle_publico(turno_id: int, token: str) -> dict:
+    resultado = api_request(
+        method="GET",
+        endpoint=f"/turnos/{turno_id}/detalle-publico",
+        params={"token": token},
+    )
+
+    return resultado.get("data") or {}
+
+
+def cancelar_turno_con_token(turno_id: int, token: str) -> None:
+    api_request(
+        method="PATCH",
+        endpoint=f"/turnos/{turno_id}/cancelar-con-token",
+        json={"token": token},
+    )
+
+
 def obtener_qr_turno(turno_id: int) -> str:
     resultado = api_request(
         method="GET",

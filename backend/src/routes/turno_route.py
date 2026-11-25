@@ -2,7 +2,7 @@ from datetime import date
 
 from flask import Blueprint, request
 
-from src.errors.exceptions import BadRequestError, ForbiddenError
+from src.errors.exceptions import APIError, BadRequestError, ForbiddenError
 from src.services import turno_service
 from src.utils.decorators import validar_rol, validar_token
 from src.utils.jwt_config import obtener_claims_actuales
@@ -70,10 +70,13 @@ def reservar_turno():
                 description="Debe especificarse el 'paciente_id' para efectuar la reserva."
             )
 
-    turno_id = turno_service.reservar_turno(turno_id=data["turno_id"], paciente_id=paciente_id)
+    reserva = turno_service.reservar_turno(
+        turno_id=data["turno_id"],
+        paciente_id=paciente_id,
+    )
 
     return success_response(
-        data={"id": turno_id},
+        data=reserva,
         message="Turno reservado exitosamente.",
         status_code=201
     )
@@ -254,6 +257,69 @@ def cancelar_turno(turno_id: int):
     return success_response(
         message="Turno cancelado exitosamente."
     )
+
+
+@turnos_bp.route(
+    "/turnos/<int(min=1):turno_id>/enviar-recordatorio",
+    methods=["POST"],
+)
+@validar_rol("paciente", "admin")
+def reenviar_aviso_reserva(turno_id: int):
+    claims = obtener_claims_actuales()
+    rol = claims.get("rol")
+    enviado = turno_service.reenviar_aviso_reserva(
+        turno_id=turno_id,
+        paciente_id=claims.get("perfil_id") if rol == "paciente" else None,
+        es_admin=rol == "admin",
+    )
+    if not enviado:
+        raise APIError(
+            message="No se pudo enviar el correo.",
+            description=(
+                "Verificá que el turno tenga un correo de paciente y que "
+                "el servidor SMTP esté disponible."
+            ),
+            code="EMAIL_DELIVERY_FAILED",
+            status_code=502,
+        )
+
+    return success_response(
+        message="El correo del turno se envió nuevamente."
+    )
+
+
+@turnos_bp.route(
+    "/turnos/<int(min=1):turno_id>/detalle-publico",
+    methods=["GET"],
+)
+def obtener_detalle_publico_turno(turno_id: int):
+    token = request.args.get("token", "").strip()
+    if not token:
+        raise BadRequestError(
+            description="El parámetro 'token' es obligatorio."
+        )
+
+    detalle = turno_service.obtener_detalle_publico_turno(turno_id, token)
+    return success_response(
+        data=detalle,
+        message="Detalle del turno obtenido correctamente.",
+    )
+
+
+@turnos_bp.route(
+    "/turnos/<int(min=1):turno_id>/cancelar-con-token",
+    methods=["PATCH"],
+)
+def cancelar_turno_con_token(turno_id: int):
+    data = request.get_json(silent=True) or {}
+    turno_validator.validar_cancelar_con_token(data)
+    turno_service.cancelar_turno_con_token(
+        turno_id,
+        data["token"].strip(),
+    )
+
+    return success_response(message="Turno cancelado exitosamente.")
+
 
 @turnos_bp.route("/turnos/checkin", methods=["POST"])
 @validar_rol("admin")
